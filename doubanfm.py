@@ -199,8 +199,7 @@ class DoubanfmMain(gtk.Window):
 		self.unlikeText = '☆'
 		self.channel_seq = 0
 
-		self.doubanfm = DoubanfmBase(
-			'qiuxiang55aa@gmail.com', 'A2099420', onStart=self.onStart)
+		self.doubanfm = DoubanfmBase(onStart=self.onStart)
 		self.doubanfm.run()
 
 		self.set_title('豆瓣电台')
