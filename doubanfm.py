@@ -187,7 +187,7 @@ class DoubanfmBase:
 	
 	# 销毁播放器，目前尚未找到结束播放线程的方法
 	def destroy(self):
-		pass
+		self.thread._Thread__stop()
 
 
 
@@ -199,6 +199,10 @@ class DoubanfmMain(gtk.Window):
 		self.unlikeText = '☆'
 		self.channel_seq = 0
 
+		'''
+		self.doubanfm = DoubanfmBase(
+			'username', 'password', onStart=self.onStart)
+		'''
 		self.doubanfm = DoubanfmBase(onStart=self.onStart)
 		self.doubanfm.run()
 
@@ -331,6 +335,7 @@ class DoubanfmMain(gtk.Window):
 
 	# 退出
 	def destroy(self, widget):
+		self.doubanfm.destroy()
 		gtk.main_quit()
 
 
