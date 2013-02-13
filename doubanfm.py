@@ -111,6 +111,10 @@ class DoubanfmBase:
 
 	# 获取播放列表
 	def playlist(self):
+		if hasattr(self, 'song'):
+			params = self.params
+			params['sid'] = self.song['sid']
+			params['type'] = 's'
 		return json.loads(self.requests.get(
 			'http://www.douban.com/j/app/radio/people',
 			params=self.params).content)
