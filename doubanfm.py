@@ -129,8 +129,16 @@ class DoubanfmBase:
 
 	# 获取频道列表
 	def getChannels(self):
-		return json.loads(requests.get(
+		channels = json.loads(requests.get(
 			'http://www.douban.com/j/app/radio/channels').content)['channels']
+		# 由于红心兆赫没有出现在获取的播放列表里，需要手动添加
+		channels.append({
+			'name_en': 'Favorite Radio',
+			'seq_id': len(channels),
+			'abbr_en': 'Favorite',
+			'name': '红心兆赫',
+			'channel_id': -3})
+		return channels
 
 
 	# 主线程函数，循环播放
