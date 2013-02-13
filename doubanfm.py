@@ -84,9 +84,6 @@ class DoubanfmBase:
 	def like(self):
 		params = self.params
 		params['sid'] = self.song['sid']
-		self.requests.get(
-			'http://www.douban.com/j/app/radio/people',
-			params=params)
 		if self.song['like'] == 0:
 			params['type'] = 'r'
 			self.song['like'] = 1
@@ -95,6 +92,9 @@ class DoubanfmBase:
 			params['type'] = 'u'
 			self.song['like'] = 0
 			print '取消喜欢'
+		self.requests.get(
+			'http://www.douban.com/j/app/radio/people',
+			params=params)
 
 
 	# 不再播放
