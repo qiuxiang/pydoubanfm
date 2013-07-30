@@ -10,3 +10,4 @@ $ git clone https://github.com/hanxi/pydoubanfm.git <br>
 $ cd pydoubanfm<br>
 $ ./install<br>
 
+然后就可以看到豆瓣FM在桌面上了.
