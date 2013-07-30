@@ -17,7 +17,7 @@ import gtk
 
 # 基础类
 class DoubanfmBase:
-    def __init__(self, email='785446153@qq.com', password='911203', onStart=None):
+    def __init__(self, email='', password='', onStart=None):
         self.app_name = 'radio_desktop_win'
         self.version = '100'
         self.requests = requests.Session()
