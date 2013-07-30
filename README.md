@@ -6,7 +6,7 @@ pydoubanfm
 
 ###ubuntu安装步骤
 
-$ git clone https://github.com/hanxi/pydoubanfm.git
-$ cd pydoubanfm
-$ ./install
+$ git clone https://github.com/hanxi/pydoubanfm.git <br>
+$ cd pydoubanfm<br>
+$ ./install<br>
 
