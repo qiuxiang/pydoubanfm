@@ -18,7 +18,8 @@
                 <child>
                     <object class="GtkBox" id="box-controls">
                         <property name="halign">center</property>
-                        <property name="margin_bottom">10</property>
+                        <property name="margin_top">8</property>
+                        <property name="margin_bottom">8</property>
                         <child>
                             <object class="GtkButton" id="button-playback">
                                 <property name="image">image-pause</property>

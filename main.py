@@ -10,27 +10,36 @@ from player import *
 
 class DoubanfmPlayer:
     def __init__(self):
-        self.initDataDir()
+        self.initPath()
         self.initBuilder()
         self.initWidget()
         self.initDoubanfm()
         self.initPlayer()
         self.initNotify()
 
-    def initDataDir(self):
-        self.dataDir = os.path.expanduser('~/.local/share/pydoubanfm/')
+    def initPath(self):
+        self.__dir__ = os.path.abspath(os.path.dirname(__file__))
+        self.dataDir = os.path.expanduser('~/.pydoubanfm/')
         self.albumCoverDir = self.dataDir + 'albumCover/'
-        self.configPath = os.path.dirname(__file__) + '/config.json'
-        self.config = json.load(open(self.configPath))
+        self.configPath = self.dataDir + 'config.json'
+
         if not os.path.isdir(self.dataDir):
             os.mkdir(self.dataDir)
-        elif not os.path.isdir(self.albumCoverDir):
+
+        if not os.path.isdir(self.albumCoverDir):
             os.mkdir(self.albumCoverDir)
+
+        if os.path.isfile(self.configPath):
+            self.config = json.load(open(self.configPath))
+        else:
+            self.config = {
+                'channel': 0,
+                'email': '',
+                'password': ''}
 
     def initBuilder(self):
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(
-            os.path.dirname(__file__) + '/player.glade')
+        self.builder.add_from_file(self.__dir__ + '/doubanfm.glade')
         self.builder.connect_signals(self)
         self.builder.get_object('window-player').show_all()
 
@@ -44,19 +53,10 @@ class DoubanfmPlayer:
     def initDoubanfm(self):
         self.doubanfm = Doubanfm()
         self.playCount = 0
+        self.song = {'sid': None}
+        self.channel = self.config['channel']
 
-        if 'sid' in self.config:
-            self.song = {'sid': self.config['channel']}
-        else:
-            self.song = {'sid': None}
-
-        if 'channel' in self.config:
-            self.channel = self.config['channel']
-        else:
-            self.channel = 0
-
-        if 'email' in self.config and self.config['email'] and \
-            'password' in self.config and self.config['password']:
+        if self.config['email'] and self.config['password']:
             self.login(self.config['email'], self.config['password'])
 
     def initPlayer(self):
@@ -115,7 +115,6 @@ class DoubanfmPlayer:
     def onDeleteWindow(self, *args):
         Gtk.main_quit(*args)
         self.config['channel'] = self.channel
-        self.config['sid'] = self.song['sid']
         json.dump(self.config, open(self.configPath, 'w'), indent=2)
 
     def onPlayback(self, button):
@@ -171,5 +170,4 @@ if __name__ == '__main__':
     reload(sys)
     sys.setdefaultencoding('utf-8')
 
-    doubanfmPlayer = DoubanfmPlayer()
-    doubanfmPlayer.run()
+    DoubanfmPlayer().run()
