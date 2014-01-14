@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+    <!-- interface-requires gtk+ 3.0 -->
+    <object class="GtkWindow" id="window-player">
+        <signal name="delete-event" handler="onDeleteWindow"/>
+        <property name="title">豆瓣电台</property>
+        <property name="resizable">False</property>
+        <property name="width_request">160</property>
+        <property name="icon">icon.png</property>
+        <child>
+            <object class="GtkBox" id="box-body">
+                <property name="orientation">vertical</property>
+                <child>
+                    <object class="GtkImage" id="image-album-cover">
+                        <property name="height_request">160</property>
+                    </object>
+                </child>
+                <child>
+                    <object class="GtkBox" id="box-controls">
+                        <property name="halign">center</property>
+                        <property name="margin_bottom">10</property>
+                        <child>
+                            <object class="GtkButton" id="button-playback">
+                                <property name="image">image-pause</property>
+                                <property name="tooltip_text">暂停</property>
+                                <property name="relief">none</property>
+                                <property name="can_focus">False</property>
+                                <signal name="clicked" handler="onPlayback"/>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkToggleButton" id="button-rate">
+                                <property name="image">image-rate</property>
+                                <property name="tooltip_text">喜欢</property>
+                                <property name="relief">none</property>
+                                <property name="can_focus">False</property>
+                                <signal name="toggled" handler="onRate"/>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkButton" id="button-delete">
+                                <property name="image">image-delete</property>
+                                <property name="tooltip_text">不再播放</property>
+                                <property name="relief">none</property>
+                                <property name="can_focus">False</property>
+                                <signal name="clicked" handler="onDelete"/>
+                            </object>
+                        </child>
+                        <child>
+                            <object class="GtkButton" id="button-next">
+                                <property name="image">image-skip</property>
+                                <property name="tooltip_text">下一首</property>
+                                <property name="relief">none</property>
+                                <property name="can_focus">False</property>
+                                <signal name="clicked" handler="onSkip"/>
+                            </object>
+                        </child>
+                    </object>
+                </child>
+            </object>
+        </child>
+    </object>
+    <object class="GtkImage" id="image-play">
+        <property name="icon_name">media-playback-start</property>
+    </object>
+    <object class="GtkImage" id="image-pause">
+        <property name="icon_name">media-playback-pause</property>
+    </object>
+    <object class="GtkImage" id="image-rate">
+        <property name="icon_name">emblem-favorite</property>
+    </object>
+    <object class="GtkImage" id="image-skip">
+        <property name="icon_name">media-skip-forward</property>
+    </object>
+    <object class="GtkImage" id="image-delete">
+        <property name="icon_name">edit-delete</property>
+    </object>
+
+    <object class="GtkMenu" id="menu1">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+    </object>
+</interface>
