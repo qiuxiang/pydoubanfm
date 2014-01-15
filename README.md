@@ -22,6 +22,7 @@ python 实现的豆瓣电台客户端
 * requests 2.*
 * gst
 
+
 配置
 ----
 ~/.pydoubanfm/config.json
@@ -33,3 +34,8 @@ python 实现的豆瓣电台客户端
 }
 ```
 如果文件不存在，程序会自动创建
+
+
+运行
+----
+运行 main.py 即可
