@@ -1,26 +1,29 @@
 # encoding: utf8
 
-import gst
+from gi.repository import Gst
 
-STATE_NULL    = gst.STATE_NULL
-STATE_PLAYING = gst.STATE_PLAYING
-STATE_PAUSED  = gst.STATE_PAUSED
+Gst.init(None)
+
+STATE_NULL = Gst.State.NULL
+STATE_PLAYING = Gst.State.PLAYING
+STATE_PAUSED = Gst.State.PAUSED
+
 
 class Player:
     def __init__(self):
-        self.player = gst.element_factory_make('playbin', 'player')
+        self.player = Gst.ElementFactory.make('playbin')
 
         bus = self.player.get_bus()
         bus.add_signal_watch()
-        bus.connect('message', self.messageHandler)
+        bus.connect('message', self.message_handler)
 
-    def messageHandler(self, bus, message):
-        if message.type == gst.MESSAGE_EOS:
+    def message_handler(self, bus, message):
+        if message.type == Gst.MessageType.EOS:
             self.stop()
-            if hasattr(self, 'onEos'):
-                self.onEos()
+            if hasattr(self, 'on_eos'):
+                self.on_eos()
 
-    def setUri(self, uri):
+    def set_uri(self, uri):
         self.player.set_property('uri', uri)
 
     def play(self):
@@ -32,5 +35,5 @@ class Player:
     def stop(self):
         self.player.set_state(STATE_NULL)
 
-    def getState(self):
-        return self.player.get_state()[1]
+    def get_state(self):
+        return self.player.get_state(0)[1]
