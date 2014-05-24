@@ -1,8 +1,7 @@
 # encoding: utf8
 
 from gi.repository import Gst
-
-Gst.init(None)
+Gst.init()
 
 STATE_NULL = Gst.State.NULL
 STATE_PLAYING = Gst.State.PLAYING

@@ -129,12 +129,18 @@ class DoubanfmPlayer:
             self.button_playback.set_tooltip_text('暂停')
 
     def on_rate(self, button):
-        self.play_count = 0
         if self.button_rate.get_active():
-            self.update_playlist('r')
             self.button_rate.set_tooltip_text('取消喜欢')
+            if self.song['like'] == 0:
+                self.update_playlist('r')
+                self.song['like'] = True
+                self.play_count = 0
         else:
             self.button_rate.set_tooltip_text('喜欢')
+            if self.song['like'] == 1:
+                self.update_playlist('u')
+                self.song['like'] = False
+                self.play_count = 0
 
     def on_delete(self, button):
         self.next('b')
