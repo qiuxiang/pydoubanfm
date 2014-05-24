@@ -22,6 +22,7 @@ python 实现的豆瓣FM客户端
 截图
 ----
 ![截图](http://qiuxiang.qiniudn.com/pydoubanfm-1.png)
+
 ![截图](http://qiuxiang.qiniudn.com/pydoubanfm-2.png)
 
 
