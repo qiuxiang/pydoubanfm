@@ -76,9 +76,4 @@
   <object class="GtkImage" id="image-delete">
     <property name="icon_name">edit-delete</property>
   </object>
-
-  <object class="GtkMenu" id="menu1">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-  </object>
 </interface>

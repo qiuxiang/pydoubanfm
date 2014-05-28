@@ -4,7 +4,7 @@
 import os
 import json
 import requests
-from gi.repository import Gtk, Notify
+from gi.repository import Gtk, Notify, GdkPixbuf
 from doubanfm import Doubanfm
 from player import *
 
@@ -159,7 +159,9 @@ class DoubanfmPlayer:
             self.album_cover_dir + self.song['picture'].split('/')[-1]
         open(self.album_cover_path, 'wb') \
             .write(requests.get(self.song['picture']).content)
-        self.image_album_cover.set_from_file(self.album_cover_path)
+        self.image_album_cover.set_from_pixbuf(
+            GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                self.album_cover_path, 240, -1, True))
         self.image_album_cover.set_tooltip_text(
             '标题：%s\n艺术家：%s\n专辑：%s' % (
                 self.song['title'],
