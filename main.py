@@ -17,6 +17,7 @@ class DoubanfmPlayer:
         self.init_doubanfm()
         self.init_player()
         self.init_notify()
+        self.init_indicator()
 
     def init_path(self):
         self.__dir__ = os.path.abspath(os.path.dirname(__file__))
@@ -71,6 +72,14 @@ class DoubanfmPlayer:
         Notify.init('pydoubanfm')
         self.notify = Notify.Notification.new('', '', '')
 
+    def init_indicator(self):
+        self.indicator = AppIndicator3.Indicator.new(
+            'pydoubanfm', 'applications-multimedia',
+            AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
+        self.indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
+        self.indicator.set_icon(self.__dir__ + '/icon.png')
+        self.indicator.set_menu(self.indicator_menu)
+
     def update_notify(self):
         self.notify.update(
             self.song['title'], self.song['artist'], self.album_cover_path)
@@ -91,13 +100,6 @@ class DoubanfmPlayer:
             dialog.destroy()
 
     def run(self):
-        indicator = AppIndicator3.Indicator.new(
-            'pydoubanfm', 'applications-multimedia',
-            AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
-        indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
-        indicator.set_icon(self.__dir__ + '/icon.png')
-        indicator.set_menu(self.indicator_menu)
-
         self.update_playlist('n')
         self.play()
         Gtk.main()
