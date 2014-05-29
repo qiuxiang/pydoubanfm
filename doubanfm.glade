@@ -4,7 +4,7 @@
   <!-- interface-requires gtk+ 3.0 -->
 
   <object class="GtkWindow" id="window-player">
-    <signal name="delete-event" handler="on_delete_window"/>
+    <signal name="delete-event" handler="on_exit"/>
     <property name="title">豆瓣电台</property>
     <property name="resizable">False</property>
     <property name="icon">icon.png</property>
@@ -75,5 +75,64 @@
   </object>
   <object class="GtkImage" id="image-delete">
     <property name="icon_name">edit-delete</property>
+  </object>
+
+  <object class="GtkMenu" id="indicator-menu">
+    <child>
+      <object class="GtkMenuItem" id="menuitem-title">
+        <property name="visible">True</property>
+        <property name="label">标题</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="menuitem-separator1">
+        <property name="visible">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="menuitem-playback">
+        <property name="visible">True</property>
+        <property name="label">暂停</property>
+        <signal name="activate" handler="on_playback"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="menuitem-skip">
+        <property name="visible">True</property>
+        <property name="label">下一首</property>
+        <signal name="activate" handler="on_skip"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="menuitem-separator2">
+        <property name="visible">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="menuitem-rate">
+        <property name="visible">True</property>
+        <property name="label">添加喜欢</property>
+        <signal name="activate" handler="on_rate"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="menuitem-delete">
+        <property name="visible">True</property>
+        <property name="label">不再播放</property>
+        <signal name="activate" handler="on_delete"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="menuitem-separator3">
+        <property name="visible">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="menuitem-exit">
+        <property name="visible">True</property>
+        <property name="label">退出</property>
+        <signal name="activate" handler="on_exit"/>
+      </object>
+    </child>
   </object>
 </interface>

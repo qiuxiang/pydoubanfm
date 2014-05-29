@@ -4,7 +4,7 @@
 import os
 import json
 import requests
-from gi.repository import Gtk, Notify, GdkPixbuf
+from gi.repository import Gtk, Notify, GdkPixbuf, AppIndicator3
 from doubanfm import Doubanfm
 from player import *
 
@@ -50,6 +50,9 @@ class DoubanfmPlayer:
         self.image_play = self.builder.get_object('image-play')
         self.image_pause = self.builder.get_object('image-pause')
         self.image_album_cover = self.builder.get_object('image-album-cover')
+        self.indicator_menu = self.builder.get_object('indicator-menu')
+        self.menuitem_playback = self.builder.get_object('menuitem-playback')
+        self.menuitem_title = self.builder.get_object('menuitem-title')
 
     def init_doubanfm(self):
         self.doubanfm = Doubanfm()
@@ -73,6 +76,10 @@ class DoubanfmPlayer:
             self.song['title'], self.song['artist'], self.album_cover_path)
         self.notify.show()
 
+    def update_title(self):
+        self.menuitem_title.set_label(
+            self.song['title'] + ' - ' + self.song['artist'])
+
     def login(self, email, password):
         try:
             self.doubanfm.login(email, password)
@@ -84,6 +91,13 @@ class DoubanfmPlayer:
             dialog.destroy()
 
     def run(self):
+        indicator = AppIndicator3.Indicator.new(
+            'pydoubanfm', 'applications-multimedia',
+            AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
+        indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
+        indicator.set_icon(self.__dir__ + '/icon.png')
+        indicator.set_menu(self.indicator_menu)
+
         self.update_playlist('n')
         self.play()
         Gtk.main()
@@ -105,6 +119,7 @@ class DoubanfmPlayer:
         self.set_album_cover()
         self.set_rate_state()
         self.update_notify()
+        self.update_title()
 
     def end_report(self):
         self.doubanfm.get_playlist(self.channel, 'e', self.song['sid'])
@@ -113,23 +128,26 @@ class DoubanfmPlayer:
         self.playlist = self.doubanfm.get_playlist(
             self.channel, type, self.song['sid'])['song']
 
-    def on_delete_window(self, *args):
+    def on_exit(self, *args):
         Gtk.main_quit(*args)
         self.config['channel'] = self.channel
         json.dump(self.config, open(self.config_path, 'w'), indent=2)
 
-    def on_playback(self, button):
+    def on_playback(self, widget):
         if self.player.get_state() == STATE_PLAYING:
             self.player.pause()
             self.button_playback.set_image(self.image_play)
             self.button_playback.set_tooltip_text('播放')
+            self.menuitem_playback.set_label('播放')
         else:
             self.player.play()
             self.button_playback.set_image(self.image_pause)
             self.button_playback.set_tooltip_text('暂停')
+            self.menuitem_playback.set_label('暂停')
 
-    def on_rate(self, button):
-        if self.button_rate.get_active():
+    def on_rate(self, widget):
+        if (type(widget) == Gtk.ToggleButton and self.button_rate.get_active()) or \
+           (type(widget) == Gtk.MenuItem and not self.button_rate.get_active()):
             self.button_rate.set_tooltip_text('取消喜欢')
             if self.song['like'] == 0:
                 self.update_playlist('r')
@@ -142,10 +160,10 @@ class DoubanfmPlayer:
                 self.song['like'] = False
                 self.play_count = 0
 
-    def on_delete(self, button):
+    def on_delete(self, widget):
         self.next('b')
 
-    def on_skip(self, button):
+    def on_skip(self, widget):
         self.next('s')
 
     def next(self, type):
