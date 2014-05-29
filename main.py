@@ -53,6 +53,7 @@ class DoubanfmPlayer:
         self.image_album_cover = self.builder.get_object('image-album-cover')
         self.indicator_menu = self.builder.get_object('indicator-menu')
         self.menuitem_playback = self.builder.get_object('menuitem-playback')
+        self.menuitem_rate = self.builder.get_object('menuitem-rate')
         self.menuitem_title = self.builder.get_object('menuitem-title')
 
     def init_doubanfm(self):
@@ -151,16 +152,20 @@ class DoubanfmPlayer:
         if (type(widget) == Gtk.ToggleButton and self.button_rate.get_active()) or \
            (type(widget) == Gtk.MenuItem and not self.button_rate.get_active()):
             self.button_rate.set_tooltip_text('取消喜欢')
+            self.menuitem_rate.set_label('取消喜欢')
             if self.song['like'] == 0:
                 self.update_playlist('r')
                 self.song['like'] = True
                 self.play_count = 0
+                self.button_rate.set_active(True)
         else:
             self.button_rate.set_tooltip_text('喜欢')
+            self.menuitem_rate.set_label('喜欢')
             if self.song['like'] == 1:
                 self.update_playlist('u')
                 self.song['like'] = False
                 self.play_count = 0
+                self.button_rate.set_active(False)
 
     def on_delete(self, widget):
         self.next('b')

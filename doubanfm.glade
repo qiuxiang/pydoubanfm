@@ -99,19 +99,14 @@
     <child>
       <object class="GtkMenuItem" id="menuitem-skip">
         <property name="visible">True</property>
-        <property name="label">下一首</property>
+        <property name="label">跳过</property>
         <signal name="activate" handler="on_skip"/>
-      </object>
-    </child>
-    <child>
-      <object class="GtkSeparatorMenuItem" id="menuitem-separator2">
-        <property name="visible">True</property>
       </object>
     </child>
     <child>
       <object class="GtkMenuItem" id="menuitem-rate">
         <property name="visible">True</property>
-        <property name="label">添加喜欢</property>
+        <property name="label">喜欢</property>
         <signal name="activate" handler="on_rate"/>
       </object>
     </child>
