@@ -179,6 +179,9 @@ class DoubanfmPlayer:
         self.player.stop()
         self.play()
 
+    def on_open_album(self, widget):
+        os.system('sensible-browser http://music.douban.com' + self.song['album'])
+
     def set_album_cover(self):
         self.album_cover_path = \
             self.album_cover_dir + self.song['picture'].split('/')[-1]

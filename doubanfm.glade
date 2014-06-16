@@ -82,6 +82,7 @@
       <object class="GtkMenuItem" id="menuitem-title">
         <property name="visible">True</property>
         <property name="label">标题</property>
+        <signal name="activate" handler="on_open_album"/>
       </object>
     </child>
     <child>
