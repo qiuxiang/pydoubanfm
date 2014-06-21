@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkImage" id="image-skip">
+    <property name="can_focus">False</property>
+    <property name="icon_name">media-skip-forward</property>
+  </object>
   <object class="GtkImage" id="image-delete">
     <property name="can_focus">False</property>
     <property name="icon_name">edit-delete</property>
@@ -16,10 +20,6 @@
   <object class="GtkImage" id="image-rate">
     <property name="can_focus">False</property>
     <property name="icon_name">emblem-favorite</property>
-  </object>
-  <object class="GtkImage" id="image-skip">
-    <property name="can_focus">False</property>
-    <property name="icon_name">media-skip-forward</property>
   </object>
   <object class="GtkMenu" id="indicator-menu">
     <property name="can_focus">False</property>
@@ -115,6 +115,7 @@
             <property name="halign">center</property>
             <property name="margin_top">8</property>
             <property name="margin_bottom">8</property>
+            <property name="spacing">10</property>
             <child>
               <object class="GtkButton" id="button-playback">
                 <property name="use_action_appearance">False</property>
@@ -129,7 +130,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -146,7 +147,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -163,7 +164,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -180,7 +181,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child>
@@ -205,7 +206,7 @@ audio-volume-medium</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">4</property>
+                <property name="position">5</property>
               </packing>
             </child>
           </object>
@@ -213,6 +214,33 @@ audio-volume-medium</property>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="box-controls2">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkComboBox" id="channelSelector">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="has_tooltip">True</property>
+                <property name="tooltip_markup" translatable="yes">频道</property>
+                <property name="tooltip_text">频道</property>
+                <signal name="changed" handler="on_channels_changed" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child>

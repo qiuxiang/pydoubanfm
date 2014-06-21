@@ -55,3 +55,8 @@ class Doubanfm:
 
     def set_kbps(self, kbps):
         self.params['kbps'] = kbps
+
+if __name__=="__main__":
+    db = Doubanfm()
+    print db.get_channels()
+    

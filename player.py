@@ -10,9 +10,9 @@ STATE_PAUSED = Gst.State.PAUSED
 
 class Player:
     def __init__(self):
-        self.player = Gst.ElementFactory.make('playbin',"player")
+        self.player = Gst.ElementFactory.make('playbin',None)
         bus = self.player.get_bus()
-        bus.add_signal_watch_full(1)
+        bus.add_signal_watch()
         bus.connect('message', self.message_handler)
         self.bus = bus
         
