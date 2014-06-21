@@ -1,133 +1,223 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
-
-  <object class="GtkWindow" id="window-player">
-    <signal name="delete-event" handler="on_exit"/>
-    <property name="title">豆瓣电台</property>
-    <property name="resizable">False</property>
-    <property name="icon">icon.png</property>
-    <child>
-      <object class="GtkBox" id="box-body">
-        <property name="orientation">vertical</property>
-        <child>
-          <object class="GtkImage" id="image-album-cover"/>
-        </child>
-        <child>
-          <object class="GtkBox" id="box-controls">
-            <property name="halign">center</property>
-            <property name="margin_top">8</property>
-            <property name="margin_bottom">8</property>
-            <child>
-              <object class="GtkButton" id="button-playback">
-                <property name="image">image-pause</property>
-                <property name="tooltip_text">暂停</property>
-                <property name="relief">none</property>
-                <property name="can_focus">False</property>
-                <signal name="clicked" handler="on_playback"/>
-              </object>
-            </child>
-            <child>
-              <object class="GtkToggleButton" id="button-rate">
-                <property name="image">image-rate</property>
-                <property name="tooltip_text">喜欢</property>
-                <property name="relief">none</property>
-                <property name="can_focus">False</property>
-                <signal name="toggled" handler="on_rate"/>
-              </object>
-            </child>
-            <child>
-              <object class="GtkButton" id="button-delete">
-                <property name="image">image-delete</property>
-                <property name="tooltip_text">不再播放</property>
-                <property name="relief">none</property>
-                <property name="can_focus">False</property>
-                <signal name="clicked" handler="on_delete"/>
-              </object>
-            </child>
-            <child>
-              <object class="GtkButton" id="button-next">
-                <property name="image">image-skip</property>
-                <property name="tooltip_text">下一首</property>
-                <property name="relief">none</property>
-                <property name="can_focus">False</property>
-                <signal name="clicked" handler="on_skip"/>
-              </object>
-            </child>
-          </object>
-        </child>
-      </object>
-    </child>
-  </object>
-
-  <object class="GtkImage" id="image-play">
-    <property name="icon_name">media-playback-start</property>
+  <object class="GtkImage" id="image-delete">
+    <property name="can_focus">False</property>
+    <property name="icon_name">edit-delete</property>
   </object>
   <object class="GtkImage" id="image-pause">
+    <property name="can_focus">False</property>
     <property name="icon_name">media-playback-pause</property>
   </object>
+  <object class="GtkImage" id="image-play">
+    <property name="can_focus">False</property>
+    <property name="icon_name">media-playback-start</property>
+  </object>
   <object class="GtkImage" id="image-rate">
+    <property name="can_focus">False</property>
     <property name="icon_name">emblem-favorite</property>
   </object>
   <object class="GtkImage" id="image-skip">
+    <property name="can_focus">False</property>
     <property name="icon_name">media-skip-forward</property>
   </object>
-  <object class="GtkImage" id="image-delete">
-    <property name="icon_name">edit-delete</property>
-  </object>
-
   <object class="GtkMenu" id="indicator-menu">
+    <property name="can_focus">False</property>
     <child>
       <object class="GtkMenuItem" id="menuitem-title">
+        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <property name="label">标题</property>
-        <signal name="activate" handler="on_open_album"/>
       </object>
     </child>
     <child>
       <object class="GtkSeparatorMenuItem" id="menuitem-separator1">
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
       </object>
     </child>
     <child>
       <object class="GtkMenuItem" id="menuitem-playback">
+        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <property name="label">暂停</property>
-        <signal name="activate" handler="on_playback"/>
+        <signal name="activate" handler="on_playback" swapped="no"/>
       </object>
     </child>
     <child>
       <object class="GtkMenuItem" id="menuitem-skip">
+        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <property name="label">跳过</property>
-        <signal name="activate" handler="on_skip"/>
+        <signal name="activate" handler="on_skip" swapped="no"/>
       </object>
     </child>
     <child>
       <object class="GtkMenuItem" id="menuitem-rate">
+        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <property name="label">喜欢</property>
-        <signal name="activate" handler="on_rate"/>
+        <signal name="activate" handler="on_rate" swapped="no"/>
       </object>
     </child>
     <child>
       <object class="GtkMenuItem" id="menuitem-delete">
+        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <property name="label">不再播放</property>
-        <signal name="activate" handler="on_delete"/>
+        <signal name="activate" handler="on_delete" swapped="no"/>
       </object>
     </child>
     <child>
       <object class="GtkSeparatorMenuItem" id="menuitem-separator3">
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
       </object>
     </child>
     <child>
       <object class="GtkMenuItem" id="menuitem-exit">
+        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <property name="label">退出</property>
-        <signal name="activate" handler="on_exit"/>
+        <signal name="activate" handler="on_exit" swapped="no"/>
+      </object>
+    </child>
+  </object>
+  <object class="GtkWindow" id="window-player">
+    <property name="can_focus">False</property>
+    <property name="title">豆瓣电台</property>
+    <property name="resizable">False</property>
+    <property name="icon">icon.png</property>
+    <signal name="delete-event" handler="on_exit" swapped="no"/>
+    <child>
+      <object class="GtkBox" id="box-body">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkImage" id="image-album-cover">
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="box-controls">
+            <property name="can_focus">False</property>
+            <property name="halign">center</property>
+            <property name="margin_top">8</property>
+            <property name="margin_bottom">8</property>
+            <child>
+              <object class="GtkButton" id="button-playback">
+                <property name="use_action_appearance">False</property>
+                <property name="can_focus">False</property>
+                <property name="receives_default">False</property>
+                <property name="tooltip_text">暂停</property>
+                <property name="use_action_appearance">False</property>
+                <property name="image">image-pause</property>
+                <property name="relief">none</property>
+                <signal name="clicked" handler="on_playback" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToggleButton" id="button-rate">
+                <property name="use_action_appearance">False</property>
+                <property name="can_focus">False</property>
+                <property name="receives_default">False</property>
+                <property name="tooltip_text">喜欢</property>
+                <property name="use_action_appearance">False</property>
+                <property name="image">image-rate</property>
+                <property name="relief">none</property>
+                <signal name="toggled" handler="on_rate" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button-delete">
+                <property name="use_action_appearance">False</property>
+                <property name="can_focus">False</property>
+                <property name="receives_default">False</property>
+                <property name="tooltip_text">不再播放</property>
+                <property name="use_action_appearance">False</property>
+                <property name="image">image-delete</property>
+                <property name="relief">none</property>
+                <signal name="clicked" handler="on_delete" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button-next">
+                <property name="use_action_appearance">False</property>
+                <property name="can_focus">False</property>
+                <property name="receives_default">False</property>
+                <property name="tooltip_text">下一首</property>
+                <property name="use_action_appearance">False</property>
+                <property name="image">image-skip</property>
+                <property name="relief">none</property>
+                <signal name="clicked" handler="on_skip" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVolumeButton" id="volumebutton">
+                <property name="use_action_appearance">False</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="has_tooltip">True</property>
+                <property name="tooltip_text" translatable="yes">音量</property>
+                <property name="use_action_appearance">False</property>
+                <property name="relief">none</property>
+                <property name="focus_on_click">False</property>
+                <property name="value">1</property>
+                <property name="icons">audio-volume-muted
+audio-volume-high
+audio-volume-low
+audio-volume-medium</property>
+                <property name="use_symbolic">True</property>
+                <signal name="value-changed" handler="on_volume_changed" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">4</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
       </object>
     </child>
   </object>

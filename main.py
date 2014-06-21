@@ -46,6 +46,7 @@ class DoubanfmPlayer:
         self.builder.get_object('window-player').show_all()
 
     def init_widget(self):
+        self.window = self.builder.get_object('window-player')
         self.button_playback = self.builder.get_object('button-playback')
         self.button_rate = self.builder.get_object('button-rate')
         self.image_play = self.builder.get_object('image-play')
@@ -92,7 +93,8 @@ class DoubanfmPlayer:
 
     def login(self, email, password):
         try:
-            self.doubanfm.login(email, password)
+            username = self.doubanfm.login(email, password)
+            self.window.set_title("豆瓣电台 - " + username)
         except Exception as error:
             dialog = Gtk.MessageDialog(
                 None, 0, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, '登录失败')
@@ -173,14 +175,14 @@ class DoubanfmPlayer:
     def on_skip(self, widget):
         self.next('s')
 
+    def on_volume_changed(self,widget,value):
+        self.player.set_volume(round(value,2))
+
     def next(self, type):
         self.update_playlist(type)
         self.play_count = 0
         self.player.stop()
         self.play()
-
-    def on_open_album(self, widget):
-        os.system('sensible-browser http://music.douban.com' + self.song['album'])
 
     def set_album_cover(self):
         self.album_cover_path = \
@@ -203,6 +205,7 @@ class DoubanfmPlayer:
             self.button_rate.set_active(False)
 
 if __name__ == '__main__':
+    print "pid:",os.getpid()
     import sys
     if sys.version_info[0] < 3:
         reload(sys)
