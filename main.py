@@ -18,6 +18,7 @@ class DoubanfmPlayer:
         self.init_player()
         self.init_notify()
         self.init_indicator()
+        self.init_channels()
 
     def init_path(self):
         self.__dir__ = os.path.abspath(os.path.dirname(__file__))
@@ -46,6 +47,8 @@ class DoubanfmPlayer:
         self.builder.get_object('window-player').show_all()
 
     def init_widget(self):
+        self.window = self.builder.get_object('window-player')
+        self.channelSelector = self.builder.get_object('channelSelector')
         self.button_playback = self.builder.get_object('button-playback')
         self.button_rate = self.builder.get_object('button-rate')
         self.image_play = self.builder.get_object('image-play')
@@ -61,9 +64,20 @@ class DoubanfmPlayer:
         self.play_count = 0
         self.song = {'sid': None}
         self.channel = self.config['channel']
-
         if self.config['email'] and self.config['password']:
             self.login(self.config['email'], self.config['password'])
+
+    def init_channels(self):
+        channels = Gtk.ListStore(int, str)
+        for i in self.doubanfm.get_channels():
+            channels.append([int(i['channel_id']),i['name']])
+        self.channelSelector.set_model(channels)
+        self.cell = Gtk.CellRendererText()
+        self.channelSelector.pack_start(self.cell, True)
+        self.channelSelector.add_attribute(self.cell, 'text', 1)
+        self.channelSelector.set_wrap_width(5)
+        self.channelSelector.set_active(0)
+
 
     def init_player(self):
         self.player = Player()
@@ -92,7 +106,8 @@ class DoubanfmPlayer:
 
     def login(self, email, password):
         try:
-            self.doubanfm.login(email, password)
+            username = self.doubanfm.login(email, password)
+            self.window.set_title("豆瓣电台 - " + username)
         except Exception as error:
             dialog = Gtk.MessageDialog(
                 None, 0, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, '登录失败')
@@ -100,7 +115,7 @@ class DoubanfmPlayer:
             dialog.run()
             dialog.destroy()
 
-    def run(self):
+    def run(self):        
         self.update_playlist('n')
         self.play()
         Gtk.main()
@@ -111,7 +126,6 @@ class DoubanfmPlayer:
             self.play_count = 0
         else:
             self.play_count += 1
-
         self.end_report()
         self.play()
 
@@ -173,14 +187,18 @@ class DoubanfmPlayer:
     def on_skip(self, widget):
         self.next('s')
 
+    def on_volume_changed(self,widget,value):
+        self.player.set_volume(round(value,2))
+
+    def on_channels_changed(self,widget):
+        self.channel = widget.get_model()[widget.get_active()][0]
+        if self.player.get_state() is not Gst.State.NULL:self.next('n')
+
     def next(self, type):
         self.update_playlist(type)
         self.play_count = 0
         self.player.stop()
         self.play()
-
-    def on_open_album(self, widget):
-        os.system('sensible-browser http://music.douban.com' + self.song['album'])
 
     def set_album_cover(self):
         self.album_cover_path = \
@@ -203,6 +221,7 @@ class DoubanfmPlayer:
             self.button_rate.set_active(False)
 
 if __name__ == '__main__':
+    print "pid:",os.getpid()
     import sys
     if sys.version_info[0] < 3:
         reload(sys)
