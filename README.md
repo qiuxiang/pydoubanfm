@@ -14,7 +14,7 @@ python 实现的豆瓣FM客户端
 
 特性
 ----
-- 集成 ubuntu 通知中心
+- 集成 ubuntu 通知中心，Indicator
 - 完全模拟豆瓣FM行为
 - 支持登录
 

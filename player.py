@@ -10,14 +10,13 @@ STATE_PAUSED = Gst.State.PAUSED
 
 class Player:
     def __init__(self):
-        self.player = Gst.ElementFactory.make('playbin',None)
+        self.player = Gst.ElementFactory.make('playbin', None)
         bus = self.player.get_bus()
         bus.add_signal_watch()
         bus.connect('message', self.message_handler)
         self.bus = bus
         
-
-    def message_handler(self,bus,message):
+    def message_handler(self, bus, message):
         if message.type == Gst.MessageType.EOS:
             self.stop()
             if hasattr(self, 'on_eos'):
@@ -40,4 +39,3 @@ class Player:
 
     def get_state(self):
         return self.player.get_state(0)[1]
-

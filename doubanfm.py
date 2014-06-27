@@ -1,6 +1,6 @@
 # encoding: utf8
 
-import requests,time
+import requests
 
 
 class Doubanfm:
@@ -16,13 +16,7 @@ class Doubanfm:
             'kbps': 192}
 
     def request(self, method, url, **kwargs):
-        retry = 3
-        while retry:                
-            try:
-                return self.session.request(method, self.base_url + url, **kwargs)
-            except:
-                retry-=1
-                continue
+        return self.session.request(method, self.base_url + url, **kwargs)
 
     def get_playlist(self, channel, type='n', sid=None):
         self.params.update({
@@ -46,7 +40,6 @@ class Doubanfm:
             self.params['expire'] = response['expire']
             self.params['token'] = response['token']
             self.logged = True
-            return response['user_name']
         else:
             raise Exception(response['err'])
 
@@ -55,8 +48,3 @@ class Doubanfm:
 
     def set_kbps(self, kbps):
         self.params['kbps'] = kbps
-
-if __name__=="__main__":
-    db = Doubanfm()
-    print db.get_channels()
-    
