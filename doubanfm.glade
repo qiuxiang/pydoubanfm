@@ -148,4 +148,14 @@
       </object>
     </child>
   </object>
+
+  <object class="GtkMenu" id="popup-menu">
+    <child>
+      <object class="GtkMenuItem" id="menuitem-view-album">
+        <property name="visible">True</property>
+        <property name="label">查看专辑</property>
+        <signal name="activate" handler="open_album"/>
+      </object>
+    </child>
+  </object>
 </interface>
