@@ -13,7 +13,6 @@ class DoubanfmPlayer:
     def __init__(self):
         self.init_path()
         self.init_builder()
-        self.init_widget()
         self.init_doubanfm()
         self.init_player()
         self.init_notify()
@@ -40,21 +39,11 @@ class DoubanfmPlayer:
                 'password': ''}
 
     def init_builder(self):
+        self.widgets = {}
         self.builder = Gtk.Builder()
         self.builder.add_from_file(self.__dir__ + '/doubanfm.glade')
         self.builder.connect_signals(self)
         self.builder.get_object('window-player').show_all()
-
-    def init_widget(self):
-        self.button_playback = self.builder.get_object('button-playback')
-        self.button_rate = self.builder.get_object('button-rate')
-        self.image_play = self.builder.get_object('image-play')
-        self.image_pause = self.builder.get_object('image-pause')
-        self.image_album_cover = self.builder.get_object('image-album-cover')
-        self.indicator_menu = self.builder.get_object('indicator-menu')
-        self.menuitem_playback = self.builder.get_object('menuitem-playback')
-        self.menuitem_rate = self.builder.get_object('menuitem-rate')
-        self.menuitem_title = self.builder.get_object('menuitem-title')
 
     def init_doubanfm(self):
         self.doubanfm = Doubanfm()
@@ -78,7 +67,12 @@ class DoubanfmPlayer:
             AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
         self.indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
         self.indicator.set_icon(self.__dir__ + '/icon.png')
-        self.indicator.set_menu(self.indicator_menu)
+        self.indicator.set_menu(self.get_widget('indicator-menu'))
+
+    def get_widget(self, name):
+        if name not in self.widgets:
+            self.widgets[name] = self.builder.get_object(name)
+        return self.widgets[name]
 
     def update_notify(self):
         self.notify.update(
@@ -86,7 +80,7 @@ class DoubanfmPlayer:
         self.notify.show()
 
     def update_title(self):
-        self.menuitem_title.set_label(
+        self.get_widget('menuitem-title').set_label(
             self.song['title'] + ' - ' + self.song['artist'])
 
     def login(self, email, password):
@@ -138,33 +132,33 @@ class DoubanfmPlayer:
     def on_playback(self, widget):
         if self.player.get_state() == STATE_PLAYING:
             self.player.pause()
-            self.button_playback.set_image(self.image_play)
-            self.button_playback.set_tooltip_text('播放')
-            self.menuitem_playback.set_label('播放')
+            self.get_widget('button-playback').set_image(self.get_widget('image-play'))
+            self.get_widget('button-playback').set_tooltip_text('播放')
+            self.get_widget('menuitem-playback').set_label('播放')
         else:
             self.player.play()
-            self.button_playback.set_image(self.image_pause)
-            self.button_playback.set_tooltip_text('暂停')
-            self.menuitem_playback.set_label('暂停')
+            self.get_widget('button-playback').set_image(self.get_widget('image-pause'))
+            self.get_widget('button-playback').set_tooltip_text('暂停')
+            self.get_widget('menuitem-playback').set_label('暂停')
 
     def on_rate(self, widget):
-        if (type(widget) == Gtk.ToggleButton and self.button_rate.get_active()) or \
-           (type(widget) == Gtk.MenuItem and not self.button_rate.get_active()):
-            self.button_rate.set_tooltip_text('取消喜欢')
-            self.menuitem_rate.set_label('取消喜欢')
+        if (type(widget) == Gtk.ToggleButton and self.get_widget('button-rate').get_active()) or \
+           (type(widget) == Gtk.MenuItem and not self.get_widget('button-rate').get_active()):
+            self.get_widget('button-rate').set_tooltip_text('取消喜欢')
+            self.get_widget('menuitem-rate').set_label('取消喜欢')
             if self.song['like'] == 0:
                 self.update_playlist('r')
                 self.song['like'] = True
                 self.play_count = 0
-                self.button_rate.set_active(True)
+                self.get_widget('button-rate').set_active(True)
         else:
-            self.button_rate.set_tooltip_text('喜欢')
-            self.menuitem_rate.set_label('喜欢')
+            self.get_widget('button-rate').set_tooltip_text('喜欢')
+            self.get_widget('menuitem-rate').set_label('喜欢')
             if self.song['like'] == 1:
                 self.update_playlist('u')
                 self.song['like'] = False
                 self.play_count = 0
-                self.button_rate.set_active(False)
+                self.get_widget('button-rate').set_active(False)
 
     def on_delete(self, widget):
         self.next('b')
@@ -194,10 +188,10 @@ class DoubanfmPlayer:
             self.album_cover_dir + self.song['picture'].split('/')[-1]
         open(self.album_cover_path, 'wb') \
             .write(requests.get(self.song['picture']).content)
-        self.image_album_cover.set_from_pixbuf(
+        self.get_widget('image-album-cover').set_from_pixbuf(
             GdkPixbuf.Pixbuf.new_from_file_at_scale(
                 self.album_cover_path, 240, -1, True))
-        self.image_album_cover.set_tooltip_text(
+        self.get_widget('image-album-cover').set_tooltip_text(
             '标题：%s\n艺术家：%s\n专辑：%s' % (
                 self.song['title'],
                 self.song['artist'],
@@ -205,9 +199,9 @@ class DoubanfmPlayer:
 
     def set_rate_state(self):
         if self.song['like']:
-            self.button_rate.set_active(True)
+            self.get_widget('button-rate').set_active(True)
         else:
-            self.button_rate.set_active(False)
+            self.get_widget('button-rate').set_active(False)
 
 if __name__ == '__main__':
     import sys
