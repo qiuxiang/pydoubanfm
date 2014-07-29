@@ -19,29 +19,30 @@ class DoubanfmPlayer:
         self.init_indicator()
 
     def init_path(self):
-        self.__dir__ = os.path.abspath(os.path.dirname(__file__))
-        self.data_dir = os.path.expanduser('~/.pydoubanfm/')
-        self.album_cover_dir = self.data_dir + 'albumcover/'
-        self.config_path = self.data_dir + 'config.json'
+        self.program_dir = os.path.abspath(os.path.dirname(__file__))
+        self.local_dir = os.path.expanduser('~/.pydoubanfm/')
+        self.album_cover_dir = self.local_dir + 'albumcover/'
+        self.setting_file = self.local_dir + 'setting.json'
 
-        if not os.path.isdir(self.data_dir):
-            os.mkdir(self.data_dir)
+        if not os.path.isdir(self.local_dir):
+            os.mkdir(self.local_dir)
 
         if not os.path.isdir(self.album_cover_dir):
             os.mkdir(self.album_cover_dir)
 
-        if os.path.isfile(self.config_path):
-            self.config = json.load(open(self.config_path))
+        if os.path.isfile(self.setting_file):
+            self.setting = json.load(open(self.setting_file))
         else:
-            self.config = {
+            self.setting = {
                 'channel': 0,
                 'email': '',
                 'password': ''}
+            self.update_setting_file()
 
     def init_builder(self):
         self.widgets = {}
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(self.__dir__ + '/doubanfm.glade')
+        self.builder.add_from_file(self.program_dir + '/doubanfm.glade')
         self.builder.connect_signals(self)
         self.builder.get_object('window-player').show_all()
 
@@ -49,9 +50,9 @@ class DoubanfmPlayer:
         self.doubanfm = Doubanfm()
         self.play_count = 0
         self.song = {'sid': None}
-        self.channel = self.config['channel']
-        if self.config['email'] and self.config['password']:
-            self.login(self.config['email'], self.config['password'])
+        self.channel = self.setting['channel']
+        if self.setting['email'] and self.setting['password']:
+            self.login(self.setting['email'], self.setting['password'])
 
     def init_player(self):
         self.player = Player()
@@ -66,7 +67,7 @@ class DoubanfmPlayer:
             'pydoubanfm', 'applications-multimedia',
             AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
         self.indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
-        self.indicator.set_icon(self.__dir__ + '/icon.png')
+        self.indicator.set_icon(self.program_dir + '/icon.png')
         self.indicator.set_menu(self.get_widget('indicator-menu'))
 
     def get_widget(self, name):
@@ -76,7 +77,7 @@ class DoubanfmPlayer:
 
     def update_notify(self):
         self.notify.update(
-            self.song['title'], self.song['artist'], self.album_cover_path)
+            self.song['title'], self.song['artist'], self.album_cover_file)
         self.notify.show()
 
     def update_title(self):
@@ -124,10 +125,12 @@ class DoubanfmPlayer:
         self.playlist = self.doubanfm.get_playlist(
             self.channel, type, self.song['sid'])['song']
 
+    def update_setting_file(self):
+        json.dump(self.setting, open(self.setting_file, 'w'), indent=2)
+
     def on_exit(self, *args):
         Gtk.main_quit(*args)
-        self.config['channel'] = self.channel
-        json.dump(self.config, open(self.config_path, 'w'), indent=2)
+        self.setting['channel'] = self.channel
 
     def on_playback(self, widget):
         if self.player.get_state() == STATE_PLAYING:
@@ -184,13 +187,13 @@ class DoubanfmPlayer:
         os.system('sensible-browser http://music.douban.com' + self.song['album'])
 
     def set_album_cover(self):
-        self.album_cover_path = \
+        self.album_cover_file = \
             self.album_cover_dir + self.song['picture'].split('/')[-1]
-        open(self.album_cover_path, 'wb') \
+        open(self.album_cover_file, 'wb') \
             .write(requests.get(self.song['picture']).content)
         self.get_widget('image-album-cover').set_from_pixbuf(
             GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                self.album_cover_path, 240, -1, True))
+                self.album_cover_file, 240, -1, True))
         self.get_widget('image-album-cover').set_tooltip_text(
             '标题：%s\n艺术家：%s\n专辑：%s' % (
                 self.song['title'],

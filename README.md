@@ -32,7 +32,7 @@ python 实现的豆瓣FM客户端
 
 配置
 ----
-~/.pydoubanfm/config.json
+~/.pydoubanfm/setting.json
 ``` json
 {
   "password": "",
