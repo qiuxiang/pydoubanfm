@@ -134,11 +134,11 @@ class DoubanfmPlayer:
         self.end_report()
         self.play()
 
-    def on_exit(self, *args):
+    def exit(self, *args):
         Gtk.main_quit(*args)
         self.setting['channel'] = self.channel
 
-    def on_playback(self, widget):
+    def playback(self, widget):
         if self.player.get_state() == STATE_PLAYING:
             self.player.pause()
             self.get_widget('button-playback').set_image(self.get_widget('image-play'))
@@ -150,7 +150,7 @@ class DoubanfmPlayer:
             self.get_widget('button-playback').set_tooltip_text('暂停')
             self.get_widget('menuitem-playback').set_label('暂停')
 
-    def on_rate(self, widget):
+    def rate(self, widget):
         if (type(widget) == Gtk.ToggleButton and self.get_widget('button-rate').get_active()) or \
            (type(widget) == Gtk.MenuItem and not self.get_widget('button-rate').get_active()):
             self.get_widget('button-rate').set_tooltip_text('取消喜欢')
@@ -169,21 +169,16 @@ class DoubanfmPlayer:
                 self.play_count = 0
                 self.get_widget('button-rate').set_active(False)
 
-    def on_delete(self, widget):
+    def no_longer_play(self, widget):
         self.next('b')
 
-    def on_skip(self, widget):
+    def skip(self, widget):
         self.next('s')
 
-    def on_volume_changed(self, widget, value):
+    def set_volume(self, widget, value):
         self.player.set_volume(value)
 
-    def on_open_album(self, widget, event=None):
-        # 限定只有在图片范围内点击才会触发
-        if event:
-            size = widget.size_request()
-            if event.x < 0 or event.x > size.width or event.y < 0 or event.y > size.height:
-                return
+    def open_album(self, widget):
         os.system('sensible-browser http://music.douban.com' + self.song['album'])
 
     def set_album_cover(self):
