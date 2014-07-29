@@ -184,10 +184,9 @@ class DoubanfmPlayer:
     def album_cover_clicked(self, widget, event):
         size = widget.size_request()
         if 0 < event.x < size.width and 0 < event.y < size.height:
-            if event.button == 1:
-                self.open_album(widget)
-            elif event.button == 3:
-                self.get_widget('popup-menu').popup(None, None, None, None, event.button, event.time)
+            if event.button == 3:
+                self.get_widget('popup-menu').popup(
+                    None, None, None, None, event.button, event.time)
 
     def set_album_cover(self):
         self.album_cover_file = \
