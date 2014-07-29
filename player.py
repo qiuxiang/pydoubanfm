@@ -1,23 +1,38 @@
 # encoding: utf8
 
-from gi.repository import Gst
-Gst.init(None)
+try:
+    from gi.repository import Gst
+    Gst.init(None)
 
-STATE_NULL = Gst.State.NULL
-STATE_PLAYING = Gst.State.PLAYING
-STATE_PAUSED = Gst.State.PAUSED
+    def make_playbin():
+        return Gst.ElementFactory.make('playbin', None)
+
+    STATE_NULL = Gst.State.NULL
+    STATE_PLAYING = Gst.State.PLAYING
+    STATE_PAUSED = Gst.State.PAUSED
+    MESSAGE_EOS = Gst.MessageType.EOS
+except Exception:
+    import gst
+
+    def make_playbin():
+        return gst.element_factory_make('playbin', None)
+
+    STATE_NULL = gst.STATE_NULL
+    STATE_PLAYING = gst.STATE_PLAYING
+    STATE_PAUSED = gst.STATE_PAUSED
+    MESSAGE_EOS = gst.MESSAGE_EOS
 
 
 class Player:
     def __init__(self):
-        self.player = Gst.ElementFactory.make('playbin', None)
+        self.player = make_playbin()
         bus = self.player.get_bus()
         bus.add_signal_watch()
         bus.connect('message', self.message_handler)
         self.bus = bus
-        
+
     def message_handler(self, bus, message):
-        if message.type == Gst.MessageType.EOS:
+        if message.type == MESSAGE_EOS:
             self.stop()
             if hasattr(self, 'on_eos'):
                 self.on_eos()
