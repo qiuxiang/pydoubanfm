@@ -99,16 +99,6 @@ class DoubanfmPlayer:
         self.play()
         Gtk.main()
 
-    def on_eos(self):
-        if len(self.playlist) == self.play_count + 1:
-            self.update_playlist('p')
-            self.play_count = 0
-        else:
-            self.play_count += 1
-
-        self.end_report()
-        self.play()
-
     def play(self):
         self.song = self.playlist[self.play_count]
         self.player.set_uri(self.song['url'])
@@ -117,6 +107,12 @@ class DoubanfmPlayer:
         self.set_rate_state()
         self.update_notify()
         self.update_title()
+
+    def next(self, type):
+        self.update_playlist(type)
+        self.play_count = 0
+        self.player.stop()
+        self.play()
 
     def end_report(self):
         self.doubanfm.get_playlist(self.channel, 'e', self.song['sid'])
@@ -127,6 +123,16 @@ class DoubanfmPlayer:
 
     def update_setting_file(self):
         json.dump(self.setting, open(self.setting_file, 'w'), indent=2)
+
+    def on_eos(self):
+        if len(self.playlist) == self.play_count + 1:
+            self.update_playlist('p')
+            self.play_count = 0
+        else:
+            self.play_count += 1
+
+        self.end_report()
+        self.play()
 
     def on_exit(self, *args):
         Gtk.main_quit(*args)
@@ -171,12 +177,6 @@ class DoubanfmPlayer:
 
     def on_volume_changed(self, widget, value):
         self.player.set_volume(value)
-
-    def next(self, type):
-        self.update_playlist(type)
-        self.play_count = 0
-        self.player.stop()
-        self.play()
 
     def on_open_album(self, widget, event=None):
         # 限定只有在图片范围内点击才会触发
