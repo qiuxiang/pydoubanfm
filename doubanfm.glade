@@ -12,7 +12,12 @@
       <object class="GtkBox" id="box-body">
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkImage" id="image-album-cover"/>
+          <object class="GtkEventBox" id="event-box-image">
+            <signal name="button-release-event" handler="on_open_album"/>
+            <child>
+              <object class="GtkImage" id="image-album-cover"/>
+            </child>
+          </object>
         </child>
         <child>
           <object class="GtkBox" id="box-controls">

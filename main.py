@@ -181,7 +181,12 @@ class DoubanfmPlayer:
         self.player.stop()
         self.play()
 
-    def on_open_album(self, widget):
+    def on_open_album(self, widget, event=None):
+        # 限定只有在图片范围内点击才会触发
+        if event:
+            size = widget.size_request()
+            if event.x < 0 or event.x > size.width or event.y < 0 or event.y > size.height:
+                return
         os.system('sensible-browser http://music.douban.com' + self.song['album'])
 
     def set_album_cover(self):
