@@ -3,6 +3,7 @@
 
 import os
 import json
+import webbrowser
 import requests
 from gi.repository import Gtk, Notify, GdkPixbuf
 try:
@@ -184,7 +185,7 @@ class DoubanfmPlayer:
         self.player.set_volume(value)
 
     def open_album(self, widget):
-        os.system('sensible-browser http://music.douban.com' + self.song['album'])
+        webbrowser.open('http://music.douban.com' + self.song['album'])
 
     def album_cover_clicked(self, widget, event):
         size = widget.size_request()
