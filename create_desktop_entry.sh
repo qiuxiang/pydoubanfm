@@ -2,7 +2,7 @@
 
 echo "
 [Desktop Entry]
-Name=豆瓣电台
+Name=豆瓣FM
 Type=Application
 Categories=Audio;Music;Player;AudioVideo;
 Exec=`pwd`/main.py
