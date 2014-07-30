@@ -96,52 +96,61 @@
 
   <object class="GtkMenu" id="indicator-menu">
     <child>
-      <object class="GtkMenuItem" id="menuitem-title">
+      <object class="GtkMenuItem" id="menu-item-title">
         <property name="visible">True</property>
         <property name="label">标题</property>
         <signal name="activate" handler="open_album"/>
       </object>
     </child>
     <child>
-      <object class="GtkSeparatorMenuItem" id="menuitem-separator1">
+      <object class="GtkSeparatorMenuItem" id="menu-item-separator1">
         <property name="visible">True</property>
       </object>
     </child>
     <child>
-      <object class="GtkMenuItem" id="menuitem-playback">
+      <object class="GtkMenuItem" id="menu-item-playback">
         <property name="visible">True</property>
         <property name="label">暂停</property>
         <signal name="activate" handler="playback"/>
       </object>
     </child>
     <child>
-      <object class="GtkMenuItem" id="menuitem-skip">
+      <object class="GtkMenuItem" id="menu-item-skip">
         <property name="visible">True</property>
         <property name="label">跳过</property>
         <signal name="activate" handler="skip"/>
       </object>
     </child>
     <child>
-      <object class="GtkMenuItem" id="menuitem-rate">
+      <object class="GtkMenuItem" id="menu-item-rate">
         <property name="visible">True</property>
         <property name="label">喜欢</property>
         <signal name="activate" handler="rate"/>
       </object>
     </child>
     <child>
-      <object class="GtkMenuItem" id="menuitem-delete">
+      <object class="GtkMenuItem" id="menu-item-delete">
         <property name="visible">True</property>
         <property name="label">不再播放</property>
         <signal name="activate" handler="no_longer_play"/>
       </object>
     </child>
     <child>
-      <object class="GtkSeparatorMenuItem" id="menuitem-separator3">
+      <object class="GtkSeparatorMenuItem" id="menu-item-separator3">
         <property name="visible">True</property>
       </object>
     </child>
     <child>
-      <object class="GtkMenuItem" id="menuitem-exit">
+      <object class="GtkMenuItem" id="menu-item-channels-indicator">
+        <property name="visible">True</property>
+        <property name="label">选择频道</property>
+        <child type="submenu">
+          <object class="GtkMenu" id="menu-channels"/>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="menu-item-exit">
         <property name="visible">True</property>
         <property name="label">退出</property>
         <signal name="activate" handler="exit"/>
@@ -151,20 +160,10 @@
 
   <object class="GtkMenu" id="popup-menu">
     <child>
-      <object class="GtkMenuItem" id="menuitem-view-album">
+      <object class="GtkMenuItem" id="menu-item-view-album">
         <property name="visible">True</property>
         <property name="label">查看专辑</property>
         <signal name="activate" handler="open_album"/>
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="menuitem-channels">
-        <property name="visible">True</property>
-        <property name="label">选择频道</property>
-        <property name="submenu">menu-channels</property>
-        <child type="submenu">
-          <object class="GtkMenu" id="menu-channels"/>
-        </child>
       </object>
     </child>
   </object>
