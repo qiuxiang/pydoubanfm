@@ -184,25 +184,21 @@ class DoubanfmPlayer:
         Gtk.main_quit(*args)
 
     def set_kbps(self, widget, kbps):
-        if self.widget_kbps != widget:
-            self.widget_kbps.set_active(False)
-            self.widget_kbps = widget
-            self.doubanfm.set_kbps(kbps)
-            self.setting['kbps'] = kbps
-            self.update_setting_file()
-        else:
-            widget.set_active(True)
+        # TODO: 点击相同菜单项时会出现 bug
+        self.widget_kbps.set_active(False)
+        self.widget_kbps = widget
+        self.doubanfm.set_kbps(kbps)
+        self.setting['kbps'] = kbps
+        self.update_setting_file()
 
     def select_channel(self, widget, channel_id):
-        if self.widget_channel != widget:
-            self.widget_channel.set_active(False)
-            self.widget_channel = widget
-            self.channel = channel_id
-            self.setting['channel'] = channel_id
-            self.update_setting_file()
-            self.next('n')
-        else:
-            self.widget_channel.set_active(True)
+        # TODO: 点击相同菜单项时会出现 bug
+        self.widget_channel.set_active(False)
+        self.widget_channel = widget
+        self.channel = channel_id
+        self.setting['channel'] = channel_id
+        self.update_setting_file()
+        self.next('n')
 
     def playback(self, widget):
         if self.player.get_state() == STATE_PLAYING:
