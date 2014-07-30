@@ -13,8 +13,10 @@ from player import *
 class DoubanfmPlayer:
     def __init__(self):
         self.init_path()
+        self.init_setting()
         self.init_builder()
         self.init_doubanfm()
+        self.init_channels()
         self.init_player()
         self.init_notify()
         self.init_indicator()
@@ -24,6 +26,7 @@ class DoubanfmPlayer:
         self.local_dir = os.path.expanduser('~/.pydoubanfm/')
         self.album_cover_dir = self.local_dir + 'albumcover/'
         self.setting_file = self.local_dir + 'setting.json'
+        self.channels_file = self.local_dir + 'channels.json'
 
         if not os.path.isdir(self.local_dir):
             os.mkdir(self.local_dir)
@@ -31,6 +34,7 @@ class DoubanfmPlayer:
         if not os.path.isdir(self.album_cover_dir):
             os.mkdir(self.album_cover_dir)
 
+    def init_setting(self):
         if os.path.isfile(self.setting_file):
             self.setting = json.load(open(self.setting_file))
         else:
@@ -54,6 +58,20 @@ class DoubanfmPlayer:
         self.channel = self.setting['channel']
         if self.setting['email'] and self.setting['password']:
             self.login(self.setting['email'], self.setting['password'])
+
+    def init_channels(self):
+        if os.path.isfile(self.channels_file):
+            self.channels = json.load(open(self.channels_file))
+        else:
+            self.channels = self.doubanfm.get_channels()
+            self.channels.insert(0, { 'name': '红心兆赫', 'channel_id': -3 })
+            self.update_channels_file()
+
+        for channel in self.channels:
+            item = Gtk.CheckMenuItem(channel['name'])
+            item.connect('activate', self.select_channel, channel['channel_id'])
+            item.show()
+            self.get_widget('menu-channels').append(item)
 
     def init_player(self):
         self.player = Player()
@@ -127,7 +145,16 @@ class DoubanfmPlayer:
             self.channel, type, self.song['sid'])['song']
 
     def update_setting_file(self):
-        json.dump(self.setting, open(self.setting_file, 'w'), indent=2)
+        json.dump(
+            self.setting,
+            open(self.setting_file, 'w'),
+            indent=2, ensure_ascii=False)
+
+    def update_channels_file(self):
+        json.dump(
+            self.channels,
+            open(self.channels_file, 'w'),
+            indent=2, ensure_ascii=False)
 
     def on_eos(self):
         if len(self.playlist) == self.play_count + 1:
@@ -143,21 +170,29 @@ class DoubanfmPlayer:
         Gtk.main_quit(*args)
         self.setting['channel'] = self.channel
 
+    def select_channel(self, widget, channel_id, ):
+        print(widget)
+        print(channel_id)
+
     def playback(self, widget):
         if self.player.get_state() == STATE_PLAYING:
             self.player.pause()
-            self.get_widget('button-playback').set_image(self.get_widget('image-play'))
+            self.get_widget('button-playback').set_image(
+                self.get_widget('image-play'))
             self.get_widget('button-playback').set_tooltip_text('播放')
             self.get_widget('menuitem-playback').set_label('播放')
         else:
             self.player.play()
-            self.get_widget('button-playback').set_image(self.get_widget('image-pause'))
+            self.get_widget('button-playback').set_image(
+                self.get_widget('image-pause'))
             self.get_widget('button-playback').set_tooltip_text('暂停')
             self.get_widget('menuitem-playback').set_label('暂停')
 
     def rate(self, widget):
-        if (type(widget) == Gtk.ToggleButton and self.get_widget('button-rate').get_active()) or \
-           (type(widget) == Gtk.MenuItem and not self.get_widget('button-rate').get_active()):
+        if (type(widget) == Gtk.ToggleButton and \
+               self.get_widget('button-rate').get_active()) or \
+           (type(widget) == Gtk.MenuItem and not \
+               self.get_widget('button-rate').get_active()):
             self.get_widget('button-rate').set_tooltip_text('取消喜欢')
             self.get_widget('menuitem-rate').set_label('取消喜欢')
             if self.song['like'] == 0:
@@ -191,7 +226,7 @@ class DoubanfmPlayer:
         if 0 < event.x < size.width and 0 < event.y < size.height:
             if event.button == 3:
                 self.get_widget('popup-menu').popup(
-                    None, None, None, None, event.button, event.time)
+                    None, widget, None, None, event.button, event.time)
 
     def set_album_cover(self):
         self.album_cover_file = \

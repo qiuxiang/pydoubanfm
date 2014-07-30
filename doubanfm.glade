@@ -157,5 +157,15 @@
         <signal name="activate" handler="open_album"/>
       </object>
     </child>
+    <child>
+      <object class="GtkMenuItem" id="menuitem-channels">
+        <property name="visible">True</property>
+        <property name="label">选择频道</property>
+        <property name="submenu">menu-channels</property>
+        <child type="submenu">
+          <object class="GtkMenu" id="menu-channels"/>
+        </child>
+      </object>
+    </child>
   </object>
 </interface>
