@@ -5,7 +5,7 @@ python 实现的豆瓣FM客户端
 
 目的
 ----
-尽管官方豆瓣FM没有开发 Linux 客户端，却不乏第三方豆瓣FM解决方案。
+尽管官方豆瓣FM没有开发 Linux 客户端，却不乏第三方的豆瓣FM客户端。
 如 [zonyitoo](https://github.com/zonyitoo) 的 [doubanfm-qt](https://github.com/zonyitoo/doubanfm-qt)
 （感谢 zonyitoo 整理的文档）。那么我为什么还要重复造轮呢？
 

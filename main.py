@@ -6,10 +6,6 @@ import json
 import webbrowser
 import requests
 from gi.repository import Gtk, Notify, GdkPixbuf
-try:
-    from gi.repository import AppIndicator3
-except:
-    without_indicator = True
 from doubanfm import Doubanfm
 from player import *
 
@@ -68,13 +64,16 @@ class DoubanfmPlayer:
         self.notify = Notify.Notification.new('', '', '')
 
     def init_indicator(self):
-        if 'without_indicator' in locals():
+        try:
+            from gi.repository import AppIndicator3
             self.indicator = AppIndicator3.Indicator.new(
                 'pydoubanfm', 'applications-multimedia',
                 AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
             self.indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
             self.indicator.set_icon(self.program_dir + '/icon.png')
             self.indicator.set_menu(self.get_widget('indicator-menu'))
+        except Exception as e:
+          pass
 
     def get_widget(self, name):
         if name not in self.widgets:
