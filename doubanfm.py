@@ -18,10 +18,10 @@ class Doubanfm:
     def request(self, method, url, **kwargs):
         return self.session.request(method, self.base_url + url, **kwargs)
 
-    def get_playlist(self, channel, type='n', sid=None):
+    def get_playlist(self, channel, operation_type='n', sid=None):
         self.params.update({
             'channel': channel,
-            'type': type,
+            'type': operation_type,
             'sid': sid})
         return self.request(
             'get', 'radio/people', params=self.params).json()
@@ -48,3 +48,7 @@ class Doubanfm:
 
     def set_kbps(self, kbps):
         self.params['kbps'] = kbps
+
+
+class LoginError(BaseException):
+    pass

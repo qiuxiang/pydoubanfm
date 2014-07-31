@@ -6,7 +6,7 @@ import json
 import webbrowser
 import requests
 from gi.repository import Gtk, Notify, GdkPixbuf
-from doubanfm import Doubanfm
+from doubanfm import Doubanfm, LoginError
 from player import *
 
 
@@ -104,7 +104,7 @@ class DoubanfmPlayer:
             self.indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
             self.indicator.set_icon(self.program_dir + '/icon.png')
             self.indicator.set_menu(self.get_widget('indicator-menu'))
-        except Exception:
+        except ImportError:
             pass
 
     def get_widget(self, name):
@@ -124,7 +124,7 @@ class DoubanfmPlayer:
     def login(self, email, password):
         try:
             self.doubanfm.login(email, password)
-        except Exception as error:
+        except LoginError as error:
             self.alert(Gtk.MessageType.WARNING, '登录失败', error)
 
     def run(self):
