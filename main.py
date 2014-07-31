@@ -75,7 +75,7 @@ class DoubanfmPlayer:
             self.channels = json.load(open(self.channels_file))
         else:
             self.channels = self.doubanfm.get_channels()
-            self.channels.insert(0, { 'name': '红心兆赫', 'channel_id': -3 })
+            self.channels.insert(0, {'name': '红心兆赫', 'channel_id': -3})
             self.update_channels_file()
 
         for channel in self.channels:
@@ -97,6 +97,7 @@ class DoubanfmPlayer:
     def init_indicator(self):
         try:
             from gi.repository import AppIndicator3
+
             self.indicator = AppIndicator3.Indicator.new(
                 'pydoubanfm', 'applications-multimedia',
                 AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
@@ -104,7 +105,7 @@ class DoubanfmPlayer:
             self.indicator.set_icon(self.program_dir + '/icon.png')
             self.indicator.set_menu(self.get_widget('indicator-menu'))
         except Exception:
-          pass
+            pass
 
     def get_widget(self, name):
         if name not in self.widgets:
@@ -140,8 +141,8 @@ class DoubanfmPlayer:
         self.update_notify()
         self.update_title()
 
-    def next(self, type):
-        self.update_playlist(type)
+    def next(self, operation_type):
+        self.update_playlist(operation_type)
         self.play_count = 0
         self.player.stop()
         self.play()
@@ -149,9 +150,9 @@ class DoubanfmPlayer:
     def end_report(self):
         self.doubanfm.get_playlist(self.setting['channel'], 'e', self.song['sid'])
 
-    def update_playlist(self, type):
+    def update_playlist(self, operation_type):
         self.playlist = self.doubanfm.get_playlist(
-            self.setting['channel'], type, self.song['sid'])['song']
+            self.setting['channel'], operation_type, self.song['sid'])['song']
 
     def update_setting_file(self):
         json.dump(
@@ -165,13 +166,6 @@ class DoubanfmPlayer:
             open(self.channels_file, 'w'),
             indent=2, ensure_ascii=False)
 
-    def alert(self, alert_type, title, message):
-        dialog = Gtk.MessageDialog(
-            None, 0, alert_type, Gtk.ButtonsType.OK, title)
-        dialog.format_secondary_text(message)
-        dialog.run()
-        dialog.destroy()
-
     def on_eos(self):
         if len(self.playlist) == self.play_count + 1:
             self.update_playlist('p')
@@ -181,9 +175,6 @@ class DoubanfmPlayer:
 
         self.end_report()
         self.play()
-
-    def exit(self, *args):
-        Gtk.main_quit(*args)
 
     def set_kbps(self, widget, kbps):
         # TODO: 点击相同菜单项时会出现 bug
@@ -219,10 +210,8 @@ class DoubanfmPlayer:
             self.get_widget('menu-item-playback').set_label('暂停')
 
     def rate(self, widget):
-        if (type(widget) == Gtk.ToggleButton and \
-               self.get_widget('button-rate').get_active()) or \
-           (type(widget) == Gtk.MenuItem and not \
-               self.get_widget('button-rate').get_active()):
+        if (type(widget) == Gtk.ToggleButton and self.get_widget('button-rate').get_active()) or \
+           (type(widget) == Gtk.MenuItem and not self.get_widget('button-rate').get_active()):
             self.get_widget('button-rate').set_tooltip_text('取消喜欢')
             self.get_widget('menu-item-rate').set_label('取消喜欢')
             if self.song['like'] == 0:
@@ -278,8 +267,22 @@ class DoubanfmPlayer:
         else:
             self.get_widget('button-rate').set_active(False)
 
+    @staticmethod
+    def exit(*args):
+        Gtk.main_quit(*args)
+
+    @staticmethod
+    def alert(alert_type, title, message):
+        dialog = Gtk.MessageDialog(
+            None, 0, alert_type, Gtk.ButtonsType.OK, title)
+        dialog.format_secondary_text(message)
+        dialog.run()
+        dialog.destroy()
+
+
 if __name__ == '__main__':
     import sys
+
     if sys.version_info[0] < 3:
         reload(sys)
         sys.setdefaultencoding('utf-8')
