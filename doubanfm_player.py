@@ -23,10 +23,17 @@ class DoubanfmPlayer:
         self.init_indicator()
 
     def init_path(self):
+        """初始化路径，如果文件夹不存在则自动创建"""
+
+        # 当前程序目录
         self.program_dir = os.path.abspath(os.path.dirname(__file__))
+        # 本地存储目录
         self.local_dir = os.path.expanduser('~/.pydoubanfm/')
+        # 专辑封面目录
         self.album_cover_dir = self.local_dir + 'albumcover/'
+        # 设置文件路径
         self.setting_file = self.local_dir + 'setting.json'
+        # 频道列表缓存文件路径
         self.channels_file = self.local_dir + 'channels.json'
 
         if not os.path.isdir(self.local_dir):
@@ -36,6 +43,7 @@ class DoubanfmPlayer:
             os.mkdir(self.album_cover_dir)
 
     def init_setting(self):
+        """从文件读取设置，如果文件不存在，使用默认配置，并创建"""
         if os.path.isfile(self.setting_file):
             self.setting = json.load(open(self.setting_file))
         else:
@@ -58,10 +66,12 @@ class DoubanfmPlayer:
         self.doubanfm.set_kbps(self.setting['kbps'])
         self.play_count = 0
         self.song = {'sid': None}
-        if self.setting['email'] and self.setting['password']:
+        if 'email' in self.setting and self.setting['email'] and \
+           'password' in self.setting and self.setting['password']:
             self.login(self.setting['email'], self.setting['password'])
 
     def init_kbps(self):
+        """创建码率设置菜单"""
         for kbps in ['64', '128', '192']:
             item = Gtk.CheckMenuItem(kbps + ' Kbps', visible=True)
             if str(self.setting['kbps']) == kbps:
@@ -71,6 +81,7 @@ class DoubanfmPlayer:
             self.get_widget('menu-kbps').append(item)
 
     def init_channels(self):
+        """创建频道选择菜单"""
         if os.path.isfile(self.channels_file):
             self.channels = json.load(open(self.channels_file))
         else:
@@ -91,10 +102,12 @@ class DoubanfmPlayer:
         self.player.on_eos = self.on_eos
 
     def init_notify(self):
+        """初始化桌面通知"""
         Notify.init('pydoubanfm')
         self.notify = Notify.Notification.new('', '', '')
 
     def init_indicator(self):
+        """初始化系统托盘"""
         try:
             from gi.repository import AppIndicator3
 
@@ -108,16 +121,23 @@ class DoubanfmPlayer:
             pass
 
     def get_widget(self, name):
+        """从 glade 中获取 gtk object，该方法实现了缓存
+
+        args:
+          name (str): opject id
+        """
         if name not in self.widgets:
             self.widgets[name] = self.builder.get_object(name)
         return self.widgets[name]
 
     def update_notify(self):
+        """更新桌面通知显示当前歌曲信息"""
         self.notify.update(
             self.song['title'], self.song['artist'], self.album_cover_file)
         self.notify.show()
 
-    def update_title(self):
+    def update_indicator_title(self):
+        """更新系统托盘中的歌曲信息"""
         self.get_widget('menu-item-title').set_label(
             self.song['title'] + ' - ' + self.song['artist'])
 
@@ -139,15 +159,21 @@ class DoubanfmPlayer:
         self.set_album_cover()
         self.set_rate_state()
         self.update_notify()
-        self.update_title()
+        self.update_indicator_title()
 
     def next(self, operation_type):
+        """播放下一首
+        
+        args:
+          operation_type (str): 操作类型，详情请参考 https://github.com/qiuxiang/pydoubanfm/wiki/%E8%B1%86%E7%93%A3FM-API
+        """
         self.update_playlist(operation_type)
         self.play_count = 0
         self.player.stop()
         self.play()
 
     def end_report(self):
+        """报告已播放完的歌曲"""
         self.doubanfm.get_playlist(self.setting['channel'], 'e', self.song['sid'])
 
     def update_playlist(self, operation_type):
@@ -167,6 +193,7 @@ class DoubanfmPlayer:
             indent=2, ensure_ascii=False)
 
     def on_eos(self):
+        """一首歌曲播放完毕的处理"""
         if len(self.playlist) == self.play_count + 1:
             self.update_playlist('p')
             self.play_count = 0
@@ -193,6 +220,7 @@ class DoubanfmPlayer:
         self.next('n')
 
     def playback(self, widget):
+        """播放/暂停"""
         if self.player.get_state() == STATE_PLAYING:
             self.player.pause()
             self.get_widget('button-playback').set_image(
@@ -207,6 +235,7 @@ class DoubanfmPlayer:
             self.get_widget('menu-item-playback').set_label('暂停')
 
     def rate(self, widget):
+        """喜欢/取消喜欢"""
         if (type(widget) == Gtk.ToggleButton and self.get_widget('button-rate').get_active()) or \
            (type(widget) == Gtk.MenuItem and not self.get_widget('button-rate').get_active()):
             self.get_widget('button-rate').set_tooltip_text('取消喜欢')
@@ -226,9 +255,11 @@ class DoubanfmPlayer:
                 self.get_widget('button-rate').set_active(False)
 
     def no_longer_play(self, widget):
+        """不再播放当前的歌曲"""
         self.next('b')
 
     def skip(self, widget):
+        """跳过当前的歌曲"""
         self.next('s')
 
     def set_volume(self, widget, value):
@@ -238,6 +269,7 @@ class DoubanfmPlayer:
         webbrowser.open('http://music.douban.com' + self.song['album'])
 
     def album_cover_clicked(self, widget, event):
+        """点击专辑封面弹出右键菜单"""
         size = widget.size_request()
         if 0 < event.x < size.width and 0 < event.y < size.height:
             if event.button == 3:
@@ -245,6 +277,7 @@ class DoubanfmPlayer:
                     None, None, None, None, event.button, event.time)
 
     def set_album_cover(self):
+        """保存并更新专辑封面"""
         self.album_cover_file = \
             self.album_cover_dir + self.song['picture'].split('/')[-1]
         open(self.album_cover_file, 'wb') \
