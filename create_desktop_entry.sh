@@ -5,5 +5,5 @@ echo "
 Name=豆瓣FM
 Type=Application
 Categories=Audio;Music;Player;AudioVideo;
-Exec=`pwd`/main.py
+Exec=`pwd`/doubanfm_player.py
 Icon=`pwd`/icon.png" > ~/.local/share/applications/pydoubanfm.desktop

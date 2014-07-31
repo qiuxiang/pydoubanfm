@@ -49,4 +49,4 @@ python 实现的豆瓣FM客户端
 
 运行
 ----
-运行 main.py 即可
+运行 doubanfm_player.py 即可
