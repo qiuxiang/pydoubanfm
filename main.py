@@ -58,7 +58,6 @@ class DoubanfmPlayer:
         self.doubanfm.set_kbps(self.setting['kbps'])
         self.play_count = 0
         self.song = {'sid': None}
-        self.channel = self.setting['channel']
         if self.setting['email'] and self.setting['password']:
             self.login(self.setting['email'], self.setting['password'])
 
@@ -81,7 +80,7 @@ class DoubanfmPlayer:
 
         for channel in self.channels:
             item = Gtk.CheckMenuItem(channel['name'], visible=True)
-            if channel['channel_id'] == self.channel:
+            if channel['channel_id'] == self.setting['channel']:
                 item.set_active(True)
                 self.widget_channel = item
             item.connect('activate', self.select_channel, channel['channel_id'])
@@ -152,11 +151,11 @@ class DoubanfmPlayer:
         self.play()
 
     def end_report(self):
-        self.doubanfm.get_playlist(self.channel, 'e', self.song['sid'])
+        self.doubanfm.get_playlist(self.setting['channel'], 'e', self.song['sid'])
 
     def update_playlist(self, type):
         self.playlist = self.doubanfm.get_playlist(
-            self.channel, type, self.song['sid'])['song']
+            self.setting['channel'], type, self.song['sid'])['song']
 
     def update_setting_file(self):
         json.dump(
@@ -195,7 +194,6 @@ class DoubanfmPlayer:
         # TODO: 点击相同菜单项时会出现 bug
         self.widget_channel.set_active(False)
         self.widget_channel = widget
-        self.channel = channel_id
         self.setting['channel'] = channel_id
         self.update_setting_file()
         self.next('n')
