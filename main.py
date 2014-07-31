@@ -124,11 +124,7 @@ class DoubanfmPlayer:
         try:
             self.doubanfm.login(email, password)
         except Exception as error:
-            dialog = Gtk.MessageDialog(
-                None, 0, Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, '登录失败')
-            dialog.format_secondary_text(error)
-            dialog.run()
-            dialog.destroy()
+            self.alert(Gtk.MessageType.WARNING, '登录失败', error)
 
     def run(self):
         self.update_playlist('n')
@@ -169,6 +165,13 @@ class DoubanfmPlayer:
             open(self.channels_file, 'w'),
             indent=2, ensure_ascii=False)
 
+    def alert(self, alert_type, title, message):
+        dialog = Gtk.MessageDialog(
+            None, 0, alert_type, Gtk.ButtonsType.OK, title)
+        dialog.format_secondary_text(message)
+        dialog.run()
+        dialog.destroy()
+
     def on_eos(self):
         if len(self.playlist) == self.play_count + 1:
             self.update_playlist('p')
@@ -192,11 +195,14 @@ class DoubanfmPlayer:
 
     def select_channel(self, widget, channel_id):
         # TODO: 点击相同菜单项时会出现 bug
-        self.widget_channel.set_active(False)
-        self.widget_channel = widget
-        self.setting['channel'] = channel_id
-        self.update_setting_file()
-        self.next('n')
+        if channel_id == -3 and self.doubanfm.logged:
+            self.widget_channel.set_active(False)
+            self.widget_channel = widget
+            self.setting['channel'] = channel_id
+            self.update_setting_file()
+            self.next('n')
+        else:
+            self.alert(Gtk.MessageType.WARNING, ':(', '收听红心兆赫需要登录')
 
     def playback(self, widget):
         if self.player.get_state() == STATE_PLAYING:
