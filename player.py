@@ -11,7 +11,7 @@ try:
     STATE_PLAYING = Gst.State.PLAYING
     STATE_PAUSED = Gst.State.PAUSED
     MESSAGE_EOS = Gst.MessageType.EOS
-except Exception:
+except ImportError:
     import gst
 
     def make_playbin():
@@ -29,7 +29,6 @@ class Player:
         bus = self.player.get_bus()
         bus.add_signal_watch()
         bus.connect('message', self.message_handler)
-        self.bus = bus
 
     def message_handler(self, bus, message):
         if message.type == MESSAGE_EOS:
