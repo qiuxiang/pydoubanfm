@@ -186,14 +186,11 @@ class DoubanfmPlayer:
 
     def select_channel(self, widget, channel_id):
         # TODO: 点击相同菜单项时会出现 bug
-        if channel_id == -3 and self.doubanfm.logged:
-            self.widget_channel.set_active(False)
-            self.widget_channel = widget
-            self.setting['channel'] = channel_id
-            self.update_setting_file()
-            self.next('n')
-        else:
-            self.alert(Gtk.MessageType.WARNING, ':(', '收听红心兆赫需要登录')
+        self.widget_channel.set_active(False)
+        self.widget_channel = widget
+        self.setting['channel'] = channel_id
+        self.update_setting_file()
+        self.next('n')
 
     def playback(self, widget):
         if self.player.get_state() == STATE_PLAYING:
