@@ -74,13 +74,17 @@ class DoubanfmPlayer:
 
     def init_kbps(self):
         """创建码率设置菜单"""
-        for kbps in ['64', '128', '192']:
+        def new_item(kbps):
             item = Gtk.CheckMenuItem(kbps + ' Kbps', visible=True)
             if str(self.setting['kbps']) == kbps:
                 item.set_active(True)
                 self.widget_kbps = item
             item.connect('activate', self.set_kbps, kbps)
-            self.get_widget('menu-kbps').append(item)
+            return item
+
+        for kbps in ['64', '128', '192']:
+            self.get_widget('menu-kbps').append(new_item(kbps))
+            self.get_widget('menu-popup-kbps').append(new_item(kbps))
 
     def init_channels(self):
         """创建频道选择菜单"""
@@ -151,6 +155,7 @@ class DoubanfmPlayer:
         try:
             self.user_info = self.doubanfm.login(email, password)
             self.get_widget('menu-item-login').set_label('注销')
+            self.get_widget('menu-item-popup-login').set_label('注销')
             return True
         except LoginError as error:
             self.alert(Gtk.MessageType.WARNING, '登录失败', error)
@@ -280,10 +285,9 @@ class DoubanfmPlayer:
     def album_cover_clicked(self, widget, event):
         """点击专辑封面弹出右键菜单"""
         size = widget.size_request()
-        if 0 < event.x < size.width and 0 < event.y < size.height:
-            if event.button == 3:
-                self.get_widget('popup-menu').popup(
-                    None, None, None, None, event.button, event.time)
+        if event.button == 3:
+            self.get_widget('menu-popup').popup(
+                None, None, None, None, event.button, event.time)
 
     def show_login_window(self, widget):
         if self.doubanfm.logged:
