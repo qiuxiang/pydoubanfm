@@ -4,10 +4,11 @@
   <!-- interface-requires gtk+ 3.0 -->
 
   <object class="GtkWindow" id="window-player">
-    <signal name="delete-event" handler="exit"/>
     <property name="title">豆瓣FM</property>
     <property name="resizable">False</property>
     <property name="icon">icon.png</property>
+    <property name="window_position">mouse</property>
+    <signal name="delete-event" handler="exit"/>
     <child>
       <object class="GtkBox" id="box-body">
         <property name="orientation">vertical</property>
@@ -159,6 +160,18 @@
       </object>
     </child>
     <child>
+      <object class="GtkSeparatorMenuItem" id="menu-item-separator4">
+        <property name="visible">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="menu-item-login">
+        <property name="visible">True</property>
+        <property name="label">登录</property>
+        <signal name="activate" handler="show_login_window"/>
+      </object>
+    </child>
+    <child>
       <object class="GtkMenuItem" id="menu-item-exit">
         <property name="visible">True</property>
         <property name="label">退出</property>
@@ -173,6 +186,41 @@
         <property name="visible">True</property>
         <property name="label">查看专辑</property>
         <signal name="activate" handler="open_album"/>
+      </object>
+    </child>
+  </object>
+
+  <object class="GtkWindow" id="window-login">
+    <property name="title">登录豆瓣FM</property>
+    <property name="resizable">False</property>
+    <property name="window_position">center</property>
+    <signal name="delete-event" handler="hide_login_window"/>
+    <child>
+      <object class="GtkBox" id="box-login">
+        <property name="orientation">vertical</property>
+        <property name="margin_left">40</property>
+        <property name="margin_right">40</property>
+        <property name="margin_top">24</property>
+        <property name="margin_bottom">24</property>
+        <property name="spacing">8</property>
+        <child>
+          <object class="GtkEntry" id="entry-email">
+            <property name="placeholder_text">邮箱</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkEntry" id="entry-password">
+            <property name="visibility">False</property>
+            <property name="invisible_char">●</property>
+            <property name="placeholder_text">密码</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="button-login">
+            <property name="label">登录</property>
+            <signal name="clicked" handler="do_login"/>
+          </object>
+        </child>
       </object>
     </child>
   </object>

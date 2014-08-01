@@ -27,11 +27,13 @@ class DoubanfmPlayer:
 
         # 当前程序目录
         self.program_dir = os.path.abspath(os.path.dirname(__file__))
+        # 图标路径
+        self.icon_file = self.program_dir + '/icon.png'
         # 本地存储目录
         self.local_dir = os.path.expanduser('~/.pydoubanfm/')
         # 专辑封面目录
         self.album_cover_dir = self.local_dir + 'albumcover/'
-        # 设置文件路径
+        # “设置文件”路径
         self.setting_file = self.local_dir + 'setting.json'
         # 频道列表缓存文件路径
         self.channels_file = self.local_dir + 'channels.json'
@@ -130,10 +132,14 @@ class DoubanfmPlayer:
             self.widgets[name] = self.builder.get_object(name)
         return self.widgets[name]
 
-    def update_notify(self):
+    def update_notify(self, title='', content='', picture=''):
         """更新桌面通知显示当前歌曲信息"""
-        self.notify.update(
-            self.song['title'], self.song['artist'], self.album_cover_file)
+        if not title:
+            title = self.song['title']
+            content = self.song['artist']
+            picture = self.album_cover_file
+
+        self.notify.update(title, content, picture)
         self.notify.show()
 
     def update_indicator_title(self):
@@ -143,9 +149,12 @@ class DoubanfmPlayer:
 
     def login(self, email, password):
         try:
-            self.doubanfm.login(email, password)
+            self.user_info = self.doubanfm.login(email, password)
+            self.get_widget('menu-item-login').set_label('注销')
+            return True
         except LoginError as error:
             self.alert(Gtk.MessageType.WARNING, '登录失败', error)
+            return False
 
     def run(self):
         self.update_playlist('n')
@@ -275,6 +284,28 @@ class DoubanfmPlayer:
             if event.button == 3:
                 self.get_widget('popup-menu').popup(
                     None, None, None, None, event.button, event.time)
+
+    def show_login_window(self, widget):
+        if self.doubanfm.logged:
+            # TODO: 实现注销登录功能
+            self.alert(Gtk.MessageType.WARNING, 'TODO', '注销功能尚未实现')
+        else:
+            self.get_widget('window-login').show_all()
+
+    def hide_login_window(self, widget, event):
+        self.get_widget('window-login').hide()
+        return True
+
+    def do_login(self, widget):
+        if (self.login(self.get_widget('entry-email').get_text(),
+                       self.get_widget('entry-password').get_text())):
+            self.get_widget('window-login').hide()
+            self.update_notify('登录成功',
+                               self.user_info['user_name'] + ', ' +
+                               self.user_info['email'], self.icon_file)
+            self.setting['email'] = self.get_widget('entry-email').get_text()
+            self.setting['password'] = self.get_widget('entry-password').get_text()
+            self.update_setting_file()
 
     def set_album_cover(self):
         """保存并更新专辑封面"""
