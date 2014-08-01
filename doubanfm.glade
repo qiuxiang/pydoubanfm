@@ -189,21 +189,8 @@
       </object>
     </child>
     <child>
-      <object class="GtkMenuItem" id="menu-item-popup-kbps">
+      <object class="GtkSeparatorMenuItem" id="menu-item-separator5">
         <property name="visible">True</property>
-        <property name="label">码率</property>
-        <child type="submenu">
-          <object class="GtkMenu" id="menu-popup-kbps"/>
-        </child>
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="menu-item-popup-channels">
-        <property name="visible">True</property>
-        <property name="label">频道</property>
-        <child type="submenu">
-          <object class="GtkMenu" id="menu-popup-channels"/>
-        </child>
       </object>
     </child>
     <child>

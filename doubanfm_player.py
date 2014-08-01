@@ -74,17 +74,13 @@ class DoubanfmPlayer:
 
     def init_kbps(self):
         """创建码率设置菜单"""
-        def new_item(kbps):
+        for kbps in ['64', '128', '192']:
             item = Gtk.CheckMenuItem(kbps + ' Kbps', visible=True)
             if str(self.setting['kbps']) == kbps:
                 item.set_active(True)
                 self.widget_kbps = item
             item.connect('activate', self.set_kbps, kbps)
-            return item
-
-        for kbps in ['64', '128', '192']:
-            self.get_widget('menu-kbps').append(new_item(kbps))
-            self.get_widget('menu-popup-kbps').append(new_item(kbps))
+            self.get_widget('menu-kbps').append(item)
 
     def init_channels(self):
         """创建频道选择菜单"""
