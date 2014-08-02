@@ -45,7 +45,7 @@ class DoubanfmPlayer:
             os.mkdir(self.album_cover_dir)
 
     def init_setting(self):
-        """从文件读取设置，如果文件不存在，使用默认配置，并创建"""
+        """从文件读取设置，如果文件不存在，则使用默认配置创建"""
         if os.path.isfile(self.setting_file):
             self.setting = json.load(open(self.setting_file))
         else:
@@ -311,8 +311,9 @@ class DoubanfmPlayer:
         """保存并更新专辑封面"""
         self.album_cover_file = \
             self.album_cover_dir + self.song['picture'].split('/')[-1]
-        open(self.album_cover_file, 'wb') \
-            .write(requests.get(self.song['picture']).content)
+        if not os.path.isfile(self.album_cover_file):
+            open(self.album_cover_file, 'wb') \
+                .write(requests.get(self.song['picture']).content)
         self.get_widget('image-album-cover').set_from_pixbuf(
             GdkPixbuf.Pixbuf.new_from_file_at_scale(
                 self.album_cover_file, 240, -1, True))
