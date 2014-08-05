@@ -214,20 +214,22 @@ class DoubanfmPlayer:
         self.play()
 
     def set_kbps(self, widget, kbps):
-        # TODO: 点击相同菜单项时会出现 bug
-        self.widget_kbps.set_active(False)
-        self.widget_kbps = widget
-        self.doubanfm.set_kbps(kbps)
-        self.setting['kbps'] = kbps
-        self.update_setting_file()
+        # TODO: 点击相同菜单项时会出现选择消失 bug，已找到解决办法，不影响使用，暂不处理
+        if self.widget_kbps != widget:
+            self.widget_kbps.set_active(False)
+            self.widget_kbps = widget
+            self.doubanfm.set_kbps(kbps)
+            self.setting['kbps'] = kbps
+            self.update_setting_file()
 
     def select_channel(self, widget, channel_id):
-        # TODO: 点击相同菜单项时会出现 bug
-        self.widget_channel.set_active(False)
-        self.widget_channel = widget
-        self.setting['channel'] = channel_id
-        self.update_setting_file()
-        self.next('n')
+        # TODO: 点击相同菜单项时会出现选择消失 bug，已找到解决办法，不影响使用，暂不处理
+        if self.widget_channel != widget:
+            self.widget_channel.set_active(False)
+            self.widget_channel = widget
+            self.setting['channel'] = channel_id
+            self.update_setting_file()
+            self.next('n')
 
     def playback(self, widget):
         """播放/暂停"""
