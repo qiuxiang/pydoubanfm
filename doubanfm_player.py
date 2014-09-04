@@ -2,10 +2,11 @@
 # encoding: utf8
 
 import os
+import threading
 import json
 import webbrowser
 import requests
-from gi.repository import Gtk, Notify, GdkPixbuf
+from gi.repository import GLib, Gtk, Notify, GdkPixbuf
 from doubanfm import Doubanfm, LoginError
 from player import *
 
@@ -287,6 +288,21 @@ class DoubanfmPlayer:
             self.get_widget('menu-popup').popup(
                 None, None, None, None, event.button, event.time)
 
+    def open_download_dialog(self, widget):
+        filename = ''
+        dialog = Gtk.FileChooserDialog(
+            '下载', None, Gtk.FileChooserAction.SAVE, (
+                '取消', Gtk.ResponseType.CANCEL,
+                '确定', Gtk.ResponseType.OK))
+        dialog.set_current_name(
+            self.song['title'] + ' - ' + self.song['artist'] + '.mp3')
+        dialog.set_current_folder(
+            GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOWNLOAD))
+        if dialog.run() == Gtk.ResponseType.OK:
+            threading.Thread(target=self.download, args=(
+                self.song['url'], dialog.get_filename())).start()
+        dialog.destroy()
+
     def show_login_window(self, widget):
         if self.doubanfm.logged:
             # TODO: 实现注销登录功能
@@ -314,8 +330,7 @@ class DoubanfmPlayer:
         self.album_cover_file = \
             self.album_cover_dir + self.song['picture'].split('/')[-1]
         if not os.path.isfile(self.album_cover_file):
-            open(self.album_cover_file, 'wb') \
-                .write(requests.get(self.song['picture']).content)
+            self.download(self.song['picture'], self.album_cover_file)
         self.get_widget('image-album-cover').set_from_pixbuf(
             GdkPixbuf.Pixbuf.new_from_file_at_scale(
                 self.album_cover_file, 240, -1, True))
@@ -330,6 +345,11 @@ class DoubanfmPlayer:
             self.get_widget('button-rate').set_active(True)
         else:
             self.get_widget('button-rate').set_active(False)
+
+    @staticmethod
+    def download(url, filename):
+        open(filename, 'wb') \
+            .write(requests.get(url).content)
 
     @staticmethod
     def exit(*args):
