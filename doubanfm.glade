@@ -104,6 +104,13 @@
       </object>
     </child>
     <child>
+      <object class="GtkMenuItem" id="menu-item-open-download-dialog-indicator">
+        <property name="visible">True</property>
+        <property name="label">下载</property>
+        <signal name="activate" handler="open_download_dialog"/>
+      </object>
+    </child>
+    <child>
       <object class="GtkSeparatorMenuItem" id="menu-item-separator1">
         <property name="visible">True</property>
       </object>
