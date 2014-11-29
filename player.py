@@ -20,6 +20,9 @@ class Player:
             self.stop()
             self.on_eos()
 
+    def on_eos(self):
+        pass
+
     def set_volume(self, volume):
         self.player.set_property('volume', volume)
 

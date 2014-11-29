@@ -22,7 +22,7 @@ class DoubanfmPlayer:
 
     def init_player(self):
         self.player = Player()
-        self.player.on_eos = self.on_eos
+        self.player.on_eos = self.on_player_eos
 
     def init_path(self):
         """初始化路径，如果文件夹不存在则自动创建"""
@@ -81,6 +81,7 @@ class DoubanfmPlayer:
 
     def login(self, email, password):
         self.user_info = self.doubanfm.login(email, password)
+        self.on_login_success()
         return self.user_info
 
     def play(self):
@@ -88,6 +89,13 @@ class DoubanfmPlayer:
         self.save_album_cover()
         self.player.set_uri(self.song['url'])
         self.player.play()
+        self.on_play_new()
+
+    def on_play_new(self):
+        pass
+
+    def on_login_success(self):
+        pass
 
     def next(self, operation_type='n'):
         """播放下一首
@@ -110,8 +118,16 @@ class DoubanfmPlayer:
         """播放/暂停"""
         if self.player.get_state() == STATE_PLAYING:
             self.player.pause()
+            self.on_pause()
         else:
             self.player.play()
+            self.on_play()
+
+    def on_play(self):
+        pass
+
+    def on_pause(self):
+        pass
 
     def rate(self):
         """喜欢/取消喜欢"""
@@ -124,7 +140,7 @@ class DoubanfmPlayer:
 
         self.playlist_count = 0
 
-    def on_eos(self):
+    def on_player_eos(self):
         """一首歌曲播放完毕的处理"""
         if len(self.playlist) == self.playlist_count + 1:
             self.update_playlist('p')
@@ -164,7 +180,3 @@ class DoubanfmPlayer:
 if __name__ == '__main__':
     doubanfm_player = DoubanfmPlayer()
     doubanfm_player.run()
-    import time
-    time.sleep(4)
-    doubanfm_player.pause()
-    time.sleep(4)

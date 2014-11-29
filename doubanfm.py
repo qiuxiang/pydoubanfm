@@ -1,5 +1,4 @@
 # encoding: utf8
-
 """豆瓣FM API 的封装，提供登录、获取播放列表等功能"""
 
 import requests
