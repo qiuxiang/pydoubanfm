@@ -1,6 +1,7 @@
+#!/usr/bin/env python
 # encoding: utf-8
-import json
 import sys
+import json
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -145,5 +146,7 @@ class Factory(protocol.Factory):
         return Protocol(self)
 
 if __name__ == '__main__':
-    TCP4ServerEndpoint(reactor, setting.get('port')).listen(Factory())
-    reactor.run()
+    port = setting.get('port')
+    if not utils.port_is_open(port):
+        TCP4ServerEndpoint(reactor, port).listen(Factory())
+        reactor.run()
