@@ -3,7 +3,7 @@ import os
 import json
 import cookielib
 from gi.repository import Gtk, Notify
-from doubanfm import Doubanfm
+from doubanfm import Doubanfm, LoginError
 from player import Player
 import utils
 import setting
@@ -20,7 +20,14 @@ class DoubanfmPlayer:
         self.doubanfm = Doubanfm()
         self.doubanfm.session.cookies = \
             cookielib.LWPCookieJar(setting.cookies_file)
-        self.doubanfm.session.cookies.load()
+
+        try:
+            self.doubanfm.session.cookies.load()
+            self.user_info = json.load(open(setting.user_file))
+            self.doubanfm.set_token(self.user_info)
+        except:
+            pass
+
         self.doubanfm.set_kbps(setting.get('kbps'))
         self.playlist_count = 0
         self.song = {'sid': -1}
@@ -67,9 +74,14 @@ class DoubanfmPlayer:
         self.on_kbps_change()
 
     def login(self, email, password):
-        self.user_info = self.doubanfm.login(email, password)
-        self.on_login_success()
-        return self.user_info
+        try:
+            self.user_info = self.doubanfm.login(email, password)
+            self.doubanfm.session.cookies.save()
+            self.on_login_success()
+            utils.json_dump(self.user_info, setting.user_file)
+            return self.user_info
+        except LoginError as e:
+            return e
 
     def play(self):
         self.song = self.playlist[self.playlist_count]

@@ -1,6 +1,7 @@
 # encoding: utf-8
 import json
 import sys
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -9,6 +10,7 @@ gireactor.install()
 from twisted.internet import reactor, protocol
 from twisted.internet.endpoints import TCP4ServerEndpoint
 
+from doubanfm import LoginError
 from doubanfm_player import DoubanfmPlayer
 import utils
 import setting
@@ -57,6 +59,12 @@ class Handler:
     def action_playlist_count(self):
         self.protocol.send('playlist_count', self.doubanfm_player.playlist_count)
 
+    def action_login(self):
+        result = self.doubanfm_player.login(
+            self.data[1]['email'], self.data[1]['password'])
+        if type(result) is LoginError:
+            self.protocol.send('login_failed', result.message)
+
 
 class Protocol(protocol.Protocol):
     def __init__(self, factory):
@@ -86,6 +94,7 @@ class Factory(protocol.Factory):
         self.doubanfm_player.on_channel_change = self.on_channel_change
         self.doubanfm_player.on_skip = self.on_skip
         self.doubanfm_player.on_no_longer_play = self.on_no_longer_play
+        self.doubanfm_player.on_login_success = self.on_login_success
         self.doubanfm_player.run()
 
     def on_play_new(self):

@@ -37,10 +37,7 @@ class Doubanfm:
                 'app_name': self.app_name,
                 'version': self.version}).json()
         if response['err'] == 'ok':
-            self.params['user_id'] = response['user_id']
-            self.params['expire'] = response['expire']
-            self.params['token'] = response['token']
-            self.logged = True
+            self.set_token(response)
             return response
         else:
             raise LoginError(response['err'])
@@ -51,6 +48,12 @@ class Doubanfm:
     def set_kbps(self, kbps):
         """:param kbps: 64 or 128 or 192"""
         self.params['kbps'] = kbps
+
+    def set_token(self, data):
+        self.params['user_id'] = data['user_id']
+        self.params['expire'] = data['expire']
+        self.params['token'] = data['token']
+        self.logged = True
 
 
 class LoginError(BaseException):

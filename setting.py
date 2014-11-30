@@ -20,6 +20,7 @@ local_dir = os.path.expanduser('~/.pydoubanfm/')
 albumcover_dir = local_dir + 'albumcover/'
 setting_file = local_dir + 'setting.json'
 channels_file = local_dir + 'channels.json'
+user_file = local_dir + 'user.json'
 cookies_file = local_dir + 'cookies.txt'
 
 if not os.path.isdir(local_dir):
