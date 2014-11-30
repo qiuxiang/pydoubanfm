@@ -1,6 +1,7 @@
 # encoding: utf-8
 import os
 import json
+import cookielib
 from gi.repository import Gtk, Notify
 from doubanfm import Doubanfm
 from player import Player
@@ -17,6 +18,9 @@ class DoubanfmPlayer:
 
     def init_doubanfm(self):
         self.doubanfm = Doubanfm()
+        self.doubanfm.session.cookies = \
+            cookielib.LWPCookieJar(setting.cookies_file)
+        self.doubanfm.session.cookies.load()
         self.doubanfm.set_kbps(setting.get('kbps'))
         self.playlist_count = 0
         self.song = {'sid': -1}
@@ -55,10 +59,11 @@ class DoubanfmPlayer:
     def update_playlist(self, operation_type):
         self.playlist = self.doubanfm.get_playlist(
             setting.get('channel'), operation_type, self.song['sid'])['song']
+        self.doubanfm.session.cookies.save()
 
     def set_kbps(self, kbps):
         self.doubanfm.set_kbps(kbps)
-        setting.set('kbps', kbps)
+        setting.put('kbps', kbps)
         self.on_kbps_change()
 
     def login(self, email, password):
@@ -99,7 +104,7 @@ class DoubanfmPlayer:
         """设置收听频道
         :param channel_id: 频道ID
         """
-        setting.set('channel', channel_id)
+        setting.put('channel', channel_id)
         self.next('n')
         self.on_channel_change()
 
@@ -174,7 +179,7 @@ class DoubanfmPlayer:
     def save_album_cover(self):
         """保存并更新专辑封面"""
         self.song['picture_file'] = \
-            setting.album_cover_dir + self.song['picture'].split('/')[-1]
+            setting.albumcover_dir + self.song['picture'].split('/')[-1]
         if not os.path.isfile(self.song['picture_file']):
             utils.download(self.song['picture'], self.song['picture_file'])
 
