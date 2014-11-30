@@ -116,7 +116,7 @@ class DoubanfmPlayer:
 
     def pause(self):
         """播放/暂停"""
-        if self.player.get_state() == STATE_PLAYING:
+        if self.player.get_state() == 'playing':
             self.player.pause()
             self.on_pause()
         else:

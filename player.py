@@ -3,12 +3,14 @@ from gi.repository import Gst
 
 Gst.init(None)
 
-STATE_NULL = Gst.State.NULL
-STATE_PLAYING = Gst.State.PLAYING
-STATE_PAUSED = Gst.State.PAUSED
-
 
 class Player:
+    status = {
+        Gst.State.NULL: 'null',
+        Gst.State.PLAYING: 'playing',
+        Gst.State.PAUSED: 'paused',
+    }
+
     def __init__(self):
         self.player = Gst.ElementFactory.make('playbin', None)
         bus = self.player.get_bus()
@@ -30,14 +32,13 @@ class Player:
         self.player.set_property('uri', uri)
 
     def play(self):
-        self.player.set_state(STATE_PLAYING)
+        self.player.set_state(Gst.State.PLAYING)
 
     def pause(self):
-        self.player.set_state(STATE_PAUSED)
+        self.player.set_state(Gst.State.PAUSED)
 
     def stop(self):
-        self.player.set_state(STATE_NULL)
+        self.player.set_state(Gst.State.NULL)
 
     def get_state(self):
-        """:return: STATE_NULL or STATE_PLAYING or STATE_PAUSED"""
-        return self.player.get_state(0)[1]
+        return self.status[self.player.get_state(0)[1]]
