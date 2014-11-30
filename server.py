@@ -84,6 +84,8 @@ class Factory(protocol.Factory):
         self.doubanfm_player.on_play = self.on_play
         self.doubanfm_player.on_kbps_change = self.on_kbps_change
         self.doubanfm_player.on_channel_change = self.on_channel_change
+        self.doubanfm_player.on_skip = self.on_skip
+        self.doubanfm_player.on_no_longer_play = self.on_no_longer_play
         self.doubanfm_player.run()
 
     def on_play_new(self):
@@ -109,6 +111,22 @@ class Factory(protocol.Factory):
     def on_channel_change(self):
         self.broadcast('channel', setting.get('channel'))
         print('设置收听频道为：' + setting.get('channel'))
+
+    def on_skip(self):
+        self.broadcast('skip')
+        print('跳过')
+
+    def on_no_longer_play(self):
+        self.broadcast('no_longer_play')
+        print('不再播放')
+
+    def on_rate(self):
+        if self.doubanfm_player.song['like'] == 0:
+            self.broadcast('like')
+            print('喜欢')
+        else:
+            self.broadcast('unlike')
+            print('不喜欢')
 
     def broadcast(self, *data):
         for client in self.clients:

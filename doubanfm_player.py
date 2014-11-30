@@ -131,6 +131,7 @@ class DoubanfmPlayer:
             self.song['like'] = False
 
         self.playlist_count = 0
+        self.on_rate()
 
     def on_player_eos(self):
         """一首歌曲播放完毕的处理"""
@@ -150,10 +151,21 @@ class DoubanfmPlayer:
     def no_longer_play(self):
         """不再播放当前的歌曲"""
         self.next('b')
+        self.on_no_longer_play()
 
     def skip(self):
         """跳过当前的歌曲"""
         self.next('s')
+        self.on_skip()
+
+    def on_skip(self):
+        pass
+
+    def on_rate(self):
+        pass
+
+    def on_no_longer_play(self):
+        pass
 
     def set_volume(self, value):
         self.player.set_volume(value)

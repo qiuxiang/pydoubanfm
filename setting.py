@@ -7,8 +7,10 @@ import utils
 def update_file():
     utils.json_dump(setting, setting_file)
 
+
 def get(name):
     return setting[name]
+
 
 def set(name, value):
     setting[name] = value
