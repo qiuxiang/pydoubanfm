@@ -11,6 +11,7 @@ from twisted.internet.endpoints import TCP4ServerEndpoint
 
 from doubanfm_player import DoubanfmPlayer
 import utils
+import setting
 
 
 class Handler:
@@ -42,13 +43,13 @@ class Handler:
         self.doubanfm_player.set_kbps(self.data[1])
 
     def action_get_kbps(self):
-        self.protocol.send('kbps', self.doubanfm_player.setting['kbps'])
+        self.protocol.send('kbps', setting.get('kbps'))
 
     def action_set_channel(self):
         self.doubanfm_player.select_channel(self.data[1])
 
     def action_get_channel(self):
-        self.protocol.send('channel', self.doubanfm_player.setting['channel'])
+        self.protocol.send('channel', setting.get('channel'))
 
     def action_playlist(self):
         self.protocol.send('playlist', self.doubanfm_player.playlist)
@@ -102,12 +103,12 @@ class Factory(protocol.Factory):
         print('登录成功：' + utils.json_dumps(self.doubanfm_player.user_info))
 
     def on_kbps_change(self):
-        self.broadcast('kbps', self.doubanfm_player.setting['kbps'])
-        print('设置收听码率为：%skbps' % self.doubanfm_player.setting['kbps'])
+        self.broadcast('kbps', setting.get('kbps'))
+        print('设置收听码率为：%skbps' % setting.get('kbps'))
 
     def on_channel_change(self):
-        self.broadcast('channel', self.doubanfm_player.setting['channel'])
-        print('设置收听频道为：' + self.doubanfm_player.setting['channel'])
+        self.broadcast('channel', setting.get('channel'))
+        print('设置收听频道为：' + setting.get('channel'))
 
     def broadcast(self, *data):
         for client in self.clients:
@@ -117,6 +118,5 @@ class Factory(protocol.Factory):
         return Protocol(self)
 
 if __name__ == '__main__':
-    port = 1234
-    TCP4ServerEndpoint(reactor, port).listen(Factory())
+    TCP4ServerEndpoint(reactor, setting.get('port')).listen(Factory())
     reactor.run()

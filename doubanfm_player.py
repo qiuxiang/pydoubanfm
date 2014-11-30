@@ -5,12 +5,11 @@ from gi.repository import Gtk, Notify
 from doubanfm import Doubanfm
 from player import Player
 import utils
+import setting
 
 
 class DoubanfmPlayer:
     def __init__(self):
-        self.init_path()
-        self.init_setting()
         self.init_notify()
         self.init_channels()
         self.init_doubanfm()
@@ -18,7 +17,7 @@ class DoubanfmPlayer:
 
     def init_doubanfm(self):
         self.doubanfm = Doubanfm()
-        self.doubanfm.set_kbps(self.setting['kbps'])
+        self.doubanfm.set_kbps(setting.get('kbps'))
         self.playlist_count = 0
         self.song = {'sid': -1}
 
@@ -26,40 +25,15 @@ class DoubanfmPlayer:
         self.player = Player()
         self.player.on_eos = self.on_player_eos
 
-    def init_path(self):
-        """初始化路径，如果文件夹不存在则自动创建"""
-        # 本地存储目录
-        self.local_dir = os.path.expanduser('~/.pydoubanfm/')
-        # 专辑封面目录
-        self.album_cover_dir = self.local_dir + 'albumcover/'
-        # “设置文件”路径
-        self.setting_file = self.local_dir + 'setting.json'
-        # 频道列表缓存文件路径
-        self.channels_file = self.local_dir + 'channels.json'
-
-        if not os.path.isdir(self.local_dir):
-            os.mkdir(self.local_dir)
-
-        if not os.path.isdir(self.album_cover_dir):
-            os.mkdir(self.album_cover_dir)
-
-    def init_setting(self):
-        """从文件读取设置，如果文件不存在，则使用默认配置创建"""
-        if os.path.isfile(self.setting_file):
-            self.setting = json.load(open(self.setting_file))
-        else:
-            self.setting = {'channel': 0, 'kbps': 192}
-            self.update_setting_file()
-
     def init_notify(self):
         """初始化桌面通知"""
-        Notify.init('pydoubanfm')
+        Notify.init(__name__)
         self.notify = Notify.Notification.new('', '', '')
 
     def init_channels(self):
         """创建频道选择菜单"""
-        if os.path.isfile(self.channels_file):
-            self.channels = json.load(open(self.channels_file))
+        if os.path.isfile(setting.channels_file):
+            self.channels = json.load(open(setting.channels_file))
         else:
             self.update_channels()
 
@@ -76,22 +50,15 @@ class DoubanfmPlayer:
     def update_channels(self):
         self.channels = self.doubanfm.get_channels()
         self.channels.insert(0, {'name': '红心兆赫', 'channel_id': -3})
-        self.update_channels_file()
-
-    def update_setting_file(self):
-        utils.json_dump(self.setting, self.setting_file)
-
-    def update_channels_file(self):
-        utils.json_dump(self.channels, self.channels_file)
+        utils.json_dump(self.channels, setting.channels_file)
 
     def update_playlist(self, operation_type):
         self.playlist = self.doubanfm.get_playlist(
-            self.setting['channel'], operation_type, self.song['sid'])['song']
+            setting.get('channel'), operation_type, self.song['sid'])['song']
 
     def set_kbps(self, kbps):
         self.doubanfm.set_kbps(kbps)
-        self.setting['kbps'] = kbps
-        self.update_setting_file()
+        setting.set('kbps', kbps)
         self.on_kbps_change()
 
     def login(self, email, password):
@@ -132,8 +99,7 @@ class DoubanfmPlayer:
         """设置收听频道
         :param channel_id: 频道ID
         """
-        self.setting['channel'] = channel_id
-        self.update_setting_file()
+        setting.set('channel', channel_id)
         self.next('n')
         self.on_channel_change()
 
@@ -174,7 +140,7 @@ class DoubanfmPlayer:
         else:
             self.playlist_count += 1
 
-        self.doubanfm.get_playlist(self.setting['channel'], 'e', self.song['sid'])
+        self.doubanfm.get_playlist(setting.get('channel'), 'e', self.song['sid'])
         self.play()
 
     def run(self):
@@ -196,7 +162,7 @@ class DoubanfmPlayer:
     def save_album_cover(self):
         """保存并更新专辑封面"""
         self.song['picture_file'] = \
-            self.album_cover_dir + self.song['picture'].split('/')[-1]
+            setting.album_cover_dir + self.song['picture'].split('/')[-1]
         if not os.path.isfile(self.song['picture_file']):
             utils.download(self.song['picture'], self.song['picture_file'])
 
