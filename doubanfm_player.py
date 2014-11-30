@@ -92,6 +92,7 @@ class DoubanfmPlayer:
         self.doubanfm.set_kbps(kbps)
         self.setting['kbps'] = kbps
         self.update_setting_file()
+        self.on_kbps_change()
 
     def login(self, email, password):
         self.user_info = self.doubanfm.login(email, password)
@@ -112,6 +113,12 @@ class DoubanfmPlayer:
     def on_login_success(self):
         pass
 
+    def on_kbps_change(self):
+        pass
+
+    def on_channel_change(self):
+        pass
+
     def next(self, operation_type='n'):
         """播放下一首
         :param operation_type: 操作类型，详情请参考 https://github.com/qiuxiang/pydoubanfm/wiki/%E8%B1%86%E7%93%A3FM-API
@@ -128,6 +135,7 @@ class DoubanfmPlayer:
         self.setting['channel'] = channel_id
         self.update_setting_file()
         self.next('n')
+        self.on_channel_change()
 
     def pause(self):
         """播放/暂停"""
@@ -142,6 +150,9 @@ class DoubanfmPlayer:
         pass
 
     def on_pause(self):
+        pass
+
+    def on_volume_change(self):
         pass
 
     def rate(self):
@@ -180,6 +191,7 @@ class DoubanfmPlayer:
 
     def set_volume(self, value):
         self.player.set_volume(value)
+        self.on_volume_change()
 
     def save_album_cover(self):
         """保存并更新专辑封面"""
