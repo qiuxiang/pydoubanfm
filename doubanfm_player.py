@@ -1,15 +1,17 @@
 # encoding: utf-8
 import os
 import json
-import requests
+from gi.repository import Gtk, Notify
 from doubanfm import Doubanfm
-from player import *
+from player import Player
+import utils
 
 
 class DoubanfmPlayer:
     def __init__(self):
         self.init_path()
         self.init_setting()
+        self.init_notify()
         self.init_channels()
         self.init_doubanfm()
         self.init_player()
@@ -49,6 +51,11 @@ class DoubanfmPlayer:
             self.setting = {'channel': 0, 'kbps': 192}
             self.update_setting_file()
 
+    def init_notify(self):
+        """初始化桌面通知"""
+        Notify.init('pydoubanfm')
+        self.notify = Notify.Notification.new('', '', '')
+
     def init_channels(self):
         """创建频道选择菜单"""
         if os.path.isfile(self.channels_file):
@@ -56,19 +63,26 @@ class DoubanfmPlayer:
         else:
             self.update_channels()
 
+    def update_notify(self, title='', content='', picture=''):
+        """更新桌面通知显示当前歌曲信息"""
+        if not title:
+            title = self.song['title']
+            content = self.song['artist']
+            picture = self.song['picture_file']
+
+        self.notify.update(title, content, picture)
+        self.notify.show()
+
     def update_channels(self):
         self.channels = self.doubanfm.get_channels()
         self.channels.insert(0, {'name': '红心兆赫', 'channel_id': -3})
         self.update_channels_file()
 
-    def dump(self, data):
-        json.dump(data, open(self.setting_file, 'w'), indent=2, ensure_ascii=False)
-
     def update_setting_file(self):
-        self.dump(self.setting)
+        utils.json_dump(self.setting, self.setting_file)
 
     def update_channels_file(self):
-        self.dump(self.channels)
+        utils.json_dump(self.channels, self.channels_file)
 
     def update_playlist(self, operation_type):
         self.playlist = self.doubanfm.get_playlist(
@@ -89,6 +103,7 @@ class DoubanfmPlayer:
         self.save_album_cover()
         self.player.set_uri(self.song['url'])
         self.player.play()
+        self.update_notify()
         self.on_play_new()
 
     def on_play_new(self):
@@ -171,12 +186,9 @@ class DoubanfmPlayer:
         self.song['picture_file'] = \
             self.album_cover_dir + self.song['picture'].split('/')[-1]
         if not os.path.isfile(self.song['picture_file']):
-            self.download(self.song['picture'], self.song['picture_file'])
-
-    @staticmethod
-    def download(url, filename):
-        open(filename, 'wb').write(requests.get(url).content)
+            utils.download(self.song['picture'], self.song['picture_file'])
 
 if __name__ == '__main__':
     doubanfm_player = DoubanfmPlayer()
     doubanfm_player.run()
+    Gtk.main()
