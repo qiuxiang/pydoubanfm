@@ -14,8 +14,8 @@ class DoubanfmPlayer(Hook):
     def __init__(self):
         Hook.__init__(self)
         self.init_notify()
-        self.init_channels()
         self.init_doubanfm()
+        self.init_channels()
         self.init_player()
 
     def init_doubanfm(self):
