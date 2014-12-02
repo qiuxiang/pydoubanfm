@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
-import sys
 import json
-
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 from twisted.internet import gireactor
 gireactor.install()
@@ -88,14 +84,16 @@ class Factory(protocol.Factory):
     def __init__(self):
         self.clients = []
         self.doubanfm_player = DoubanfmPlayer()
-        self.doubanfm_player.on_play_new = self.on_play_new
-        self.doubanfm_player.on_pause = self.on_pause
-        self.doubanfm_player.on_play = self.on_play
-        self.doubanfm_player.on_kbps_change = self.on_kbps_change
-        self.doubanfm_player.on_channel_change = self.on_channel_change
-        self.doubanfm_player.on_skip = self.on_skip
-        self.doubanfm_player.on_no_longer_play = self.on_no_longer_play
-        self.doubanfm_player.on_login_success = self.on_login_success
+        self.doubanfm_player.on({
+            'play_new',       self.on_play_new(),
+            'pause',          self.on_pause(),
+            'play',           self.on_play(),
+            'kbps_change',    self.on_kbps_change(),
+            'channel_change', self.on_channel_change(),
+            'skip',           self.on_skip(),
+            'no_longer_play', self.on_no_longer_play(),
+            'login_success',  self.on_login_success(),
+        })
         self.doubanfm_player.run()
 
     def on_play_new(self):
@@ -146,6 +144,10 @@ class Factory(protocol.Factory):
         return Protocol(self)
 
 if __name__ == '__main__':
+    import sys
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+
     port = setting.get('port')
     if not utils.port_is_open(port):
         TCP4ServerEndpoint(reactor, port).listen(Factory())

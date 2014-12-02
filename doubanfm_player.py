@@ -4,13 +4,15 @@ import json
 import cookielib
 from gi.repository import Gtk, Notify
 from doubanfm import Doubanfm, LoginError
+from hook import Hook
 from player import Player
 import utils
 import setting
 
 
-class DoubanfmPlayer:
+class DoubanfmPlayer(Hook):
     def __init__(self):
+        Hook.__init__(self)
         self.init_notify()
         self.init_channels()
         self.init_doubanfm()
@@ -34,7 +36,7 @@ class DoubanfmPlayer:
 
     def init_player(self):
         self.player = Player()
-        self.player.on_eos = self.on_player_eos
+        self.player.on('eos', self.on_player_eos)
 
     def init_notify(self):
         """初始化桌面通知"""
@@ -71,13 +73,13 @@ class DoubanfmPlayer:
     def set_kbps(self, kbps):
         self.doubanfm.set_kbps(kbps)
         setting.put('kbps', kbps)
-        self.on_kbps_change()
+        self.dispatch('kbps_change')
 
     def login(self, email, password):
         try:
             self.user_info = self.doubanfm.login(email, password)
             self.doubanfm.session.cookies.save()
-            self.on_login_success()
+            self.dispatch('login_success')
             utils.json_dump(self.user_info, setting.user_file)
             return self.user_info
         except LoginError as e:
@@ -89,19 +91,7 @@ class DoubanfmPlayer:
         self.player.set_uri(self.song['url'])
         self.player.play()
         self.update_notify()
-        self.on_play_new()
-
-    def on_play_new(self):
-        pass
-
-    def on_login_success(self):
-        pass
-
-    def on_kbps_change(self):
-        pass
-
-    def on_channel_change(self):
-        pass
+        self.dispatch('play_new')
 
     def next(self, operation_type='n'):
         """播放下一首
@@ -118,25 +108,16 @@ class DoubanfmPlayer:
         """
         setting.put('channel', channel_id)
         self.next('n')
-        self.on_channel_change()
+        self.dispatch('channel_change')
 
     def pause(self):
         """播放/暂停"""
         if self.player.get_state() == 'playing':
             self.player.pause()
-            self.on_pause()
+            self.dispatch('pause')
         else:
             self.player.play()
-            self.on_play()
-
-    def on_play(self):
-        pass
-
-    def on_pause(self):
-        pass
-
-    def on_volume_change(self):
-        pass
+            self.dispatch('play')
 
     def rate(self):
         """喜欢/取消喜欢"""
@@ -148,7 +129,7 @@ class DoubanfmPlayer:
             self.song['like'] = False
 
         self.playlist_count = 0
-        self.on_rate()
+        self.dispatch('rate')
 
     def on_player_eos(self):
         """一首歌曲播放完毕的处理"""
@@ -168,25 +149,16 @@ class DoubanfmPlayer:
     def no_longer_play(self):
         """不再播放当前的歌曲"""
         self.next('b')
-        self.on_no_longer_play()
+        self.dispatch('no_longer_play')
 
     def skip(self):
         """跳过当前的歌曲"""
         self.next('s')
-        self.on_skip()
-
-    def on_skip(self):
-        pass
-
-    def on_rate(self):
-        pass
-
-    def on_no_longer_play(self):
-        pass
+        self.dispatch('skip')
 
     def set_volume(self, value):
         self.player.set_volume(value)
-        self.on_volume_change()
+        self.dispatch('volume_change')
 
     def save_album_cover(self):
         """保存并更新专辑封面"""
