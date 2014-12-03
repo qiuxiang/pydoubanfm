@@ -1,10 +1,11 @@
 # encoding: utf-8
-from hook import Hook
 from gi.repository import Gst
 Gst.init(None)
 
+from .hook import Hook
 
-class Player(Hook):
+
+class GstPlayer(Hook):
     status = {
         Gst.State.NULL: 'null',
         Gst.State.PLAYING: 'playing',

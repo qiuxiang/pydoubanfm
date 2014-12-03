@@ -4,7 +4,7 @@ class Hook:
 
     def on(self, hook, function=None):
         if type(hook) is dict:
-            for hook_name, function in hook:
+            for hook_name, function in hook.iteritems():
                 self.put(hook_name, function)
         else:
             self.put(hook, function)
@@ -19,4 +19,3 @@ class Hook:
         if hook_name in self.hooks:
             for function in self.hooks[hook_name]:
                 function()
-

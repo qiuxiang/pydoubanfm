@@ -1,7 +1,6 @@
-# encoding: utf-8
-import json
-import socket
 import requests
+import socket
+import json
 
 
 def json_dump(data, filename):

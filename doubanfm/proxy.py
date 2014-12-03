@@ -1,10 +1,7 @@
-# encoding: utf8
-"""豆瓣FM API 的封装，提供登录、获取播放列表等功能"""
-
 import requests
 
 
-class Doubanfm:
+class Proxy:
     def __init__(self):
         self.app_name = 'radio_desktop_win'
         self.version = '100'
@@ -57,4 +54,4 @@ class Doubanfm:
 
 
 class LoginError(BaseException):
-    """登录失败异常"""
+    """Login error exception"""

@@ -2,15 +2,15 @@
 import os
 import json
 import cookielib
+
 from gi.repository import Gtk, Notify
-from doubanfm import Doubanfm, LoginError
-from hook import Hook
-from player import Player
-import utils
-import setting
+
+from .proxy import Proxy, LoginError
+from lib import Hook, GstPlayer
+from utils import setting, download, json_dump
 
 
-class DoubanfmPlayer(Hook):
+class Player(Hook):
     def __init__(self):
         Hook.__init__(self)
         self.init_notify()
@@ -19,39 +19,36 @@ class DoubanfmPlayer(Hook):
         self.init_player()
 
     def init_doubanfm(self):
-        self.doubanfm = Doubanfm()
-        self.doubanfm.session.cookies = \
+        self.proxy = Proxy()
+        self.proxy.session.cookies = \
             cookielib.LWPCookieJar(setting.cookies_file)
 
         try:
-            self.doubanfm.session.cookies.load()
+            self.proxy.session.cookies.load()
             self.user_info = json.load(open(setting.user_file))
-            self.doubanfm.set_token(self.user_info)
+            self.proxy.set_token(self.user_info)
         except:
             pass
 
-        self.doubanfm.set_kbps(setting.get('kbps'))
+        self.proxy.set_kbps(setting.get('kbps'))
         self.playlist_count = 0
         self.song = {'sid': -1}
 
     def init_player(self):
-        self.player = Player()
+        self.player = GstPlayer()
         self.player.on('eos', self.on_player_eos)
 
     def init_notify(self):
-        """初始化桌面通知"""
         Notify.init(__name__)
         self.notify = Notify.Notification.new('', '', '')
 
     def init_channels(self):
-        """创建频道选择菜单"""
         if os.path.isfile(setting.channels_file):
             self.channels = json.load(open(setting.channels_file))
         else:
             self.update_channels()
 
-    def update_notify(self, title='', content='', picture=''):
-        """更新桌面通知显示当前歌曲信息"""
+    def show_notify(self, title='', content='', picture=''):
         if not title:
             title = self.song['title']
             content = self.song['artist']
@@ -61,26 +58,27 @@ class DoubanfmPlayer(Hook):
         self.notify.show()
 
     def update_channels(self):
-        self.channels = self.doubanfm.get_channels()
+        self.channels = self.proxy.get_channels()
         self.channels.insert(0, {'name': '红心兆赫', 'channel_id': -3})
-        utils.json_dump(self.channels, setting.channels_file)
+        json_dump(self.channels, setting.channels_file)
 
     def update_playlist(self, operation_type):
-        self.playlist = self.doubanfm.get_playlist(
+        self.playlist = self.proxy.get_playlist(
             setting.get('channel'), operation_type, self.song['sid'])['song']
-        self.doubanfm.session.cookies.save()
+        self.proxy.session.cookies.save()
 
     def set_kbps(self, kbps):
-        self.doubanfm.set_kbps(kbps)
+        self.proxy.set_kbps(kbps)
         setting.put('kbps', kbps)
         self.dispatch('kbps_change')
 
     def login(self, email, password):
+        """:return: 登录成功返回用户信息，失败则返回异常"""
         try:
-            self.user_info = self.doubanfm.login(email, password)
-            self.doubanfm.session.cookies.save()
+            self.user_info = self.proxy.login(email, password)
+            self.proxy.session.cookies.save()
             self.dispatch('login_success')
-            utils.json_dump(self.user_info, setting.user_file)
+            json_dump(self.user_info, setting.user_file)
             return self.user_info
         except LoginError as e:
             return e
@@ -90,22 +88,17 @@ class DoubanfmPlayer(Hook):
         self.save_album_cover()
         self.player.set_uri(self.song['url'])
         self.player.play()
-        self.update_notify()
+        self.show_notify()
         self.dispatch('play_new')
 
     def next(self, operation_type='n'):
-        """播放下一首
-        :param operation_type: 操作类型，详情请参考 https://github.com/qiuxiang/pydoubanfm/wiki/%E8%B1%86%E7%93%A3FM-API
-        """
+        """播放下一曲"""
         self.update_playlist(operation_type)
         self.playlist_count = 0
         self.player.stop()
         self.play()
 
     def select_channel(self, channel_id):
-        """设置收听频道
-        :param channel_id: 频道ID
-        """
         setting.put('channel', channel_id)
         self.next('n')
         self.dispatch('channel_change')
@@ -132,14 +125,15 @@ class DoubanfmPlayer(Hook):
         self.dispatch('rate')
 
     def on_player_eos(self):
-        """一首歌曲播放完毕的处理"""
+        """当前歌曲播放完毕后的处理"""
         if len(self.playlist) == self.playlist_count + 1:
             self.update_playlist('p')
             self.playlist_count = 0
         else:
             self.playlist_count += 1
 
-        self.doubanfm.get_playlist(setting.get('channel'), 'e', self.song['sid'])
+        self.proxy.get_playlist(
+            setting.get('channel'), 'e', self.song['sid'])
         self.play()
 
     def run(self):
@@ -161,13 +155,12 @@ class DoubanfmPlayer(Hook):
         self.dispatch('volume_change')
 
     def save_album_cover(self):
-        """保存并更新专辑封面"""
         self.song['picture_file'] = \
-            setting.albumcover_dir + self.song['picture'].split('/')[-1]
+            setting.album_cover_dir + self.song['picture'].split('/')[-1]
         if not os.path.isfile(self.song['picture_file']):
-            utils.download(self.song['picture'], self.song['picture_file'])
+            download(self.song['picture'], self.song['picture_file'])
 
 if __name__ == '__main__':
-    doubanfm_player = DoubanfmPlayer()
+    doubanfm_player = GstPlayer()
     doubanfm_player.run()
     Gtk.main()

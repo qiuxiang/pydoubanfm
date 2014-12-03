@@ -7,16 +7,14 @@ gireactor.install()
 from twisted.internet import reactor, protocol
 from twisted.internet.endpoints import TCP4ServerEndpoint
 
-from doubanfm import LoginError
-from doubanfm_player import DoubanfmPlayer
-import utils
-import setting
+from doubanfm import LoginError, Player
+from utils import setting, json_dumps, port_is_open
 
 
 class Handler:
     def __init__(self, _protocol, data):
         self.protocol = _protocol
-        self.doubanfm_player = self.protocol.factory.doubanfm_player
+        self.doubanfm = _protocol.factory.doubanfm
         try:
             self.data = json.loads(data)
             getattr(self, 'action_' + self.data[0])()
@@ -24,40 +22,40 @@ class Handler:
             print('请求出错：' + e.message)
 
     def action_channels(self):
-        self.protocol.send('channels', self.doubanfm_player.channels)
+        self.protocol.send('channels', self.doubanfm.channels)
 
     def action_song(self):
-        self.protocol.send('song', self.doubanfm_player.song)
+        self.protocol.send('song', self.doubanfm.song)
 
     def action_skip(self):
-        self.doubanfm_player.skip()
+        self.doubanfm.skip()
 
     def action_rate(self):
-        self.doubanfm_player.rate()
+        self.doubanfm.rate()
 
     def action_pause(self):
-        self.doubanfm_player.pause()
+        self.doubanfm.pause()
 
     def action_set_kbps(self):
-        self.doubanfm_player.set_kbps(self.data[1])
+        self.doubanfm.set_kbps(self.data[1])
 
     def action_get_kbps(self):
         self.protocol.send('kbps', setting.get('kbps'))
 
     def action_set_channel(self):
-        self.doubanfm_player.select_channel(self.data[1])
+        self.doubanfm.select_channel(self.data[1])
 
     def action_get_channel(self):
         self.protocol.send('channel', setting.get('channel'))
 
     def action_playlist(self):
-        self.protocol.send('playlist', self.doubanfm_player.playlist)
+        self.protocol.send('playlist', self.doubanfm.playlist)
 
     def action_playlist_count(self):
-        self.protocol.send('playlist_count', self.doubanfm_player.playlist_count)
+        self.protocol.send('playlist_count', self.doubanfm.playlist_count)
 
     def action_login(self):
-        result = self.doubanfm_player.login(
+        result = self.doubanfm.login(
             self.data[1]['email'], self.data[1]['password'])
         if type(result) is LoginError:
             self.protocol.send('login_failed', result.message)
@@ -83,22 +81,22 @@ class Protocol(protocol.Protocol):
 class Factory(protocol.Factory):
     def __init__(self):
         self.clients = []
-        self.doubanfm_player = DoubanfmPlayer()
-        self.doubanfm_player.on({
-            'play_new',       self.on_play_new(),
-            'pause',          self.on_pause(),
-            'play',           self.on_play(),
-            'kbps_change',    self.on_kbps_change(),
-            'channel_change', self.on_channel_change(),
-            'skip',           self.on_skip(),
-            'no_longer_play', self.on_no_longer_play(),
-            'login_success',  self.on_login_success(),
+        self.doubanfm = Player()
+        self.doubanfm.on({
+            'play_new':       self.on_play_new,
+            'pause':          self.on_pause,
+            'play':           self.on_play,
+            'kbps_change':    self.on_kbps_change,
+            'channel_change': self.on_channel_change,
+            'skip':           self.on_skip,
+            'no_longer_play': self.on_no_longer_play,
+            'login_success':  self.on_login_success,
         })
-        self.doubanfm_player.run()
+        self.doubanfm.run()
 
     def on_play_new(self):
-        self.broadcast('play_new', self.doubanfm_player.song)
-        print('开始播放：' + utils.json_dumps(self.doubanfm_player.song))
+        self.broadcast('play_new', self.doubanfm.song)
+        print('开始播放：' + json_dumps(self.doubanfm.song))
 
     def on_pause(self):
         self.broadcast('pause')
@@ -109,8 +107,8 @@ class Factory(protocol.Factory):
         print('恢复播放')
 
     def on_login_success(self):
-        self.broadcast('login_success', self.doubanfm_player.user_info)
-        print('登录成功：' + utils.json_dumps(self.doubanfm_player.user_info))
+        self.broadcast('login_success', self.doubanfm.user_info)
+        print('登录成功：' + json_dumps(self.doubanfm.user_info))
 
     def on_kbps_change(self):
         self.broadcast('kbps', setting.get('kbps'))
@@ -129,7 +127,7 @@ class Factory(protocol.Factory):
         print('不再播放')
 
     def on_rate(self):
-        if self.doubanfm_player.song['like'] == 0:
+        if self.doubanfm.song['like'] == 0:
             self.broadcast('like')
             print('喜欢')
         else:
@@ -149,6 +147,6 @@ if __name__ == '__main__':
     sys.setdefaultencoding('utf-8')
 
     port = setting.get('port')
-    if not utils.port_is_open(port):
+    if not port_is_open(port):
         TCP4ServerEndpoint(reactor, port).listen(Factory())
         reactor.run()
