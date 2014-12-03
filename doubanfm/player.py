@@ -1,4 +1,4 @@
-# encoding: utf-8
+# coding: utf-8
 import os
 import json
 import cookielib
@@ -129,10 +129,10 @@ class Player:
         self.update_playlist('n')
         self.play()
 
-    def no_longer_play(self):
+    def remove(self):
         """不再播放当前的歌曲"""
         self.next('b')
-        self.hooks.dispatch('no_longer_play')
+        self.hooks.dispatch('remove')
 
     def skip(self):
         """跳过当前的歌曲"""
