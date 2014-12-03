@@ -78,7 +78,7 @@ class Player:
         self.player.set_uri(self.song['url'])
         self.player.play()
         self.show_notify()
-        self.hooks.dispatch('play_new')
+        self.hooks.dispatch('play')
 
     def next(self, operation_type='n'):
         """播放下一曲"""
@@ -93,25 +93,24 @@ class Player:
         self.hooks.dispatch('channel_change')
 
     def pause(self):
-        """播放/暂停"""
-        if self.player.get_state() == 'playing':
-            self.player.pause()
-            self.hooks.dispatch('pause')
-        else:
-            self.player.play()
-            self.hooks.dispatch('play')
+        self.player.pause()
+        self.hooks.dispatch('pause')
 
-    def rate(self):
-        """喜欢/取消喜欢"""
-        if self.song['like'] == 0:
-            self.update_playlist('r')
-            self.song['like'] = True
-        else:
-            self.update_playlist('u')
-            self.song['like'] = False
+    def resume(self):
+        self.player.play()
+        self.hooks.dispatch('play')
 
+    def like(self):
+        self.update_playlist('r')
+        self.song['like'] = True
         self.playlist_count = 0
-        self.hooks.dispatch('rate')
+        self.hooks.dispatch('like')
+
+    def unlike(self):
+        self.update_playlist('u')
+        self.song['like'] = False
+        self.playlist_count = 0
+        self.hooks.dispatch('unlike')
 
     def on_player_eos(self):
         """当前歌曲播放完毕后的处理"""

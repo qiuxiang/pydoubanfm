@@ -9,27 +9,29 @@ class Factory(protocol.Factory):
         self.clients = []
         self.doubanfm = Player()
         self.doubanfm.hooks.register({
-            'play_new':       self.on_play_new,
-            'pause':          self.on_pause,
             'play':           self.on_play,
+            'pause':          self.on_pause,
+            'resume':         self.on_resume,
             'kbps_change':    self.on_kbps_change,
             'channel_change': self.on_channel_change,
             'skip':           self.on_skip,
             'remove':         self.on_remove,
+            'like':           self.on_like,
+            'unlike':         self.on_unlike,
             'login_success':  self.on_login_success,
         })
         self.doubanfm.run()
 
-    def on_play_new(self):
-        self.broadcast('new', self.doubanfm.song)
+    def on_play(self):
+        self.broadcast('play', self.doubanfm.song)
         print('play: ' + json_dumps(self.doubanfm.song))
 
     def on_pause(self):
         self.broadcast('pause')
         print('pause')
 
-    def on_play(self):
-        self.broadcast('play')
+    def on_resume(self):
+        self.broadcast('resume')
         print('resume')
 
     def on_login_success(self):
@@ -52,13 +54,13 @@ class Factory(protocol.Factory):
         self.broadcast('remove')
         print('remove')
 
-    def on_rate(self):
-        if self.doubanfm.song['like'] == 0:
-            self.broadcast('like')
-            print('like')
-        else:
-            self.broadcast('unlike')
-            print('unlike')
+    def on_like(self):
+        self.broadcast('like')
+        print('like')
+
+    def on_unlike(self):
+        self.broadcast('unlike')
+        print('unlike')
 
     def broadcast(self, *data):
         for client in self.clients:

@@ -29,6 +29,9 @@ class Handler:
     def action_pause(self):
         self.doubanfm.pause()
 
+    def action_resume(self):
+        self.doubanfm.resume()
+
     def action_set_kbps(self):
         self.doubanfm.set_kbps(self.data[1])
 
