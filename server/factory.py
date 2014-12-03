@@ -22,7 +22,7 @@ class Factory(protocol.Factory):
         self.doubanfm.run()
 
     def on_play_new(self):
-        self.broadcast('play_new', self.doubanfm.song)
+        self.broadcast('new', self.doubanfm.song)
         print('开始播放：' + json_dumps(self.doubanfm.song))
 
     def on_pause(self):
