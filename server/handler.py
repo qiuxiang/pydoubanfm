@@ -1,5 +1,4 @@
 # coding=utf-8
-import json
 from doubanfm import LoginError
 from utils import setting
 
@@ -9,16 +8,29 @@ class Handler:
         self.protocol = _protocol
         self.doubanfm = _protocol.factory.doubanfm
         try:
-            self.data = json.loads(data)
+            self.data = [item.strip() for item in data.split(' ')]
             getattr(self, 'action_' + self.data[0])()
         except Exception as e:
-            print('请求出错：' + e.message)
+            self.protocol.send('error', e.message)
+            print('error: ' + e.message)
+
+    def action_user_info(self):
+        self.protocol.send('user_info', self.doubanfm.user_info)
 
     def action_channels(self):
         self.protocol.send('channels', self.doubanfm.channels)
 
     def action_song(self):
         self.protocol.send('song', self.doubanfm.song)
+
+    def action_like(self):
+        self.doubanfm.like()
+
+    def action_unlike(self):
+        self.doubanfm.unlike()
+
+    def action_remove(self):
+        self.doubanfm.remove()
 
     def action_skip(self):
         self.doubanfm.skip()
@@ -47,8 +59,8 @@ class Handler:
     def action_playlist(self):
         self.protocol.send('playlist', self.doubanfm.playlist)
 
-    def action_playlist_count(self):
-        self.protocol.send('playlist_count', self.doubanfm.playlist_count)
+    def action_count(self):
+        self.protocol.send('count', self.doubanfm.playlist_count)
 
     def action_login(self):
         result = self.doubanfm.login(
