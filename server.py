@@ -82,7 +82,7 @@ class Factory(protocol.Factory):
     def __init__(self):
         self.clients = []
         self.doubanfm = Player()
-        self.doubanfm.on({
+        self.doubanfm.hooks.register({
             'play_new':       self.on_play_new,
             'pause':          self.on_pause,
             'play':           self.on_play,

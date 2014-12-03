@@ -34,7 +34,7 @@ class Proxy:
                 'app_name': self.app_name,
                 'version': self.version}).json()
         if response['err'] == 'ok':
-            self.set_token(response)
+            self.set_auth(response)
             return response
         else:
             raise LoginError(response['err'])
@@ -46,7 +46,7 @@ class Proxy:
         """:param kbps: 64 or 128 or 192"""
         self.params['kbps'] = kbps
 
-    def set_token(self, data):
+    def set_auth(self, data):
         self.params['user_id'] = data['user_id']
         self.params['expire'] = data['expire']
         self.params['token'] = data['token']

@@ -1,6 +1,7 @@
 import os
 import json
-from utils import json_dump
+
+from . import json_dump
 
 
 def update_file():

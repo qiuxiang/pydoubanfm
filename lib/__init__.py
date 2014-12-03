@@ -1,2 +1,2 @@
-from .hook import Hook
+from .hooks import Hooks
 from .gst_player import GstPlayer

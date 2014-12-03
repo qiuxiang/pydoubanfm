@@ -1,8 +1,8 @@
-class Hook:
+class Hooks:
     def __init__(self):
         self.hooks = {}
 
-    def on(self, hook, function=None):
+    def register(self, hook, function=None):
         if type(hook) is dict:
             for hook_name, function in hook.iteritems():
                 self.put(hook_name, function)

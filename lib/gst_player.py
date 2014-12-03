@@ -2,10 +2,10 @@
 from gi.repository import Gst
 Gst.init(None)
 
-from .hook import Hook
+from .hooks import Hooks
 
 
-class GstPlayer(Hook):
+class GstPlayer:
     status = {
         Gst.State.NULL: 'null',
         Gst.State.PLAYING: 'playing',
@@ -13,7 +13,7 @@ class GstPlayer(Hook):
     }
 
     def __init__(self):
-        Hook.__init__(self)
+        self.hooks = Hooks()
         self.player = Gst.ElementFactory.make('playbin', None)
         bus = self.player.get_bus()
         bus.add_signal_watch()
@@ -22,7 +22,7 @@ class GstPlayer(Hook):
     def message_handler(self, bus, message):
         if message.type == Gst.MessageType.EOS:
             self.stop()
-            self.dispatch('eos')
+            self.hooks.dispatch('eos')
 
     def set_volume(self, volume):
         self.player.set_property('volume', volume)
