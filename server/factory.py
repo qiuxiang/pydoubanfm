@@ -64,7 +64,7 @@ class Factory(protocol.Factory):
 
     def broadcast(self, *data):
         for client in self.clients:
-            client.send(data)
+            client.send(*data)
 
     def buildProtocol(self, addr):
         return Protocol(self)
