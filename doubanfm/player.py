@@ -98,7 +98,7 @@ class Player:
 
     def resume(self):
         self.player.play()
-        self.hooks.dispatch('play')
+        self.hooks.dispatch('resume')
 
     def like(self):
         self.update_playlist('r')
