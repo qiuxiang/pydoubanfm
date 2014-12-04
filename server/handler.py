@@ -63,7 +63,6 @@ class Handler:
         self.protocol.send('count', self.doubanfm.playlist_count)
 
     def action_login(self):
-        result = self.doubanfm.login(
-            self.data[1]['email'], self.data[1]['password'])
+        result = self.doubanfm.login(self.data[1], self.data[2])
         if type(result) is LoginError:
             self.protocol.send('login_failed', result.message)
