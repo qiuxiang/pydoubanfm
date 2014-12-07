@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 import threading
-import json
-from twisted.internet.protocol import Protocol, ClientFactory
+from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor
-from utils import json_dumps, setting
+from client import Protocol
+from utils import json_dumps, setting, reload_sys
 
 
 class DoubanFmClientProtocol(Protocol):
@@ -15,18 +15,6 @@ class DoubanFmClientProtocol(Protocol):
     def input(self):
         while True:
             self.transport.write(raw_input())
-
-    def dataReceived(self, data):
-        for row in data.split('\n'):
-            if row:
-                try:
-                    data = json.loads(row)
-                    if len(data) == 1:
-                        getattr(self, 'on_' + data[0])()
-                    else:
-                        getattr(self, 'on_' + data[0])(data[1])
-                except Exception as e:
-                    print('error: ' + e.message)
 
     @staticmethod
     def on_error(message):
@@ -97,9 +85,6 @@ class DoubanFmFactory(ClientFactory):
         return self.protocol
 
 if __name__ == '__main__':
-    import sys
-    reload(sys)
-    sys.setdefaultencoding('utf-8')
-
+    reload_sys()
     reactor.connectTCP('127.0.0.1', setting.get('port'), DoubanFmFactory())
     reactor.run()

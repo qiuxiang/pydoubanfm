@@ -18,3 +18,9 @@ def download(url, filename):
 def port_is_open(port):
     return socket.socket(
         socket.AF_INET, socket.SOCK_STREAM).connect_ex(('127.0.0.1', port)) == 0
+
+
+def reload_sys():
+    import sys
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
