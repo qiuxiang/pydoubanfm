@@ -130,13 +130,13 @@ class Player:
 
     def remove(self):
         """不再播放当前的歌曲"""
-        self.next('b')
         self.hooks.dispatch('remove')
+        self.next('b')
 
     def skip(self):
         """跳过当前的歌曲"""
-        self.next('s')
         self.hooks.dispatch('skip')
+        self.next('s')
 
     def set_volume(self, value):
         self.player.set_volume(value)
