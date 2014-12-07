@@ -1,4 +1,3 @@
-# coding=utf-8
 from doubanfm import LoginError
 from utils import setting
 
@@ -8,8 +7,15 @@ class Handler:
         self.protocol = _protocol
         self.doubanfm = _protocol.factory.doubanfm
         try:
-            self.data = [item.strip() for item in data.split(' ')]
-            getattr(self, 'action_' + self.data[0])()
+            for row in data.split('\n'):
+                if row:
+                    data = [item.strip() for item in row.split(' ')]
+                    if len(data) == 1:
+                        getattr(self, 'action_' + data[0])()
+                    elif len(data) == 2:
+                        getattr(self, 'action_' + data[0])(data[1])
+                    else:
+                        getattr(self, 'action_' + data[0])(data[1:])
         except Exception as e:
             self.protocol.send('error', e.message)
             print('error: ' + e.message)
@@ -35,23 +41,20 @@ class Handler:
     def action_skip(self):
         self.doubanfm.skip()
 
-    def action_rate(self):
-        self.doubanfm.rate()
-
     def action_pause(self):
         self.doubanfm.pause()
 
     def action_resume(self):
         self.doubanfm.resume()
 
-    def action_set_kbps(self):
-        self.doubanfm.set_kbps(self.data[1])
+    def action_set_kbps(self, kbps):
+        self.doubanfm.set_kbps(kbps)
 
     def action_get_kbps(self):
         self.protocol.send('kbps', setting.get('kbps'))
 
-    def action_set_channel(self):
-        self.doubanfm.select_channel(self.data[1])
+    def action_set_channel(self, channel_id):
+        self.doubanfm.select_channel(channel_id)
 
     def action_get_channel(self):
         self.protocol.send('channel', setting.get('channel'))
@@ -62,7 +65,7 @@ class Handler:
     def action_count(self):
         self.protocol.send('count', self.doubanfm.playlist_count)
 
-    def action_login(self):
-        result = self.doubanfm.login(self.data[1], self.data[2])
+    def action_login(self, data):
+        result = self.doubanfm.login(data[0], data[1])
         if type(result) is LoginError:
             self.protocol.send('login_failed', result.message)

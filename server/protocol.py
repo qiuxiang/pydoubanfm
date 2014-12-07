@@ -17,4 +17,4 @@ class Protocol(protocol.Protocol):
         Handler(self, data)
 
     def send(self, *data):
-        self.transport.write(json.dumps(data))
+        self.transport.write(json.dumps(data) + '\n')
