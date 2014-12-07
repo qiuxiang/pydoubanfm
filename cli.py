@@ -76,13 +76,14 @@ class DoubanFmClientProtocol(Protocol):
     def on_playlist(playlist):
         print('播放列表：' + json_dumps(playlist))
 
+    @staticmethod
+    def on_state(state):
+        print('当前状态：' + state)
+
 
 class DoubanFmFactory(ClientFactory):
-    def __init__(self):
-        self.protocol = DoubanFmClientProtocol()
-
     def buildProtocol(self, addr):
-        return self.protocol
+        return DoubanFmClientProtocol()
 
 if __name__ == '__main__':
     reload_sys()

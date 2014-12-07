@@ -59,6 +59,9 @@ class Handler:
     def action_get_channel(self):
         self.protocol.send('channel', setting.get('channel'))
 
+    def action_state(self):
+        self.protocol.send('state', self.doubanfm.player.get_state())
+
     def action_playlist(self):
         self.protocol.send('playlist', self.doubanfm.playlist)
 
