@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<interface>
+  <!-- interface-requires gtk+ 3.0 -->
+
+  <object class="GtkWindow" id="window-player">
+    <property name="title">豆瓣FM</property>
+    <property name="resizable">False</property>
+    <property name="icon">../resources/icon.png</property>
+    <property name="window_position">mouse</property>
+    <signal name="delete-event" handler="exit"/>
+    <child>
+      <object class="GtkBox" id="box-body">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkEventBox" id="event-box-image">
+            <signal name="button-release-event" handler="album_cover_clicked"/>
+            <child>
+              <object class="GtkImage" id="image-album-cover"/>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox" id="box-controls">
+            <property name="halign">center</property>
+            <property name="margin_top">8</property>
+            <property name="margin_bottom">8</property>
+            <child>
+              <object class="GtkButton" id="button-playback">
+                <property name="image">image-pause</property>
+                <property name="tooltip_text">暂停</property>
+                <property name="relief">none</property>
+                <property name="can_focus">False</property>
+                <signal name="clicked" handler="playback"/>
+              </object>
+            </child>
+            <child>
+              <object class="GtkToggleButton" id="button-rate">
+                <property name="image">image-rate</property>
+                <property name="tooltip_text">喜欢</property>
+                <property name="relief">none</property>
+                <property name="can_focus">False</property>
+                <signal name="toggled" handler="rate"/>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="button-delete">
+                <property name="image">image-delete</property>
+                <property name="tooltip_text">不再播放</property>
+                <property name="relief">none</property>
+                <property name="can_focus">False</property>
+                <signal name="clicked" handler="remove"/>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="button-next">
+                <property name="image">image-skip</property>
+                <property name="tooltip_text">下一首</property>
+                <property name="relief">none</property>
+                <property name="can_focus">False</property>
+                <signal name="clicked" handler="skip"/>
+              </object>
+            </child>
+            <child>
+              <object class="GtkVolumeButton" id="volume-button">
+                <property name="value">1</property>
+                <property name="use_symbolic">True</property>
+                <signal name="value-changed" handler="set_volume"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">5</property>
+              </packing>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+
+  <object class="GtkImage" id="image-play">
+    <property name="icon_name">media-playback-start</property>
+  </object>
+  <object class="GtkImage" id="image-pause">
+    <property name="icon_name">media-playback-pause</property>
+  </object>
+  <object class="GtkImage" id="image-rate">
+    <property name="icon_name">emblem-favorite</property>
+  </object>
+  <object class="GtkImage" id="image-skip">
+    <property name="icon_name">media-skip-forward</property>
+  </object>
+  <object class="GtkImage" id="image-delete">
+    <property name="icon_name">edit-delete</property>
+  </object>
+
+  <object class="GtkMenu" id="indicator-menu">
+    <child>
+      <object class="GtkMenuItem" id="menu-item-title">
+        <property name="visible">True</property>
+        <property name="label">标题</property>
+        <signal name="activate" handler="open_album"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="menu-item-open-download-dialog-indicator">
+        <property name="visible">True</property>
+        <property name="label">下载</property>
+        <signal name="activate" handler="open_download_dialog"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="menu-item-separator1">
+        <property name="visible">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="menu-item-playback">
+        <property name="visible">True</property>
+        <property name="label">暂停</property>
+        <signal name="activate" handler="playback"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="menu-item-skip">
+        <property name="visible">True</property>
+        <property name="label">跳过</property>
+        <signal name="activate" handler="skip"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="menu-item-rate">
+        <property name="visible">True</property>
+        <property name="label">喜欢</property>
+        <signal name="activate" handler="rate"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="menu-item-delete">
+        <property name="visible">True</property>
+        <property name="label">不再播放</property>
+        <signal name="activate" handler="remove"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="menu-item-separator3">
+        <property name="visible">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="menu-item-kbps">
+        <property name="visible">True</property>
+        <property name="label">码率</property>
+        <child type="submenu">
+          <object class="GtkMenu" id="menu-kbps"/>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="menu-item-channels">
+        <property name="visible">True</property>
+        <property name="label">频道</property>
+        <child type="submenu">
+          <object class="GtkMenu" id="menu-channels"/>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="menu-item-separator4">
+        <property name="visible">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="menu-item-login">
+        <property name="visible">True</property>
+        <property name="label">登录</property>
+        <signal name="activate" handler="show_login_window"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="menu-item-exit">
+        <property name="visible">True</property>
+        <property name="label">退出</property>
+        <signal name="activate" handler="exit"/>
+      </object>
+    </child>
+  </object>
+
+  <object class="GtkMenu" id="menu-popup">
+    <child>
+      <object class="GtkMenuItem" id="menu-item-view-album">
+        <property name="visible">True</property>
+        <property name="label">查看专辑</property>
+        <signal name="activate" handler="open_album"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="menu-item-open-download-dialog">
+        <property name="visible">True</property>
+        <property name="label">下载</property>
+        <signal name="activate" handler="open_download_dialog"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="menu-item-separator5">
+        <property name="visible">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="menu-item-popup-login">
+        <property name="visible">True</property>
+        <property name="label">登录</property>
+        <signal name="activate" handler="show_login_window"/>
+      </object>
+    </child>
+  </object>
+
+  <object class="GtkWindow" id="window-login">
+    <property name="title">登录豆瓣FM</property>
+    <property name="resizable">False</property>
+    <property name="window_position">center</property>
+    <signal name="delete-event" handler="hide_login_window"/>
+    <child>
+      <object class="GtkBox" id="box-login">
+        <property name="orientation">vertical</property>
+        <property name="margin_left">40</property>
+        <property name="margin_right">40</property>
+        <property name="margin_top">24</property>
+        <property name="margin_bottom">24</property>
+        <property name="spacing">8</property>
+        <child>
+          <object class="GtkEntry" id="entry-email">
+            <property name="placeholder_text">邮箱</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkEntry" id="entry-password">
+            <property name="visibility">False</property>
+            <property name="invisible_char">●</property>
+            <property name="placeholder_text">密码</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="button-login">
+            <property name="label">登录</property>
+            <signal name="clicked" handler="do_login"/>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
