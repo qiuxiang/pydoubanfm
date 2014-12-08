@@ -1,3 +1,4 @@
+# coding: utf-8
 import requests
 import socket
 import json
@@ -24,3 +25,18 @@ def reload_sys():
     import sys
     reload(sys)
     sys.setdefaultencoding('utf-8')
+
+
+def stars(rating):
+    rating_round = int(round(rating))
+    result = ''
+    for i in range(0, 5):
+        if rating_round > i:
+            result += '★'
+        else:
+            result += '☆'
+    return result + ' ' + str(rating)
+
+
+def second2time(second):
+    return '%d:%d' % (second / 60, second % 60)

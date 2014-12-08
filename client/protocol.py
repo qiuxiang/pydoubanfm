@@ -2,7 +2,7 @@
 import json
 import threading
 from twisted.internet.protocol import Protocol as TwistedProtocol
-from utils import json_dumps
+from utils import stars, second2time
 
 
 class Protocol(TwistedProtocol):
@@ -26,50 +26,66 @@ class Protocol(TwistedProtocol):
                     print('error: ' + e.message)
 
     def on_error(self, message):
-        print('error: ' + message)
+        print('error: %s\n' % message)
 
     def on_user_info(self, user_info):
         print('用户：%s <%s>\n' % (user_info['user_name'], user_info['email']))
 
     def on_song(self, song):
-        print('标题：%s\n艺术家：%s\n专辑：%s\n' %
-             (song['title'], song['artist'], song['albumtitle']))
+        print('%s - %s（%s）\n%s（%s）\n%s发布于%ss\n评分：%s\n%s\n' % (
+            song['artist'],
+            song['title'],
+            second2time(song['length']),
+            song['albumtitle'],
+            'http://music.douban.com' + song['album'],
+            song['company'],
+            song['public_time'],
+            stars(song['rating_avg']),
+            ['未收藏', '已收藏'][song['like']],
+        ))
 
     def on_play(self, song):
         self.on_song(song)
 
     def on_skip(self):
-        print('跳过')
+        print('跳过\n')
 
     def on_like(self):
-        print('喜欢')
+        print('喜欢\n')
 
     def on_unlike(self):
-        print('不再喜欢')
+        print('不再喜欢\n')
 
     def on_remove(self):
-        print('不再播放')
+        print('不再播放\n')
 
     def on_pause(self):
-        print('暂停播放')
+        print('暂停播放\n')
 
     def on_resume(self):
-        print('恢复播放')
+        print('恢复播放\n')
 
     def on_login_success(self, user_info):
-        print('登录成功：' + json_dumps(user_info))
+        print('登录成功')
+        self.on_user_info(user_info)
 
     def on_kbps(self, kbps):
-        print('当前码率：' + kbps + 'kbps')
+        print('当前码率：%skbps\n' % kbps)
 
     def on_channel(self, channel_id):
-        print('当前频道：' + channel_id)
+        print('当前频道：%\n' + channel_id)
 
     def on_channels(self, channels):
-        print('频道列表：' + json_dumps(channels))
+        print('频道列表：')
+        for channel in channels:
+            print('%s（%s）' % (channel['name'], channel['channel_id']))
+        print()
 
     def on_playlist(self, playlist):
-        print('播放列表：' + json_dumps(playlist))
+        print('播放列表：')
+        for song in playlist:
+            print('%s - %s（%s）' %(song['artist'], song['title'], song['albumtitle']))
+        print('')
 
     def on_state(self, state):
-        print('当前状态：' + state)
+        print('当前状态：%s\n' % state)
