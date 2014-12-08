@@ -85,7 +85,7 @@ class Protocol(BaseProtocol):
                 song['artist'],
                 song['albumtitle']))
         self.get_widget('menu-item-title').set_label(
-            self.song['title'] + ' - ' + self.song['artist'])
+            self.song['artist'] + ' - ' + self.song['title'])
 
         if song['like']:
             self.get_widget('button-rate').set_active(True)
