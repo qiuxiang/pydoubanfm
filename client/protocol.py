@@ -29,13 +29,14 @@ class Protocol(TwistedProtocol):
         print('error: ' + message)
 
     def on_user_info(self, user_info):
-        print('当前用户：' + json_dumps(user_info))
+        print('用户：%s <%s>\n' % (user_info['user_name'], user_info['email']))
 
     def on_song(self, song):
-        print('当前播放：' + json_dumps(song))
+        print('标题：%s\n艺术家：%s\n专辑：%s\n' %
+             (song['title'], song['artist'], song['albumtitle']))
 
     def on_play(self, song):
-        print('当前播放：' + json_dumps(song))
+        self.on_song(song)
 
     def on_skip(self):
         print('跳过')
