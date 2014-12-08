@@ -1,39 +1,34 @@
 # coding: utf-8
-from gi.repository import GLib, Gtk, GdkPixbuf
 import os
 import threading
-from twisted.internet import gtk3reactor
-gtk3reactor.install()
-from twisted.internet.protocol import ClientFactory
-from twisted.internet import reactor
-from client import Protocol
-from utils import setting, reload_sys
 import webbrowser
+from gi.repository import GLib, Gtk, GdkPixbuf
+from client import Protocol as BaseProtocol
 
 
-class DoubanFmClientProtocol(Protocol):
+class Protocol(BaseProtocol):
     def __init__(self):
         self.widgets = {}
         self.builder = Gtk.Builder()
-        self.builder.add_from_file('doubanfm.glade')
+        self.builder.add_from_file('gtk/doubanfm.glade')
         self.builder.connect_signals(self)
         self.builder.get_object('window-player').show_all()
         self.init_indicator()
 
     def connectionMade(self):
-        Protocol.connectionMade(self)
+        BaseProtocol.connectionMade(self)
         self.transport.write('state\nget_kbps\nget_channel\nchannels\nuser_info\nsong')
 
     def on_channel(self, channel):
-        Protocol.on_channel(self, channel)
+        BaseProtocol.on_channel(self, channel)
         self.channel = int(channel)
 
     def on_user_info(self, user_info):
-        Protocol.on_user_info(self, user_info)
+        BaseProtocol.on_user_info(self, user_info)
         self.user = user_info
 
     def on_kbps(self, kbps):
-        Protocol.on_kbps(self, kbps)
+        BaseProtocol.on_kbps(self, kbps)
         for kbps_list in ['  64', '128', '192']:
             item = Gtk.CheckMenuItem(kbps_list + ' Kbps', visible=True)
             if str(kbps) == kbps_list.lstrip():
@@ -43,7 +38,7 @@ class DoubanFmClientProtocol(Protocol):
             self.get_widget('menu-kbps').append(item)
 
     def on_channels(self, channels):
-        Protocol.on_channels(self, channels)
+        BaseProtocol.on_channels(self, channels)
         for channel in channels:
             item = Gtk.CheckMenuItem(channel['name'], visible=True)
             if channel['channel_id'] == self.channel:
@@ -59,7 +54,7 @@ class DoubanFmClientProtocol(Protocol):
             self.transport.write('pause')
 
     def on_state(self, state):
-        Protocol.on_state(self, state)
+        BaseProtocol.on_state(self, state)
         if state == 'playing':
             self.on_resume()
         else:
@@ -72,14 +67,14 @@ class DoubanFmClientProtocol(Protocol):
         self.transport.write('skip')
 
     def on_skip(self):
-        Protocol.on_skip(self)
+        BaseProtocol.on_skip(self)
 
     def on_play(self, song):
-        Protocol.on_play(self, song)
+        BaseProtocol.on_play(self, song)
         self.on_song(song)
 
     def on_song(self, song):
-        Protocol.on_song(self, song)
+        BaseProtocol.on_song(self, song)
         self.song = song
         self.get_widget('image-album-cover').set_from_pixbuf(
             GdkPixbuf.Pixbuf.new_from_file_at_scale(
@@ -98,19 +93,19 @@ class DoubanFmClientProtocol(Protocol):
             self.get_widget('button-rate').set_active(False)
 
     def on_like(self):
-        Protocol.on_like(self)
+        BaseProtocol.on_like(self)
         self.get_widget('button-rate').set_tooltip_text('取消喜欢')
         self.get_widget('menu-item-rate').set_label('取消喜欢')
         self.get_widget('button-rate').set_active(True)
 
     def on_unlike(self):
-        Protocol.on_unlike(self)
+        BaseProtocol.on_unlike(self)
         self.get_widget('button-rate').set_tooltip_text('喜欢')
         self.get_widget('menu-item-rate').set_label('喜欢')
         self.get_widget('button-rate').set_active(False)
 
     def on_pause(self):
-        Protocol.on_pause(self)
+        BaseProtocol.on_pause(self)
         self.get_widget('button-playback').set_image(
             self.get_widget('image-play'))
         self.get_widget('button-playback').set_tooltip_text('播放')
@@ -120,7 +115,7 @@ class DoubanFmClientProtocol(Protocol):
         pass
 
     def on_resume(self):
-        Protocol.on_resume(self)
+        BaseProtocol.on_resume(self)
         self.get_widget('button-playback').set_image(
             self.get_widget('image-pause'))
         self.get_widget('button-playback').set_tooltip_text('暂停')
@@ -174,7 +169,7 @@ class DoubanFmClientProtocol(Protocol):
         self.transport.write('remove')
 
     def on_login_success(self, user_info):
-        Protocol.on_login_success(self, user_info)
+        BaseProtocol.on_login_success(self, user_info)
         self.get_widget('window-login').hide()
         self.update_notify(
             '登录成功',
@@ -210,13 +205,3 @@ class DoubanFmClientProtocol(Protocol):
         dialog.format_secondary_text(message)
         dialog.run()
         dialog.destroy()
-
-
-class DoubanFmFactory(ClientFactory):
-    def buildProtocol(self, addr):
-        return DoubanFmClientProtocol()
-
-if __name__ == '__main__':
-    reload_sys()
-    reactor.connectTCP('127.0.0.1', setting.get('port'), DoubanFmFactory())
-    reactor.run()

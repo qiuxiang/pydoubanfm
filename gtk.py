@@ -1,14 +1,10 @@
 #!/usr/bin/env python
+from twisted.internet import gtk3reactor
+gtk3reactor.install()
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor
-from client import Protocol as BaseProtocol
+from gtk import Protocol
 from utils import setting, reload_sys
-
-
-class Protocol(BaseProtocol):
-    def connectionMade(self):
-        BaseProtocol.connectionMade(self)
-        self.transport.write('user_info\nsong')
 
 
 class Factory(ClientFactory):
@@ -19,3 +15,4 @@ if __name__ == '__main__':
     reload_sys()
     reactor.connectTCP('127.0.0.1', setting.get('port'), Factory())
     reactor.run()
+
