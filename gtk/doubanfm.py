@@ -28,6 +28,19 @@ class Protocol(BaseProtocol):
     def on_user_info(self, user_info):
         BaseProtocol.on_user_info(self, user_info)
         self.user = user_info
+        self.set_login_state()
+
+    def on_login_failed(self, message):
+        BaseProtocol.on_login_failed(self, message)
+        self.alert(Gtk.MessageType.WARNING, '登录失败', message)
+
+    def set_login_state(self):
+        if self.user:
+            label = '注销'
+        else:
+            label = '登录'
+        self.get_widget('menu-item-login').set_label(label)
+        self.get_widget('menu-item-popup-login').set_label(label)
 
     def on_kbps(self, kbps):
         BaseProtocol.on_kbps(self, kbps)
@@ -187,11 +200,9 @@ class Protocol(BaseProtocol):
 
     def on_login_success(self, user_info):
         BaseProtocol.on_login_success(self, user_info)
+        self.user = user_info
+        self.set_login_state()
         self.get_widget('window-login').hide()
-        self.update_notify(
-            '登录成功',
-            self.user_info['user_name'] + ', ' +
-            self.user_info['email'], self.icon_file)
 
     def init_indicator(self):
         try:

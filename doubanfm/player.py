@@ -7,7 +7,7 @@ from gi.repository import Notify
 Notify.init(__name__)
 
 from lib import Hooks, GstPlayer
-from utils import setting, download, json_dump
+from utils import setting, download, json_dump, __root__
 from .proxy import Proxy, LoginError
 
 
@@ -68,6 +68,10 @@ class Player:
             self.proxy.session.cookies.save()
             self.hooks.dispatch('login_success')
             json_dump(self.user_info, setting.user_file)
+            self.show_notify(
+                '登录成功',
+                self.user_info['user_name'] + ' <' +
+                self.user_info['email'] + '>', __root__ + '/resources/icon.png')
             return self.user_info
         except LoginError as e:
             return e

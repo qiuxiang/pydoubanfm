@@ -29,7 +29,10 @@ class Protocol(TwistedProtocol):
         print('消息处理出错: %s' % message)
 
     def on_user_info(self, user_info):
-        print('用户：%s <%s>' % (user_info['user_name'], user_info['email']))
+        if user_info:
+            print('用户：%s <%s>' % (user_info['user_name'], user_info['email']))
+        else:
+            print('用户：None')
 
     def on_song(self, song):
         print('当前播放：\n  %s - %s（%s）\n  %s（%s）\n  %s发布于%ss\n  评分：%s\n  %s' % (
@@ -68,6 +71,9 @@ class Protocol(TwistedProtocol):
     def on_login_success(self, user_info):
         print('登录成功')
         self.on_user_info(user_info)
+
+    def on_login_failed(self, message):
+        print('登录失败：%s' % message)
 
     def on_kbps(self, kbps):
         print('当前码率：%skbps' % kbps)
