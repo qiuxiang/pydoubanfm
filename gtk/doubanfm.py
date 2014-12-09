@@ -68,7 +68,11 @@ class Protocol(BaseProtocol):
             self.on_pause()
 
     def rate(self, widget):
-        pass
+        if not self.rate_flag:
+            if self.song['like']:
+                self.transport.write('unlike')
+            else:
+                self.transport.write('like')
 
     def skip(self, widget):
         self.transport.write('skip')
@@ -94,21 +98,27 @@ class Protocol(BaseProtocol):
             self.song['artist'] + ' - ' + self.song['title'])
 
         if song['like']:
-            self.get_widget('button-rate').set_active(True)
+            self.on_like()
         else:
-            self.get_widget('button-rate').set_active(False)
+            self.on_unlike()
 
     def on_like(self):
         BaseProtocol.on_like(self)
+        self.song['like'] = True
         self.get_widget('button-rate').set_tooltip_text('取消喜欢')
         self.get_widget('menu-item-rate').set_label('取消喜欢')
+        self.rate_flag = True
         self.get_widget('button-rate').set_active(True)
+        self.rate_flag = False
 
     def on_unlike(self):
         BaseProtocol.on_unlike(self)
+        self.song['like'] = False
         self.get_widget('button-rate').set_tooltip_text('喜欢')
         self.get_widget('menu-item-rate').set_label('喜欢')
+        self.rate_flag = True
         self.get_widget('button-rate').set_active(False)
+        self.rate_flag = False
 
     def on_pause(self):
         BaseProtocol.on_pause(self)
