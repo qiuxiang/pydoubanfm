@@ -43,6 +43,7 @@ class Protocol(BaseProtocol):
         self.get_widget('menu-item-popup-login').set_label(label)
 
     def on_kbps(self, kbps):
+        # FIXME
         BaseProtocol.on_kbps(self, kbps)
         self.kbps = kbps
         self.kbps_widgets[kbps].set_active(True)
@@ -58,12 +59,11 @@ class Protocol(BaseProtocol):
             self.kbps_widgets[kbps] = item
 
     def on_channels(self, channels):
+        # FIXME
         BaseProtocol.on_channels(self, channels)
+        group = Gtk.RadioMenuItem()
         for channel in channels:
-            item = Gtk.CheckMenuItem(channel['name'], visible=True)
-            if int(channel['channel_id']) == self.channel:
-                item.set_active(True)
-                self.widget_channel = item
+            item = Gtk.RadioMenuItem(channel['name'], visible=True, group=group)
             item.connect('activate', self.select_channel, channel['channel_id'])
             self.get_widget('menu-channels').append(item)
 
@@ -111,12 +111,19 @@ class Protocol(BaseProtocol):
             self.song['artist'] + ' - ' + self.song['title'])
 
         if song['like']:
-            self.on_like()
+            self.set_like()
         else:
-            self.on_unlike()
+            self.set_unlike()
 
     def on_like(self):
         BaseProtocol.on_like(self)
+        self.set_like()
+
+    def on_unlike(self):
+        BaseProtocol.on_unlike(self)
+        self.set_unlike()
+
+    def set_like(self):
         self.song['like'] = True
         self.get_widget('button-rate').set_tooltip_text('取消喜欢')
         self.get_widget('menu-item-rate').set_label('取消喜欢')
@@ -124,8 +131,7 @@ class Protocol(BaseProtocol):
         self.get_widget('button-rate').set_active(True)
         self.rate_flag = False
 
-    def on_unlike(self):
-        BaseProtocol.on_unlike(self)
+    def set_unlike(self):
         self.song['like'] = False
         self.get_widget('button-rate').set_tooltip_text('喜欢')
         self.get_widget('menu-item-rate').set_label('喜欢')
