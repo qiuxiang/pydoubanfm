@@ -41,7 +41,7 @@ class Protocol(BaseProtocol):
         BaseProtocol.on_channels(self, channels)
         for channel in channels:
             item = Gtk.CheckMenuItem(channel['name'], visible=True)
-            if channel['channel_id'] == self.channel:
+            if int(channel['channel_id']) == self.channel:
                 item.set_active(True)
                 self.widget_channel = item
             item.connect('activate', self.select_channel, channel['channel_id'])
@@ -121,7 +121,7 @@ class Protocol(BaseProtocol):
         self.get_widget('menu-item-playback').set_label('暂停')
 
     def select_channel(self, widget, channel_id):
-        self.transport.write('set_channel ' + channel_id)
+        self.transport.write('set_channel ' + str(channel_id))
 
     def set_kbps(self, widget, kbps):
         self.transport.write('set_kbps ' + kbps)
