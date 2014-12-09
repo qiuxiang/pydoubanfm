@@ -14,10 +14,12 @@ class Protocol(BaseProtocol):
         self.builder.connect_signals(self)
         self.builder.get_object('window-player').show_all()
         self.init_indicator()
+        self.init_kbps()
 
     def connectionMade(self):
         BaseProtocol.connectionMade(self)
-        self.transport.write('state\nget_kbps\nget_channel\nchannels\nuser_info\nsong')
+        self.transport.write(
+            'state\nget_kbps\nget_channel\nchannels\nuser_info\nsong')
 
     def on_channel(self, channel):
         BaseProtocol.on_channel(self, channel)
@@ -29,13 +31,18 @@ class Protocol(BaseProtocol):
 
     def on_kbps(self, kbps):
         BaseProtocol.on_kbps(self, kbps)
-        for kbps_list in ['  64', '128', '192']:
-            item = Gtk.CheckMenuItem(kbps_list + ' Kbps', visible=True)
-            if str(kbps) == kbps_list.lstrip():
-                item.set_active(True)
-                self.widget_kbps = item
-            item.connect('activate', self.set_kbps, kbps_list.lstrip())
+        self.kbps = kbps
+        self.kbps_widgets[kbps].set_active(True)
+
+    def init_kbps(self):
+        group = Gtk.RadioMenuItem()
+        self.kbps_widgets = {}
+        for kbps in [64, 128, 192]:
+            item = Gtk.RadioMenuItem(
+                str(kbps) + ' Kbps', visible=True, group=group)
+            item.connect('activate', self.set_kbps, kbps)
             self.get_widget('menu-kbps').append(item)
+            self.kbps_widgets[kbps] = item
 
     def on_channels(self, channels):
         BaseProtocol.on_channels(self, channels)
@@ -124,7 +131,8 @@ class Protocol(BaseProtocol):
         self.transport.write('set_channel ' + str(channel_id))
 
     def set_kbps(self, widget, kbps):
-        self.transport.write('set_kbps ' + kbps)
+        if not self.kbps == kbps:
+            self.transport.write('set_kbps ' + str(kbps))
 
     def open_album(self, widget):
         webbrowser.open('http://music.douban.com' + self.song['album'])
