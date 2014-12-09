@@ -89,8 +89,8 @@ class Player:
 
     def select_channel(self, channel_id):
         setting.put('channel', channel_id)
-        self.next('n')
         self.hooks.dispatch('channel_change')
+        self.next('n')
 
     def pause(self):
         self.player.pause()
