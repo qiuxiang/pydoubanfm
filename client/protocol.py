@@ -26,13 +26,13 @@ class Protocol(TwistedProtocol):
                     print('error: ' + e.message)
 
     def on_error(self, message):
-        print('error: %s\n' % message)
+        print('消息处理出错: %s' % message)
 
     def on_user_info(self, user_info):
-        print('用户：%s <%s>\n' % (user_info['user_name'], user_info['email']))
+        print('用户：%s <%s>' % (user_info['user_name'], user_info['email']))
 
     def on_song(self, song):
-        print('%s - %s（%s）\n%s（%s）\n%s发布于%ss\n评分：%s\n%s\n' % (
+        print('当前播放：\n  %s - %s（%s）\n  %s（%s）\n  %s发布于%ss\n  评分：%s\n  %s' % (
             song['artist'],
             song['title'],
             second2time(song['length']),
@@ -48,44 +48,42 @@ class Protocol(TwistedProtocol):
         self.on_song(song)
 
     def on_skip(self):
-        print('跳过\n')
+        print('跳过')
 
     def on_like(self):
-        print('喜欢\n')
+        print('喜欢')
 
     def on_unlike(self):
-        print('不再喜欢\n')
+        print('不再喜欢')
 
     def on_remove(self):
-        print('不再播放\n')
+        print('不再播放')
 
     def on_pause(self):
-        print('暂停播放\n')
+        print('暂停播放')
 
     def on_resume(self):
-        print('恢复播放\n')
+        print('恢复播放')
 
     def on_login_success(self, user_info):
         print('登录成功')
         self.on_user_info(user_info)
 
     def on_kbps(self, kbps):
-        print('当前码率：%skbps\n' % kbps)
+        print('当前码率：%skbps' % kbps)
 
     def on_channel(self, channel_id):
-        print('当前频道：%s\n' % channel_id)
+        print('当前频道：%s' % channel_id)
 
     def on_channels(self, channels):
         print('频道列表：')
         for channel in channels:
             print('  - %s（%s）' % (channel['name'], channel['channel_id']))
-        print('')
 
     def on_playlist(self, playlist):
         print('播放列表：')
         for song in playlist:
             print('  %s - %s <%s>' %(song['artist'], song['title'], song['albumtitle']))
-        print('')
 
     def on_state(self, state):
-        print('%s\n' % state)
+        print(state)
