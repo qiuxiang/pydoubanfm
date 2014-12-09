@@ -1,7 +1,10 @@
 # coding: utf-8
+import os
 import requests
 import socket
 import json
+
+__root__ = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 
 def json_dump(data, filename):
