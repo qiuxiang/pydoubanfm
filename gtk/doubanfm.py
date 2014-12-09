@@ -71,7 +71,6 @@ class Protocol(BaseProtocol):
 
     def on_play(self, song):
         BaseProtocol.on_play(self, song)
-        self.on_song(song)
 
     def on_song(self, song):
         BaseProtocol.on_song(self, song)
