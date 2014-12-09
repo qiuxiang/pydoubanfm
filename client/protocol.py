@@ -73,19 +73,19 @@ class Protocol(TwistedProtocol):
         print('当前码率：%skbps\n' % kbps)
 
     def on_channel(self, channel_id):
-        print('当前频道：%\n' + channel_id)
+        print('当前频道：%s\n' % channel_id)
 
     def on_channels(self, channels):
         print('频道列表：')
         for channel in channels:
-            print('%s（%s）' % (channel['name'], channel['channel_id']))
-        print()
+            print('  - %s（%s）' % (channel['name'], channel['channel_id']))
+        print('')
 
     def on_playlist(self, playlist):
         print('播放列表：')
         for song in playlist:
-            print('%s - %s（%s）' %(song['artist'], song['title'], song['albumtitle']))
+            print('  %s - %s（%s）' %(song['artist'], song['title'], song['albumtitle']))
         print('')
 
     def on_state(self, state):
-        print('当前状态：%s\n' % state)
+        print('%s\n' % state)
