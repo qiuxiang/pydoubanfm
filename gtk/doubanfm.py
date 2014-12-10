@@ -3,14 +3,14 @@ import threading
 import webbrowser
 from gi.repository import GLib, Gtk, GdkPixbuf
 from client import Protocol as BaseProtocol
-from utils import __root__, download, notify
+from utils import resources, download, notify
 
 
 class Protocol(BaseProtocol):
     def __init__(self):
         self.widgets = {}
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(__root__ + '/gtk/doubanfm.glade')
+        self.builder.add_from_file(resources['glade'])
         self.builder.connect_signals(self)
         self.builder.get_object('window-player').show_all()
         self.init_indicator()
@@ -223,7 +223,7 @@ class Protocol(BaseProtocol):
                 __name__, 'applications-multimedia',
                 AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
             self.indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
-            self.indicator.set_icon(__root__ + '/resources/icon.png')
+            self.indicator.set_icon(resources['icon'])
             self.indicator.set_menu(self.get_widget('indicator-menu'))
         except ImportError:
             pass
