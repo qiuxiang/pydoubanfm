@@ -44,7 +44,7 @@ class Factory(protocol.Factory):
 
     def on_channel_change(self):
         self.broadcast('channel', setting.get('channel'))
-        print('channel: ' + setting.get('channel'))
+        print('channel: %s' % setting.get('channel'))
 
     def on_skip(self):
         self.broadcast('skip')
