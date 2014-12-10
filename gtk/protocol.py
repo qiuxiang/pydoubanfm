@@ -52,8 +52,7 @@ class Protocol(BaseProtocol):
         group = Gtk.RadioMenuItem()
         self.widget_kbps = {}
         for kbps in [64, 128, 192]:
-            item = Gtk.RadioMenuItem(
-                str(kbps) + ' Kbps', visible=True, group=group)
+            item = Gtk.RadioMenuItem(kbps, visible=True, group=group)
             item.connect('activate', self.set_kbps, kbps)
             self.get_widget('menu-kbps').append(item)
             self.widget_kbps[kbps] = item
