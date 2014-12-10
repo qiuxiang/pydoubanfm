@@ -160,7 +160,7 @@ class Protocol(BaseProtocol):
         self.transport.write('set_channel ' + str(channel_id))
 
     def set_kbps(self, widget, kbps):
-        if not self.kbps == kbps:
+        if widget.get_active() and not self.kbps == kbps:
             self.transport.write('set_kbps ' + str(kbps))
 
     def open_album(self, widget):
