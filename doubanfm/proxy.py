@@ -52,6 +52,11 @@ class Proxy:
         self.params['token'] = data['token']
         self.logged = True
 
+    def get_liked_songs(self, count=20):
+        self.params['count'] = count
+        return self.request(
+            'get', 'radio/liked_songs', params=self.params).json()['songs']
+
 
 class LoginError(BaseException):
     """Login error exception"""
