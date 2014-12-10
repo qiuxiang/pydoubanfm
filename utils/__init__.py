@@ -3,10 +3,8 @@ import os
 import requests
 import socket
 import json
-
+import eyeD3
 from gi.repository import Notify
-import subprocess
-
 Notify.init(__name__)
 
 __root__ = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
@@ -63,13 +61,13 @@ def second2time(second):
 
 
 def add_tag(filename, tags):
-    subprocess.call([
-        'eyeD3',
-        '--artist', tags['artist'],
-        '--album', tags['albumtitle'],
-        '--title', tags['title'],
-        '--year', tags['public_time'],
-        '--set-encoding=utf8',
-        '--add-image=%s:FRONT_COVER' % tags['picture_file'],
-        '--to-v2.4',
-        filename])
+    tag = eyeD3.Tag()
+    tag.link(filename)
+    tag.header.setVersion(eyeD3.ID3_ANY_VERSION)
+    tag.setTextEncoding(eyeD3.UTF_8_ENCODING)
+    tag.setTitle(tags['title'])
+    tag.setAlbum(tags['albumtitle'])
+    tag.setArtist(tags['artist'])
+    tag.setDate(tags['public_time'])
+    tag.addImage(3, tags['picture_file'])
+    tag.update()
