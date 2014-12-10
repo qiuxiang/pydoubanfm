@@ -7,14 +7,13 @@ from gi.repository import Notify
 Notify.init(__name__)
 
 from lib import Hooks, GstPlayer
-from utils import setting, download, json_dump, __root__
+from utils import setting, download, json_dump, notify
 from .proxy import Proxy, LoginError
 
 
 class Player:
     def __init__(self):
         self.hooks = Hooks()
-        self.notify = Notify.Notification.new('', '', '')
         self.song = {'sid': -1}
         self.playlist_count = 0
         self.player = GstPlayer()
@@ -36,15 +35,6 @@ class Player:
             self.channels = json.load(open(setting.channels_file))
         else:
             self.update_channels()
-
-    def show_notify(self, title='', content='', picture=''):
-        if not title:
-            title = self.song['title']
-            content = self.song['artist']
-            picture = self.song['picture_file']
-
-        self.notify.update(title, content, picture)
-        self.notify.show()
 
     def update_channels(self):
         self.channels = self.proxy.get_channels()
@@ -68,10 +58,9 @@ class Player:
             self.proxy.session.cookies.save()
             self.hooks.dispatch('login_success')
             json_dump(self.user_info, setting.user_file)
-            self.show_notify(
-                '登录成功',
-                self.user_info['user_name'] + ' <' +
-                self.user_info['email'] + '>', __root__ + '/resources/icon.png')
+            notify('登录成功',
+                   self.user_info['user_name'] + ' <' +
+                   self.user_info['email'] + '>')
             return self.user_info
         except LoginError as e:
             return e
@@ -81,7 +70,7 @@ class Player:
         self.save_album_cover()
         self.player.set_uri(self.song['url'])
         self.player.play()
-        self.show_notify()
+        notify(self.song['title'], self.song['artist'], self.song['picture_file'])
         self.hooks.dispatch('play')
 
     def next(self, operation_type='n'):

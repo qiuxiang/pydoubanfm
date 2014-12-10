@@ -3,7 +3,7 @@ import threading
 import webbrowser
 from gi.repository import GLib, Gtk, GdkPixbuf
 from client import Protocol as BaseProtocol
-from utils import __root__, download
+from utils import __root__, download, notify
 
 
 class Protocol(BaseProtocol):
@@ -179,13 +179,16 @@ class Protocol(BaseProtocol):
             '取消', Gtk.ResponseType.CANCEL,
             '确定', Gtk.ResponseType.OK))
         dialog.set_current_name(
-            self.song['title'] + ' - ' + self.song['artist'] + '.mp3')
+            self.song['artist'] + ' - ' + self.song['title'] + '.mp3')
         dialog.set_current_folder(
             GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOWNLOAD))
         if dialog.run() == Gtk.ResponseType.OK:
-            threading.Thread(target=download, args=(
-                self.song['url'], dialog.get_filename())).start()
+            threading.Thread(target=self.download, args=(dialog.get_filename(),)).start()
         dialog.destroy()
+
+    def download(self, filename):
+        download(self.song['url'], filename)
+        notify('下载完成', filename)
 
     def show_login_window(self, widget):
         if self.user:

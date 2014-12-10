@@ -4,7 +4,21 @@ import requests
 import socket
 import json
 
+from gi.repository import Notify
+Notify.init(__name__)
+
 __root__ = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+
+resources = {
+    'icon': __root__ + '/resources/icon.png'
+}
+
+_notify = Notify.Notification.new('', '', '')
+
+
+def notify(title, content, picture=resources['icon']):
+    _notify.update(title, content, picture)
+    _notify.show()
 
 
 def json_dump(data, filename):
