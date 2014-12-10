@@ -89,7 +89,7 @@ class Protocol(TwistedProtocol):
     def on_playlist(self, playlist):
         print('播放列表：')
         for song in playlist:
-            print('  %s - %s <%s>' %(song['artist'], song['title'], song['albumtitle']))
+            print('  %s - %s <%s>' % (song['artist'], song['title'], song['albumtitle']))
 
     def on_state(self, state):
         print(state)
