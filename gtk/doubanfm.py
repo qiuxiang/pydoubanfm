@@ -3,7 +3,7 @@ import threading
 import webbrowser
 from gi.repository import GLib, Gtk, GdkPixbuf
 from client import Protocol as BaseProtocol
-from utils import __root__
+from utils import __root__, download
 
 
 class Protocol(BaseProtocol):
@@ -19,11 +19,12 @@ class Protocol(BaseProtocol):
     def connectionMade(self):
         BaseProtocol.connectionMade(self)
         self.transport.write(
-            'state\nget_kbps\nget_channel\nchannels\nuser_info\nsong')
+            'state\nget_kbps\nchannels\nget_channel\nuser_info\nsong')
 
-    def on_channel(self, channel):
-        BaseProtocol.on_channel(self, channel)
-        self.channel = int(channel)
+    def on_channel(self, channel_id):
+        BaseProtocol.on_channel(self, channel_id)
+        self.channel_id = int(channel_id)
+        self.widget_channels[channel_id].set_active(True)
 
     def on_user_info(self, user_info):
         BaseProtocol.on_user_info(self, user_info)
@@ -43,29 +44,29 @@ class Protocol(BaseProtocol):
         self.get_widget('menu-item-popup-login').set_label(label)
 
     def on_kbps(self, kbps):
-        # FIXME
         BaseProtocol.on_kbps(self, kbps)
         self.kbps = kbps
-        self.kbps_widgets[kbps].set_active(True)
+        self.widget_kbps[kbps].set_active(True)
 
     def init_kbps(self):
         group = Gtk.RadioMenuItem()
-        self.kbps_widgets = {}
+        self.widget_kbps = {}
         for kbps in [64, 128, 192]:
             item = Gtk.RadioMenuItem(
                 str(kbps) + ' Kbps', visible=True, group=group)
             item.connect('activate', self.set_kbps, kbps)
             self.get_widget('menu-kbps').append(item)
-            self.kbps_widgets[kbps] = item
+            self.widget_kbps[kbps] = item
 
     def on_channels(self, channels):
-        # FIXME
         BaseProtocol.on_channels(self, channels)
         group = Gtk.RadioMenuItem()
+        self.widget_channels = {}
         for channel in channels:
             item = Gtk.RadioMenuItem(channel['name'], visible=True, group=group)
             item.connect('activate', self.select_channel, channel['channel_id'])
             self.get_widget('menu-channels').append(item)
+            self.widget_channels[channel['channel_id']] = item
 
     def playback(self, widget):
         if self.get_widget('button-playback').get_tooltip_text() == '播放':
@@ -157,7 +158,8 @@ class Protocol(BaseProtocol):
         self.get_widget('menu-item-playback').set_label('暂停')
 
     def select_channel(self, widget, channel_id):
-        self.transport.write('set_channel ' + str(channel_id))
+        if widget.get_active() and not self.channel_id == channel_id:
+            self.transport.write('set_channel ' + str(channel_id))
 
     def set_kbps(self, widget, kbps):
         if widget.get_active() and not self.kbps == kbps:
@@ -181,7 +183,7 @@ class Protocol(BaseProtocol):
         dialog.set_current_folder(
             GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOWNLOAD))
         if dialog.run() == Gtk.ResponseType.OK:
-            threading.Thread(target=self.download, args=(
+            threading.Thread(target=download, args=(
                 self.song['url'], dialog.get_filename())).start()
         dialog.destroy()
 
