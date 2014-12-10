@@ -64,9 +64,9 @@ class Protocol(BaseProtocol):
         self.widget_channels = {}
         for channel in channels:
             item = Gtk.RadioMenuItem(channel['name'], visible=True, group=group)
-            item.connect('activate', self.select_channel, channel['channel_id'])
+            item.connect('activate', self.select_channel, int(channel['channel_id']))
             self.get_widget('menu-channels').append(item)
-            self.widget_channels[channel['channel_id']] = item
+            self.widget_channels[int(channel['channel_id'])] = item
 
     def playback(self, widget):
         if self.get_widget('button-playback').get_tooltip_text() == '播放':
