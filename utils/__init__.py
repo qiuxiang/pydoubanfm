@@ -10,8 +10,8 @@ Notify.init(__name__)
 __root__ = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 resources = {
-    'icon': __root__ + '/resources/icon.png',
-    'glade': __root__ + '/resources/doubanfm.glade',
+    'icon': __root__ + '/res/icon.png',
+    'glade': __root__ + '/res/doubanfm.glade',
 }
 
 _notify = Notify.Notification.new('', '', '')
