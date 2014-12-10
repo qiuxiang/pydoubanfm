@@ -1,1 +1,1 @@
-from .doubanfm import Protocol
+from .protocol import Protocol
