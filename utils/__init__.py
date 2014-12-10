@@ -5,6 +5,8 @@ import socket
 import json
 
 from gi.repository import Notify
+import subprocess
+
 Notify.init(__name__)
 
 __root__ = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
@@ -58,3 +60,16 @@ def stars(rating):
 
 def second2time(second):
     return '%d:%d' % (second / 60, second % 60)
+
+
+def add_tag(filename, tags):
+    subprocess.call([
+        'eyeD3',
+        '--artist', tags['artist'],
+        '--album', tags['albumtitle'],
+        '--title', tags['title'],
+        '--year', tags['public_time'],
+        '--set-encoding=utf8',
+        '--add-image=%s:FRONT_COVER' % tags['picture_file'],
+        '--to-v2.4',
+        filename])

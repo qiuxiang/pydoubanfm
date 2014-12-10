@@ -3,7 +3,7 @@ import threading
 import webbrowser
 from gi.repository import GLib, Gtk, GdkPixbuf
 from client import Protocol as BaseProtocol
-from utils import resources, download, notify
+from utils import resources, download, notify, add_tag
 
 
 class Protocol(BaseProtocol):
@@ -188,6 +188,7 @@ class Protocol(BaseProtocol):
 
     def download(self, filename):
         download(self.song['url'], filename)
+        add_tag(filename, self.song)
         notify('下载完成', filename)
 
     def show_login_window(self, widget):
