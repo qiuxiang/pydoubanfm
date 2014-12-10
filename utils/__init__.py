@@ -69,5 +69,5 @@ def add_tag(filename, tags):
     tag.setAlbum(tags['albumtitle'])
     tag.setArtist(tags['artist'])
     tag.setDate(tags['public_time'])
-    tag.addImage(3, tags['picture_file'])
+    tag.addImage(eyeD3.frames.ImageFrame.FRONT_COVER, tags['picture_file'])
     tag.update()
