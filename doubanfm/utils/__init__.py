@@ -6,18 +6,26 @@ import requests
 import eyeD3
 
 from gi.repository import Notify
-Notify.init(__name__)
+Notify.init('pydoubanfm')
+
+
+class path:
+    root = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/'
+    local = os.path.expanduser('~/.pydoubanfm/')
+    album_cover = local + 'album_cover/'
+    setting = local + 'setting.json'
+    channels = local + 'channels.json'
+    user = local + 'user.json'
+    cookies = local + 'cookies.txt'
+
+
+class res:
+    icon = path.root + 'res/icon.png'
+    glade = path.root + 'res/doubanfm.glade'
+
 
 _notify = Notify.Notification.new('', '', '')
-_root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-
-resources = {
-    'icon': _root + '/res/icon.png',
-    'glade': _root + '/res/doubanfm.glade',
-}
-
-
-def notify(title, content, picture=resources['icon']):
+def notify(title, content, picture=res.icon):
     _notify.update(title, content, picture)
     _notify.show()
 
@@ -71,15 +79,6 @@ def add_tag(filename, tags):
     tag.setDate(tags['public_time'])
     tag.addImage(eyeD3.frames.ImageFrame.FRONT_COVER, tags['picture_file'])
     tag.update()
-
-
-class path:
-    local = os.path.expanduser('~/.pydoubanfm/')
-    album_cover = local + 'album_cover/'
-    setting = local + 'setting.json'
-    channels = local + 'channels.json'
-    user = local + 'user.json'
-    cookies = local + 'cookies.txt'
 
 
 class setting:
