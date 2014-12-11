@@ -8,6 +8,7 @@ from ..utils import res, download, notify, add_tag
 
 class Protocol(BaseProtocol):
     def __init__(self):
+        BaseProtocol.__init__(self)
         self.widgets = {}
         self.builder = Gtk.Builder()
         self.builder.add_from_file(res.glade)
