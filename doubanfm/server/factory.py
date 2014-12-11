@@ -1,6 +1,6 @@
 from twisted.internet import protocol
-from doubanfm import Player
-from utils import json_dumps, setting
+from ..lib.core import Player
+from ..utils import json_dumps, setting
 from .protocol import Protocol
 
 

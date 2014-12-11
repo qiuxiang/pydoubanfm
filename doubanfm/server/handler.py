@@ -1,6 +1,6 @@
-from doubanfm import LoginError
-from utils import setting
 from twisted.internet import reactor
+from ..lib.core import LoginError
+from ..utils import setting
 
 
 class Handler:

@@ -2,7 +2,7 @@
 import json
 import threading
 from twisted.internet.protocol import Protocol as TwistedProtocol
-from utils import stars, second2time
+from ..utils import stars, second2time
 
 
 class Protocol(TwistedProtocol):

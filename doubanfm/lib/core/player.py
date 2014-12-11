@@ -2,12 +2,10 @@
 import os
 import json
 import cookielib
-
 from gi.repository import Notify
 Notify.init(__name__)
-
-from lib import Hooks, GstPlayer
-from utils import setting, download, json_dump, notify
+from ...utils import setting, download, json_dump, notify
+from .. import Hooks, GstPlayer
 from .proxy import Proxy, LoginError
 
 

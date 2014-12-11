@@ -2,8 +2,8 @@
 import threading
 import webbrowser
 from gi.repository import GLib, Gtk, GdkPixbuf
-from client import Protocol as BaseProtocol
-from utils import resources, download, notify, add_tag
+from ..utils import resources, download, notify, add_tag
+from .base import Protocol as BaseProtocol
 
 
 class Protocol(BaseProtocol):
