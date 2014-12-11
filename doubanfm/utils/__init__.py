@@ -1,20 +1,20 @@
 # coding: utf-8
 import os
-import requests
-import socket
 import json
+import socket
+import requests
 import eyeD3
+
 from gi.repository import Notify
 Notify.init(__name__)
 
-__root__ = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+_notify = Notify.Notification.new('', '', '')
+_root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 resources = {
-    'icon': __root__ + '/res/icon.png',
-    'glade': __root__ + '/res/doubanfm.glade',
+    'icon': _root + '/res/icon.png',
+    'glade': _root + '/res/doubanfm.glade',
 }
-
-_notify = Notify.Notification.new('', '', '')
 
 
 def notify(title, content, picture=resources['icon']):
@@ -71,3 +71,39 @@ def add_tag(filename, tags):
     tag.setDate(tags['public_time'])
     tag.addImage(eyeD3.frames.ImageFrame.FRONT_COVER, tags['picture_file'])
     tag.update()
+
+
+class path:
+    local = os.path.expanduser('~/.pydoubanfm/')
+    album_cover = local + 'album_cover/'
+    setting = local + 'setting.json'
+    channels = local + 'channels.json'
+    user = local + 'user.json'
+    cookies = local + 'cookies.txt'
+
+
+class setting:
+    @staticmethod
+    def update_file():
+        json_dump(setting.data, path.setting)
+
+    @staticmethod
+    def get(name):
+        return setting.data[name]
+
+    @staticmethod
+    def set(name, value):
+        setting.data[name] = value
+        setting.update_file()
+
+    if not os.path.isdir(path.local):
+        os.mkdir(path.local)
+
+    if not os.path.isdir(path.album_cover):
+        os.mkdir(path.album_cover)
+
+    if os.path.isfile(path.setting):
+        data = json.load(open(path.setting))
+    else:
+        data = {'channel': 0, 'kbps': 192, 'port': 1234}
+        update_file()

@@ -1,7 +1,7 @@
 # coding: utf-8
 import json
 import threading
-from twisted.internet.protocol import Protocol as TwistedProtocol
+from twisted.internet.protocol import Protocol as TwistedProtocol, ClientFactory
 from ..utils import stars, second2time
 
 
@@ -95,3 +95,11 @@ class Protocol(TwistedProtocol):
 
     def on_state(self, state):
         print(state)
+
+
+class Factory(ClientFactory):
+    def __init__(self, protocol):
+        self.protocol = protocol
+
+    def buildProtocol(self, addr):
+        return self.protocol

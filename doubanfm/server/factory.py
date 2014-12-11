@@ -1,7 +1,7 @@
 from twisted.internet import protocol
+from .protocol import Protocol
 from ..lib.core import Player
 from ..utils import json_dumps, setting
-from .protocol import Protocol
 
 
 class Factory(protocol.Factory):

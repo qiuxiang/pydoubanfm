@@ -2,11 +2,13 @@
 import os
 import json
 import cookielib
+
 from gi.repository import Notify
 Notify.init(__name__)
-from ...utils import setting, download, json_dump, notify
-from .. import Hooks, GstPlayer
+
 from .proxy import Proxy, LoginError
+from .. import Hooks, GstPlayer
+from ...utils import setting, download, json_dump, notify, path
 
 
 class Player:
@@ -20,24 +22,24 @@ class Player:
         self.proxy = Proxy()
         self.proxy.set_kbps(setting.get('kbps'))
         self.proxy.session.cookies = \
-            cookielib.LWPCookieJar(setting.cookies_file)
+            cookielib.LWPCookieJar(path.cookies)
 
         try:
             self.proxy.session.cookies.load()
-            self.user_info = json.load(open(setting.user_file))
+            self.user_info = json.load(open(path.user))
             self.proxy.set_auth(self.user_info)
         except:
             pass
 
-        if os.path.isfile(setting.channels_file):
-            self.channels = json.load(open(setting.channels_file))
+        if os.path.isfile(path.channels):
+            self.channels = json.load(open(path.channels))
         else:
             self.update_channels()
 
     def update_channels(self):
         self.channels = self.proxy.get_channels()
         self.channels.insert(0, {'name': '红心兆赫', 'channel_id': -3})
-        json_dump(self.channels, setting.channels_file)
+        json_dump(self.channels, path.channels)
 
     def update_playlist(self, operation_type):
         self.playlist = self.proxy.get_playlist(
@@ -46,7 +48,7 @@ class Player:
 
     def set_kbps(self, kbps):
         self.proxy.set_kbps(kbps)
-        setting.put('kbps', kbps)
+        setting.set('kbps', kbps)
         self.hooks.dispatch('kbps_change')
 
     def login(self, email, password):
@@ -55,7 +57,7 @@ class Player:
             self.user_info = self.proxy.login(email, password)
             self.proxy.session.cookies.save()
             self.hooks.dispatch('login_success')
-            json_dump(self.user_info, setting.user_file)
+            json_dump(self.user_info, path.user)
             notify('登录成功',
                    self.user_info['user_name'] + ' <' +
                    self.user_info['email'] + '>')
@@ -79,7 +81,7 @@ class Player:
         self.play()
 
     def select_channel(self, channel_id):
-        setting.put('channel', channel_id)
+        setting.set('channel', channel_id)
         self.hooks.dispatch('channel_change')
         self.next('n')
 
@@ -135,12 +137,6 @@ class Player:
 
     def save_album_cover(self):
         self.song['picture_file'] = \
-            setting.album_cover_dir + self.song['picture'].split('/')[-1]
+            path.album_cover + self.song['picture'].split('/')[-1]
         if not os.path.isfile(self.song['picture_file']):
             download(self.song['picture'], self.song['picture_file'])
-
-if __name__ == '__main__':
-    from gi.repository import Gtk
-    doubanfm_player = GstPlayer()
-    doubanfm_player.run()
-    Gtk.main()
