@@ -235,6 +235,10 @@ class Protocol(BaseProtocol):
 
     @staticmethod
     def exit(*args):
+        dialog = Gtk.MessageDialog(
+            None, 0, Gtk.MessageType.INFO, Gtk.ButtonsType.YES_NO, '是否关闭播放服务？')
+        if dialog.run() == Gtk.ResponseType.YES:
+            print('TODO: 关闭播放服务')
         Gtk.main_quit(*args)
 
     @staticmethod
