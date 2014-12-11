@@ -116,6 +116,7 @@ class setting:
 class Factory(ReconnectingClientFactory):
     def __init__(self, protocol):
         self.protocol = protocol
+        self.maxDelay = 1
 
     def buildProtocol(self, address):
         return self.protocol
