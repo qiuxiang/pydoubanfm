@@ -4,7 +4,8 @@ import json
 import socket
 import requests
 import eyeD3
-
+from twisted.internet import reactor
+from twisted.internet.protocol import ClientFactory
 from gi.repository import Notify
 Notify.init('pydoubanfm')
 
@@ -106,3 +107,25 @@ class setting:
     else:
         data = {'channel': 0, 'kbps': 192, 'port': 1234}
         update_file()
+
+
+class Factory(ClientFactory):
+    def __init__(self, protocol):
+        self.protocol = protocol
+
+    def buildProtocol(self, addr):
+        return self.protocol
+
+    def clientConnectionLost(self, connector, reason):
+        reactor.stop()
+        print('失去连接')
+
+    def clientConnectionFailed(self, connector, reason):
+        reactor.stop()
+        print('连接失败')
+
+
+def run_client(protocol):
+    reload_sys()
+    reactor.connectTCP('127.0.0.1', setting.get('port'), Factory(protocol))
+    reactor.run()
