@@ -245,6 +245,9 @@ class Protocol(BaseProtocol):
 
     @staticmethod
     def alert(alert_type, title, message):
+        """显示一个仅有确定按钮的提示框
+        :param alert_type: Gtk.MessageType
+        """
         dialog = Gtk.MessageDialog(
             None, 0, alert_type, Gtk.ButtonsType.OK, title)
         dialog.format_secondary_text(message)
