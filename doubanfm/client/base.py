@@ -6,10 +6,14 @@ from ..utils import stars, second2time
 
 
 class Protocol(TwistedProtocol):
-    def connectionMade(self):
+    def __init__(self):
         self.input_thread = threading.Thread(target=self.input)
         self.input_thread.setDaemon(True)
-        self.input_thread.start()
+
+    def connectionMade(self):
+        print('连接成功')
+        if hasattr(self, 'input_thread') and not self.input_thread.isAlive():
+            self.input_thread.start()
 
     def input(self):
         while True:

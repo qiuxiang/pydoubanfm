@@ -2,11 +2,15 @@
 import os
 import json
 import socket
+import threading
+import subprocess
 import requests
 import eyeD3
 from twisted.internet import reactor
-from twisted.internet.protocol import ClientFactory
+from twisted.internet.protocol import ReconnectingClientFactory
 from gi.repository import Notify
+from .lib import Daemon
+
 Notify.init('pydoubanfm')
 
 
@@ -18,6 +22,7 @@ class path:
     channels = local + 'channels.json'
     user = local + 'user.json'
     cookies = local + 'cookies.txt'
+    pid = '/var/tmp/doubanfm.pid'
 
 
 class res:
@@ -109,7 +114,7 @@ class setting:
         update_file()
 
 
-class Factory(ClientFactory):
+class Factory(ReconnectingClientFactory):
     def __init__(self, protocol):
         self.protocol = protocol
 
@@ -117,15 +122,29 @@ class Factory(ClientFactory):
         return self.protocol
 
     def clientConnectionLost(self, connector, reason):
-        reactor.stop()
-        print('失去连接')
+        print('失去连接，正在尝试重新连接……')
+        self.retry(connector)
 
     def clientConnectionFailed(self, connector, reason):
-        reactor.stop()
-        print('连接失败')
+        if self.retries:
+            print('连接失败，正在尝试重新连接……')
+        self.retry(connector)
+
+
+class ServerDaemon(Daemon):
+    def run(self):
+        subprocess.call(path.root + 'srv.py')
 
 
 def run_client(protocol):
+    port = setting.get('port')
+    server = ServerDaemon(path.pid)
+    if not port_is_open(port):
+        if os.path.isfile(path.pid):
+            os.remove(path.pid)
+        thread = threading.Thread(target=server.start)
+        thread.setDaemon(True)
+        thread.start()
     reload_sys()
-    reactor.connectTCP('127.0.0.1', setting.get('port'), Factory(protocol))
+    reactor.connectTCP('127.0.0.1', port, Factory(protocol))
     reactor.run()
