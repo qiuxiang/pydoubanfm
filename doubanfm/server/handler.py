@@ -79,4 +79,3 @@ class Handler:
 
     def action_exit(self):
         reactor.stop()
-

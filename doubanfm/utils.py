@@ -11,8 +11,6 @@ from twisted.internet.protocol import ReconnectingClientFactory
 from gi.repository import Notify
 from .lib import Daemon
 
-Notify.init('pydoubanfm')
-
 
 class path:
     root = os.path.abspath(os.path.dirname(__file__)) + '/'
@@ -30,6 +28,7 @@ class res:
     glade = path.root + 'res/doubanfm.glade'
 
 
+Notify.init('pydoubanfm')
 _notify = Notify.Notification.new('', '', '')
 def notify(title, content, picture=res.icon):
     _notify.update(title, content, picture)
@@ -118,11 +117,12 @@ class Factory(ReconnectingClientFactory):
     def __init__(self, protocol):
         self.protocol = protocol
 
-    def buildProtocol(self, addr):
+    def buildProtocol(self, address):
         return self.protocol
 
     def clientConnectionLost(self, connector, reason):
-        reactor.stop()
+        if not reactor._stopped:
+            reactor.stop()
 
     def clientConnectionFailed(self, connector, reason):
         if self.retries:
@@ -132,7 +132,7 @@ class Factory(ReconnectingClientFactory):
 
 class ServerDaemon(Daemon):
     def run(self):
-        subprocess.call(path.root + 'srv.py')
+        subprocess.Popen(['python', path.root + 'srv.py'])
 
 
 def run_client(protocol):
@@ -141,9 +141,7 @@ def run_client(protocol):
     if not port_is_open(port):
         if os.path.isfile(path.pid):
             os.remove(path.pid)
-        thread = threading.Thread(target=server.start)
-        thread.setDaemon(True)
-        thread.start()
+        threading.Thread(target=server.start).start()
     reload_sys()
     reactor.connectTCP('127.0.0.1', port, Factory(protocol))
     reactor.run()
