@@ -233,12 +233,13 @@ class Protocol(BaseProtocol):
             self.widgets[name] = self.builder.get_object(name)
         return self.widgets[name]
 
-    @staticmethod
-    def exit(*args):
+    def exit(self, *args):
         dialog = Gtk.MessageDialog(
             None, 0, Gtk.MessageType.INFO, Gtk.ButtonsType.YES_NO, '是否关闭播放服务？')
         if dialog.run() == Gtk.ResponseType.YES:
             print('TODO: 关闭播放服务')
+            self.transport.write('exit')
+        dialog.destroy()
         Gtk.main_quit(*args)
 
     @staticmethod
