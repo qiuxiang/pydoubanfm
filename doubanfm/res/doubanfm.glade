@@ -6,7 +6,7 @@
   <object class="GtkWindow" id="window-player">
     <property name="title">豆瓣FM</property>
     <property name="resizable">False</property>
-    <property name="icon">../resources/icon.png</property>
+    <property name="icon">icon.png</property>
     <property name="window_position">mouse</property>
     <signal name="delete-event" handler="exit"/>
     <child>
