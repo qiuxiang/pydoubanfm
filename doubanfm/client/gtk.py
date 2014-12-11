@@ -25,7 +25,7 @@ class Protocol(BaseProtocol):
     def on_channel(self, channel_id):
         BaseProtocol.on_channel(self, channel_id)
         self.channel_id = int(channel_id)
-        self.widget_channels[channel_id].set_active(True)
+        self.widget_channels[self.channel_id].set_active(True)
 
     def on_user_info(self, user_info):
         BaseProtocol.on_user_info(self, user_info)
