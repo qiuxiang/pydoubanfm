@@ -10,7 +10,7 @@ Notify.init('pydoubanfm')
 
 
 class path:
-    root = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/'
+    root = os.path.abspath(os.path.dirname(__file__)) + '/'
     local = os.path.expanduser('~/.pydoubanfm/')
     album_cover = local + 'album_cover/'
     setting = local + 'setting.json'
