@@ -1,6 +1,8 @@
+#!/usr/bin/env python
 import os
 import sys
-from .utils import setting
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from doubanfm.utils import setting
 
 
 os.system('echo \'%s\' | nc localhost %s' % (

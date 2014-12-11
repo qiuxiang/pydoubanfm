@@ -1,7 +1,13 @@
+#!/usr/bin/env python
 from twisted.internet.protocol import ClientFactory
 from twisted.internet import reactor
-from .client.base import Protocol as BaseProtocol
-from .utils import setting, reload_sys
+
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+from doubanfm.client.base import Protocol as BaseProtocol
+from doubanfm.utils import setting, reload_sys
 
 
 class Protocol(BaseProtocol):

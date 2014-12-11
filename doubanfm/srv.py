@@ -1,9 +1,16 @@
+#!/usr/bin/env python
 from twisted.internet import gireactor
 gireactor.install()
+
 from twisted.internet import reactor
 from twisted.internet.endpoints import TCP4ServerEndpoint
-from server import Factory
-from utils import setting, port_is_open, reload_sys
+
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+from doubanfm.server import Factory
+from doubanfm.utils import setting, port_is_open, reload_sys
 
 
 reload_sys()
