@@ -1,5 +1,6 @@
 from doubanfm import LoginError
 from utils import setting
+from twisted.internet import reactor
 
 
 class Handler:
@@ -75,3 +76,7 @@ class Handler:
         result = self.doubanfm.login(data[0], data[1])
         if type(result) is LoginError:
             self.protocol.send('login_failed', result.message)
+
+    def action_exit(self):
+        reactor.stop()
+

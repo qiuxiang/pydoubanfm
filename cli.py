@@ -12,8 +12,15 @@ class Protocol(BaseProtocol):
 
 
 class Factory(ClientFactory):
+    def __init__(self):
+        self.protocol = Protocol()
+
     def buildProtocol(self, addr):
-        return Protocol()
+        return self.protocol
+
+    def clientConnectionLost(self, connector, reason):
+        print 'Lost connection. Reason:', reason
+        reactor.stop()
 
 if __name__ == '__main__':
     reload_sys()
