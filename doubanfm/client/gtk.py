@@ -238,10 +238,10 @@ class Protocol(BaseProtocol):
         dialog = Gtk.MessageDialog(
             None, 0, Gtk.MessageType.INFO, Gtk.ButtonsType.YES_NO, '是否关闭播放服务？')
         if dialog.run() == Gtk.ResponseType.YES:
-            print('TODO: 关闭播放服务')
             self.transport.write('exit')
-        dialog.destroy()
-        Gtk.main_quit(*args)
+        else:
+            dialog.destroy()
+            Gtk.main_quit(*args)
 
     @staticmethod
     def alert(alert_type, title, message):
