@@ -117,8 +117,10 @@ class Factory(ReconnectingClientFactory):
     def __init__(self, protocol):
         self.protocol = protocol
         self.maxDelay = 1
+        self.started = False
 
     def buildProtocol(self, address):
+        self.started = True
         return self.protocol
 
     def clientConnectionLost(self, connector, reason):
@@ -126,7 +128,7 @@ class Factory(ReconnectingClientFactory):
             reactor.stop()
 
     def clientConnectionFailed(self, connector, reason):
-        if self.retries:
+        if self.started and self.retries:
             print('连接失败，正在尝试重新连接……')
         self.retry(connector)
 
