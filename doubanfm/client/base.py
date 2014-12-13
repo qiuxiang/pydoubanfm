@@ -12,7 +12,7 @@ class Protocol(TwistedProtocol):
 
     def connectionMade(self):
         print('连接成功')
-        if hasattr(self, 'input_thread') and not self.input_thread.isAlive():
+        if not self.input_thread.isAlive():
             self.input_thread.start()
 
     def input(self):
