@@ -98,12 +98,14 @@ class Player:
         self.song['like'] = True
         self.playlist_count = 0
         self.hooks.dispatch('like')
+        notify('喜欢', '%s - %s' % (self.song['artist'], self.song['title']))
 
     def unlike(self):
         self.update_playlist('u')
         self.song['like'] = False
         self.playlist_count = 0
         self.hooks.dispatch('unlike')
+        notify('不再喜欢', '%s - %s' % (self.song['artist'], self.song['title']))
 
     def on_player_eos(self):
         """当前歌曲播放完毕后的处理"""
