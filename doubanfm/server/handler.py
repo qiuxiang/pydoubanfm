@@ -77,5 +77,8 @@ class Handler:
         if type(result) is LoginError:
             self.protocol.send('login_failed', result.message)
 
+    def action_logout(self):
+        self.doubanfm.logout()
+
     def action_exit(self):
         reactor.stop()

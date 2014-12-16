@@ -25,11 +25,14 @@ class Proxy:
             'get', 'radio/people', params=self.params).json()
 
     def login(self, email, password):
-        response = self.request('post', 'login', data={
-            'email': email,
-            'password': password,
-            'app_name': self.app_name,
-            'version': self.version}).json()
+        response = self.session.request(
+            'post',
+            'http://www.douban.com/j/app/login',
+            data={
+                'email': email,
+                'password': password,
+                'app_name': self.app_name,
+                'version': self.version}).json()
         if response['err'] == 'ok':
             self.set_auth(response)
             return response

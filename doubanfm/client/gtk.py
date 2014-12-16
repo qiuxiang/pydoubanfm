@@ -193,8 +193,7 @@ class Protocol(BaseProtocol):
 
     def show_login_window(self, widget):
         if self.user:
-            # TODO: 实现注销登录功能
-            self.alert(Gtk.MessageType.WARNING, 'TODO', '注销功能尚未实现')
+            self.transport.write('logout')
         else:
             self.get_widget('window-login').show_all()
 
@@ -215,6 +214,11 @@ class Protocol(BaseProtocol):
         self.user = user_info
         self.set_login_state()
         self.get_widget('window-login').hide()
+
+    def on_logout(self):
+        BaseProtocol.on_logout(self)
+        self.user = None
+        self.set_login_state()
 
     def init_indicator(self):
         try:

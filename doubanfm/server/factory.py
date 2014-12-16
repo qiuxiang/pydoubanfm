@@ -19,6 +19,7 @@ class Factory(protocol.Factory):
             'like':           self.on_like,
             'unlike':         self.on_unlike,
             'login_success':  self.on_login_success,
+            'logout':         self.on_logout,
         })
         self.doubanfm.run()
 
@@ -61,6 +62,10 @@ class Factory(protocol.Factory):
     def on_unlike(self):
         self.broadcast('unlike')
         print('unlike')
+
+    def on_logout(self):
+        self.broadcast('logout')
+        print('logout')
 
     def broadcast(self, *data):
         for client in self.clients:

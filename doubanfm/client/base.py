@@ -99,3 +99,6 @@ class Protocol(TwistedProtocol):
 
     def on_state(self, state):
         print(state)
+
+    def on_logout(self):
+        print('logout')
