@@ -28,7 +28,7 @@ class Player:
             self.proxy.session.cookies.load()
             self.user_info = json.load(open(path.user))
             self.proxy.set_auth(self.user_info)
-        except:
+        finally:
             pass
 
         if os.path.isfile(path.channels):
@@ -72,12 +72,13 @@ class Player:
             self.select_channel(0)
 
     def play(self):
-        self.song = self.playlist[self.playlist_count]
-        self.save_album_cover()
-        self.player.set_uri(self.song['url'])
-        self.player.play()
-        notify(self.song['title'], self.song['artist'], self.song['picture_file'])
-        self.hooks.dispatch('play')
+        if self.playlist_count in self.playlist:
+            self.song = self.playlist[self.playlist_count]
+            self.save_album_cover()
+            self.player.set_uri(self.song['url'])
+            self.player.play()
+            notify(self.song['title'], self.song['artist'], self.song['picture_file'])
+            self.hooks.dispatch('play')
 
     def next(self, operation_type='n'):
         """播放下一曲"""
