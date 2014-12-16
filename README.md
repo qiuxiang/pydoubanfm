@@ -35,3 +35,12 @@ $ sudo apt-get install python-requests python-eyed3 python-twisted python-gst-1.
 ## 运行
 在项目目录下运行 `create_desktop_entry.sh` 会创建启动项，这样，你就可以在所有程序里启动豆瓣FM。
 你也可以直接从命令行启动，运行 `./doubanfm/gtk.py` 或 `python -m doubanfm.gtk`
+
+## 截图
+![image](https://cloud.githubusercontent.com/assets/1709072/5433457/e653bda2-8482-11e4-9b66-05ed1fbf813b.png)
+
+![image](https://cloud.githubusercontent.com/assets/1709072/5433460/eaea1d20-8482-11e4-992a-dd47084f8979.png)
+
+![image](https://cloud.githubusercontent.com/assets/1709072/5433461/eeaadd6e-8482-11e4-9aa0-9f1a109fd4dd.png)
+
+![image](https://cloud.githubusercontent.com/assets/1709072/5433466/f2f5fd04-8482-11e4-9cb3-c7776eb566f8.png)
