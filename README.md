@@ -25,7 +25,7 @@ python 实现的豆瓣电台播放器
 - python-gst-1.0
 
 作者常用的操作系统是 Ubuntu 最新版，当然，其他 Linux 发行版也基本可以保证支持（主要是解决依赖）。
-至于 OS X，原则上是可以支持的，关键是 pygtk3 和 gst1.0。Windows 同理，但依赖的解决更为困难。
+至于 OS X，原则上是可以支持的，关键是 pygtk3 和 gst1.0 的安装。Windows 同理，但依赖的解决更为困难。
 以 Ubuntu 为例，运行以下命令：
 
 ```sh
