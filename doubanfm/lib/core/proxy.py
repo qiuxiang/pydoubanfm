@@ -25,14 +25,11 @@ class Proxy:
             'get', 'radio/people', params=self.params).json()
 
     def login(self, email, password):
-        response = self.session.request(
-            'post',
-            'http://www.douban.com/j/app/login',
-            data={
-                'email': email,
-                'password': password,
-                'app_name': self.app_name,
-                'version': self.version}).json()
+        response = self.request('post', 'login', data={
+            'email': email,
+            'password': password,
+            'app_name': self.app_name,
+            'version': self.version}).json()
         if response['err'] == 'ok':
             self.set_auth(response)
             return response
@@ -50,6 +47,12 @@ class Proxy:
         self.params['user_id'] = data['user_id']
         self.params['expire'] = data['expire']
         self.params['token'] = data['token']
+        self.logged = True
+
+    def logout(self):
+        self.params.pop('user_id', None)
+        self.params.pop('expire', None)
+        self.params.pop('token', None)
         self.logged = True
 
     def get_liked_songs(self, count=20):

@@ -65,6 +65,12 @@ class Player:
         except LoginError as e:
             return e
 
+    def logout(self):
+        self.proxy.logout()
+        os.remove(path.user)
+        if setting.get('channel') == -3:
+            self.select_channel(0)
+
     def play(self):
         self.song = self.playlist[self.playlist_count]
         self.save_album_cover()
