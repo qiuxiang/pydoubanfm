@@ -29,7 +29,7 @@ class Protocol(TwistedProtocol):
                     else:
                         getattr(self, 'on_' + data[0])(data[1])
                 except Exception as e:
-                    print('消息处理出错：' + e.message)
+                    print('消息处理出错：%s' % e.message)
 
     def on_error(self, message):
         print('服务端错误: %s' % message)
