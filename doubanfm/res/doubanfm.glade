@@ -16,7 +16,9 @@
           <object class="GtkEventBox" id="event-box-image">
             <signal name="button-release-event" handler="album_cover_clicked"/>
             <child>
-              <object class="GtkImage" id="image-album-cover"/>
+              <object class="GtkImage" id="image-album-cover">
+                <property name="pixbuf">loading.png</property>
+              </object>
             </child>
           </object>
         </child>
