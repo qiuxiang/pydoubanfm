@@ -8,7 +8,7 @@ Notify.init(__name__)
 
 from .proxy import Proxy, LoginError
 from .. import Hooks, GstPlayer
-from ...utils import setting, download, json_dump, notify, path
+from ...utils import setting, download, json_dump, notify, path, stars
 
 
 class Player:
@@ -78,7 +78,12 @@ class Player:
         self.save_album_cover()
         self.player.set_uri(self.song['url'])
         self.player.play()
-        notify(self.song['title'], self.song['artist'], self.song['picture_file'])
+        notify('%s %s' % (self.song['title'], ['♡', '♥'][self.song['like']]),
+               '%s <%s>\n%s' % (
+                   self.song['artist'],
+                   self.song['albumtitle'],
+                   stars(self.song['rating_avg'])),
+               self.song['picture_file'])
         self.hooks.dispatch('play')
 
     def next(self, operation_type='n'):
