@@ -125,7 +125,6 @@ class Factory(ReconnectingClientFactory):
 
     def clientConnectionLost(self, connector, reason):
         if not reactor._stopped:
-            print(reason)
             reactor.stop()
 
     def clientConnectionFailed(self, connector, reason):
