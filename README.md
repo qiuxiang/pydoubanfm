@@ -44,3 +44,6 @@ $ sudo apt-get install python-requests python-eyed3 python-twisted python-gst-1.
 ![image](https://cloud.githubusercontent.com/assets/1709072/5433461/eeaadd6e-8482-11e4-9aa0-9f1a109fd4dd.png)
 
 ![image](https://cloud.githubusercontent.com/assets/1709072/5433466/f2f5fd04-8482-11e4-9cb3-c7776eb566f8.png)
+
+## 已知的问题
+有一定几率出现启动后闪退，重新再启动即可，该 bug 无法稳定重现，调试起来比较麻烦。
