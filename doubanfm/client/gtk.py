@@ -76,10 +76,10 @@ class Protocol(BaseProtocol):
 
     def on_state(self, state):
         BaseProtocol.on_state(self, state)
-        if state == 'playing':
-            self.on_resume()
-        else:
+        if state == 'paused':
             self.on_pause()
+        else:
+            self.on_resume()
 
     def rate(self, widget):
         if not self.rate_flag:
