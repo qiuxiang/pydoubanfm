@@ -10,6 +10,7 @@ class GstPlayer:
         Gst.State.NULL: 'null',
         Gst.State.PLAYING: 'playing',
         Gst.State.PAUSED: 'paused',
+        Gst.State.READY: 'ready',
     }
 
     def __init__(self):

@@ -19,7 +19,7 @@ class Handler:
                         getattr(self, 'action_' + data[0])(data[1:])
         except Exception as e:
             self.protocol.send('error', e.message)
-            print('error: ' + e.message)
+            print('error: %s' % e.message)
 
     def action_user_info(self):
         if hasattr(self.doubanfm, 'user_info'):
