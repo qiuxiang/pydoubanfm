@@ -70,7 +70,7 @@ def stars(rating):
 
 
 def second2time(second):
-    return '%d:%d' % (second / 60, second % 60)
+    return '%d:%02d' % (second / 60, second % 60)
 
 
 def add_tag(filename, tags):
@@ -125,6 +125,7 @@ class Factory(ReconnectingClientFactory):
 
     def clientConnectionLost(self, connector, reason):
         if not reactor._stopped:
+            print(reason)
             reactor.stop()
 
     def clientConnectionFailed(self, connector, reason):

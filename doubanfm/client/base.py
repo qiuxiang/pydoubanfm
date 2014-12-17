@@ -41,16 +41,16 @@ class Protocol(TwistedProtocol):
             print('用户：None')
 
     def on_song(self, song):
-        print('当前播放：\n  %s - %s（%s）\n  %s（%s）\n  %s发布于%ss\n  评分：%s\n  %s' % (
+        print('当前播放：\n  %s - %s（%s）%s\n  %s（%s）\n  %s发布于 %s\n  评分：%s' % (
             song['artist'],
             song['title'],
             second2time(song['length']),
+            ['♡', '♥'][song['like']],
             song['albumtitle'],
             'http://music.douban.com' + song['album'],
             song['company'],
             song['public_time'],
             stars(song['rating_avg']),
-            ['未收藏', '已收藏'][song['like']],
         ))
 
     def on_play(self, song):
@@ -90,7 +90,7 @@ class Protocol(TwistedProtocol):
     def on_channels(self, channels):
         print('频道列表：')
         for channel in channels:
-            print('  - %s（%s）' % (channel['name'], channel['channel_id']))
+            print('  %s（%s）' % (channel['name'], channel['channel_id']))
 
     def on_playlist(self, playlist):
         print('播放列表：')
