@@ -1,18 +1,10 @@
 # encoding: utf-8
+from .hooks import Hooks
 from gi.repository import Gst
 Gst.init(None)
 
-from .hooks import Hooks
-
 
 class GstPlayer:
-    status = {
-        Gst.State.NULL: 'null',
-        Gst.State.PLAYING: 'playing',
-        Gst.State.PAUSED: 'paused',
-        Gst.State.READY: 'ready',
-    }
-
     def __init__(self):
         self.hooks = Hooks()
         self.player = Gst.ElementFactory.make('playbin', None)
@@ -41,4 +33,9 @@ class GstPlayer:
         self.player.set_state(Gst.State.NULL)
 
     def get_state(self):
-        return self.status[self.player.get_state(0)[1]]
+        return {
+            Gst.State.NULL: 'null',
+            Gst.State.PLAYING: 'playing',
+            Gst.State.PAUSED: 'paused',
+            Gst.State.READY: 'ready',
+        }[self.player.get_state(0)[1]]
