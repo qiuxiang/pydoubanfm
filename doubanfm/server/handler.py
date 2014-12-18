@@ -82,3 +82,12 @@ class Handler:
 
     def action_exit(self):
         reactor.stop()
+
+    def action_song_notify(self):
+        self.doubanfm.song_notify()
+
+    def action_play_or_pause(self):
+        if self.doubanfm.player.get_state() == 'paused':
+            self.doubanfm.resume()
+        else:
+            self.doubanfm.pause()

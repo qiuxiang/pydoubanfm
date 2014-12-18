@@ -7,7 +7,17 @@ Type=Application
 Categories=Audio;Music;Player;AudioVideo;
 Exec=`pwd`/doubanfm/gtk.py
 Icon=`pwd`/doubanfm/res/icon.png
-Actions=Skip;Like;Unlike;Remove;ServerStart;ServerStop;
+Actions=ShowSongNotify;PlayOrPause;Skip;Like;Unlike;Remove;ServerStart;ServerStop;
+
+[Desktop Action ShowSongNotify]
+Name=当前歌曲
+Exec=`pwd`/doubanfm/cmd.py song_notify
+OnlyShowIn=Unity;
+
+[Desktop Action PlayOrPause]
+Name=播放/暂停
+Exec=`pwd`/doubanfm/cmd.py play_or_pause
+OnlyShowIn=Unity;
 
 [Desktop Action Skip]
 Name=跳过
