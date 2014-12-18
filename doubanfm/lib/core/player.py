@@ -78,13 +78,16 @@ class Player:
         self.save_album_cover()
         self.player.set_uri(self.song['url'])
         self.player.play()
+        self.song_notify()
+        self.hooks.dispatch('play')
+
+    def song_notify(self):
         notify('%s %s' % (self.song['title'], ['♡', '♥'][self.song['like']]),
                '%s <%s>\n%s' % (
                    self.song['artist'],
                    self.song['albumtitle'],
                    stars(self.song['rating_avg'])),
                self.song['picture_file'])
-        self.hooks.dispatch('play')
 
     def next(self, operation_type='n'):
         """播放下一曲"""
@@ -111,14 +114,14 @@ class Player:
         self.song['like'] = True
         self.playlist_count = 0
         self.hooks.dispatch('like')
-        notify('喜欢', '%s - %s' % (self.song['artist'], self.song['title']))
+        self.song_notify()
 
     def unlike(self):
         self.update_playlist('u')
         self.song['like'] = False
         self.playlist_count = 0
         self.hooks.dispatch('unlike')
-        notify('不再喜欢', '%s - %s' % (self.song['artist'], self.song['title']))
+        self.song_notify()
 
     def on_player_eos(self):
         """当前歌曲播放完毕后的处理"""
