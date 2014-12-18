@@ -51,17 +51,17 @@ class Handler:
     def action_resume(self):
         self.doubanfm.resume()
 
-    def action_set_kbps(self, kbps):
-        self.doubanfm.set_kbps(int(kbps))
+    def action_kbps(self, kbps=None):
+        if kbps:
+            self.doubanfm.set_kbps(int(kbps))
+        else:
+            self.protocol.send('kbps', setting.get('kbps'))
 
-    def action_get_kbps(self):
-        self.protocol.send('kbps', setting.get('kbps'))
-
-    def action_set_channel(self, channel_id):
-        self.doubanfm.select_channel(int(channel_id))
-
-    def action_get_channel(self):
-        self.protocol.send('channel', setting.get('channel'))
+    def action_channel(self, channel_id=None):
+        if channel_id:
+            self.doubanfm.select_channel(int(channel_id))
+        else:
+            self.protocol.send('channel', setting.get('channel'))
 
     def action_state(self):
         self.protocol.send('state', self.doubanfm.player.get_state())

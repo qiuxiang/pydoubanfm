@@ -20,7 +20,7 @@ class Protocol(BaseProtocol):
     def connectionMade(self):
         BaseProtocol.connectionMade(self)
         self.transport.write(
-            'state\nvolume\nget_kbps\nchannels\nget_channel\nuser_info\nsong')
+            'state\nvolume\nkbps\nchannels\nchannel\nuser_info\nsong')
 
     def on_channel(self, channel_id):
         BaseProtocol.on_channel(self, channel_id)
@@ -163,11 +163,11 @@ class Protocol(BaseProtocol):
 
     def select_channel(self, widget, channel_id):
         if widget.get_active() and not self.channel_id == channel_id:
-            self.transport.write('set_channel ' + str(channel_id))
+            self.transport.write('channel %s' % channel_id)
 
     def set_kbps(self, widget, kbps):
         if widget.get_active() and not self.kbps == kbps:
-            self.transport.write('set_kbps ' + str(kbps))
+            self.transport.write('kbps %s' % kbps)
 
     def open_album(self, widget):
         webbrowser.open('http://music.douban.com' + self.song['album'])
