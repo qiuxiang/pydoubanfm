@@ -39,7 +39,7 @@ $ sudo apt-get install python-requests python-eyed3 python-twisted python-gst-1.
 ## 截图
 运行 `create_desktop_entry.py` 可以生成启动菜单项，对于 unity 桌面可以直接通过右键菜单进行控制
 
-![screenshot from 2014-12-18 09 58 01](https://cloud.githubusercontent.com/assets/1709072/5482921/4d9eaaee-86a4-11e4-92bc-fbd8ef9b2e6c.png)
+![screenshot from 2014-12-18 17 04 36](https://cloud.githubusercontent.com/assets/1709072/5485876/4fdef1b0-86db-11e4-970b-62318f12f442.png)
 
 提供面板指示器
 
