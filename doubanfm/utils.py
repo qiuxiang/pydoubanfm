@@ -1,6 +1,7 @@
 # coding: utf-8
 import os
 import json
+import random
 import socket
 import threading
 import subprocess
@@ -84,6 +85,10 @@ def add_tag(filename, tags):
     tag.setDate(tags['public_time'])
     tag.addImage(eyeD3.frames.ImageFrame.FRONT_COVER, tags['picture_file'])
     tag.update()
+
+
+def music_symbol():
+    return random.choice(['♫', '♬', '♪', '♩', '♭', '♪'])
 
 
 class setting:
