@@ -88,7 +88,7 @@ def add_tag(filename, tags):
 
 
 def music_symbol():
-    return random.choice(['♫', '♬', '♪', '♩', '♭', '♪'])
+    return random.choice(['♫', '♬', '♪', '♩'])
 
 
 class setting:
