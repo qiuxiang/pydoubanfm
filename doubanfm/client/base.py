@@ -83,7 +83,7 @@ class Protocol(TwistedProtocol):
         print('login failed: %s' % message)
 
     def on_kbps(self, kbps):
-        print('%s kbps' % kbps)
+        print('%sKBps' % kbps)
 
     def on_channel(self, channel_id):
         done = False
@@ -93,7 +93,7 @@ class Protocol(TwistedProtocol):
                     print(channel['name'])
                     done = True
         if not done:
-            print('%s Hz' % channel_id)
+            print('%sHz' % channel_id)
 
     def on_channels(self, channels):
         self.channels = channels
@@ -113,4 +113,4 @@ class Protocol(TwistedProtocol):
         print('logout')
 
     def on_volume(self, volume):
-        print('%s%% volume' % (float(volume) * 100))
+        print('volume %s%%' % (float(volume) * 100))
