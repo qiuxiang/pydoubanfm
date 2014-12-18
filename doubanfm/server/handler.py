@@ -86,11 +86,17 @@ class Handler:
     def action_song_notify(self):
         self.doubanfm.song_notify()
 
-    def action_play_or_pause(self):
+    def action_play(self):
         if self.doubanfm.player.get_state() == 'paused':
             self.doubanfm.resume()
         else:
             self.doubanfm.pause()
+
+    def action_rate(self):
+        if self.doubanfm.song['like']:
+            self.doubanfm.unlike()
+        else:
+            self.doubanfm.like()
 
     def action_volume(self, volume=None):
         if volume:
