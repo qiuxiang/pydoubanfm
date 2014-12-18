@@ -36,9 +36,9 @@ class Protocol(TwistedProtocol):
 
     def on_user_info(self, user_info):
         if user_info:
-            print('user\n  %s <%s>' % (user_info['user_name'], user_info['email']))
+            print('%s <%s>' % (user_info['user_name'], user_info['email']))
         else:
-            print('☻')
+            print('☺')
 
     def on_song(self, song):
         print('%s\n  %s - %s（%s）%s\n  %s（%s）\n  %s, %s\n  %s' % (
@@ -86,9 +86,17 @@ class Protocol(TwistedProtocol):
         print('%s kbps' % kbps)
 
     def on_channel(self, channel_id):
-        print('%s Hz' % channel_id)
+        done = False
+        if hasattr(self, 'channels'):
+            for channel in self.channels:
+                if channel_id == channel['channel_id']:
+                    print(channel['name'])
+                    done = True
+        if not done:
+            print('%s Hz' % channel_id)
 
     def on_channels(self, channels):
+        self.channels = channels
         print('channels: ')
         for channel in channels:
             print('  %s（%s）' % (channel['name'], channel['channel_id']))
