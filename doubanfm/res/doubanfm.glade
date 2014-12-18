@@ -16,7 +16,9 @@
           <object class="GtkEventBox" id="event-box-image">
             <signal name="button-release-event" handler="album_cover_clicked"/>
             <child>
-              <object class="GtkImage" id="image-album-cover"/>
+              <object class="GtkImage" id="image-album-cover">
+                <property name="pixbuf">loading.png</property>
+              </object>
             </child>
           </object>
         </child>
@@ -49,7 +51,7 @@
                 <property name="tooltip_text">不再播放</property>
                 <property name="relief">none</property>
                 <property name="can_focus">False</property>
-                <signal name="clicked" handler="no_longer_play"/>
+                <signal name="clicked" handler="remove"/>
               </object>
             </child>
             <child>
@@ -140,7 +142,7 @@
       <object class="GtkMenuItem" id="menu-item-delete">
         <property name="visible">True</property>
         <property name="label">不再播放</property>
-        <signal name="activate" handler="no_longer_play"/>
+        <signal name="activate" handler="remove"/>
       </object>
     </child>
     <child>
@@ -151,7 +153,7 @@
     <child>
       <object class="GtkMenuItem" id="menu-item-kbps">
         <property name="visible">True</property>
-        <property name="label">码率</property>
+        <property name="label">码率（KBps）</property>
         <child type="submenu">
           <object class="GtkMenu" id="menu-kbps"/>
         </child>
