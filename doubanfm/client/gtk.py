@@ -20,7 +20,7 @@ class Protocol(BaseProtocol):
     def connectionMade(self):
         BaseProtocol.connectionMade(self)
         self.transport.write(
-            'state\nget_kbps\nchannels\nget_channel\nuser_info\nsong')
+            'state\nvolume\nget_kbps\nchannels\nget_channel\nuser_info\nsong')
 
     def on_channel(self, channel_id):
         BaseProtocol.on_channel(self, channel_id)
@@ -147,8 +147,12 @@ class Protocol(BaseProtocol):
         self.get_widget('button-playback').set_tooltip_text('播放')
         self.get_widget('menu-item-playback').set_label('播放')
 
+    def on_volume(self, volume):
+        BaseProtocol.on_volume(self, volume)
+        self.get_widget('volume-button').set_value(float(volume))
+
     def set_volume(self, widget, value):
-        pass
+        self.transport.write('volume %s' % value)
 
     def on_resume(self):
         BaseProtocol.on_resume(self)

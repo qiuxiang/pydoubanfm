@@ -102,3 +102,6 @@ class Protocol(TwistedProtocol):
 
     def on_logout(self):
         print('logout')
+
+    def on_volume(self, volume):
+        print('音量：%s' % volume)

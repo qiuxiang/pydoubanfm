@@ -20,6 +20,9 @@ class GstPlayer:
     def set_volume(self, volume):
         self.player.set_property('volume', volume)
 
+    def get_volume(self):
+        return self.player.get_property('volume')
+
     def set_uri(self, uri):
         self.player.set_property('uri', uri)
 

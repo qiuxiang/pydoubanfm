@@ -91,3 +91,9 @@ class Handler:
             self.doubanfm.resume()
         else:
             self.doubanfm.pause()
+
+    def action_volume(self, volume=None):
+        if volume:
+            self.doubanfm.set_volume(float(volume))
+        else:
+            self.protocol.send('volume', self.doubanfm.player.get_volume())
