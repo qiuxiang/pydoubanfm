@@ -42,7 +42,7 @@ class Protocol(TwistedProtocol):
 
     def on_song(self, song):
         print('%s\n  %s - %s（%s）%s\n  %s（%s）\n  %s, %s\n  %s' % (
-            music_symbol(),
+            music_symbol() + ' ',
             song['artist'],
             song['title'],
             second2time(song['length']),
