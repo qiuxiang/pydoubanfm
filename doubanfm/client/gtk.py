@@ -149,10 +149,12 @@ class Protocol(BaseProtocol):
 
     def on_volume(self, volume):
         BaseProtocol.on_volume(self, volume)
-        self.get_widget('volume-button').set_value(float(volume))
+        self.volume = float(volume)
+        self.get_widget('volume-button').set_value(self.volume)
 
     def set_volume(self, widget, value):
-        self.transport.write('volume %s' % value)
+        if self.volume != value:
+            self.transport.write('volume %s' % value)
 
     def on_resume(self):
         BaseProtocol.on_resume(self)
