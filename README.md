@@ -39,31 +39,31 @@ $ sudo apt-get install python-requests python-eyed3 python-twisted python-gst-1.
 ## 截图
 运行 `create_desktop_entry.py` 可以生成启动菜单项，对于 unity 桌面可以直接通过右键菜单进行控制
 
-![screenshot from 2014-12-18 09 58 01](https://cloud.githubusercontent.com/assets/1709072/5482921/4d9eaaee-86a4-11e4-92bc-fbd8ef9b2e6c.png)
+![截图 - Desktop Action](https://cloud.githubusercontent.com/assets/1709072/5485876/4fdef1b0-86db-11e4-970b-62318f12f442.png)
 
 提供面板指示器
 
-![screenshot from 2014-12-18 10 00 44](https://cloud.githubusercontent.com/assets/1709072/5482934/957a9ed6-86a4-11e4-8057-b4f3e14d4959.png)
+![截图 - 指示器](https://cloud.githubusercontent.com/assets/1709072/5482934/957a9ed6-86a4-11e4-8057-b4f3e14d4959.png)
 
-提供桌面提示
+提供桌面通知
 
-![screenshot from 2014-12-18 10 03 22](https://cloud.githubusercontent.com/assets/1709072/5482937/ab01bda2-86a4-11e4-9a5d-f34f8e4fdf25.png)
+![截图 - 桌面通知](https://cloud.githubusercontent.com/assets/1709072/5482937/ab01bda2-86a4-11e4-9a5d-f34f8e4fdf25.png)
 
 如果你是一个 geek，或许会喜欢命令行的纯粹
 
-![screenshot from 2014-12-18 10 11 33](https://cloud.githubusercontent.com/assets/1709072/5482950/f36ee114-86a4-11e4-875c-392c88e9a59b.png)
+![截图 - 命令行](https://cloud.githubusercontent.com/assets/1709072/5482950/f36ee114-86a4-11e4-875c-392c88e9a59b.png)
 
 我使用 C/S 模式隔离了播放服务和控制客户端，这使得多个不同的终端可以共存，甚至不使用客户端也是可以的
 
-![screenshot from 2014-12-18 10 09 21](https://cloud.githubusercontent.com/assets/1709072/5482948/f14bf390-86a4-11e4-8cd9-59bf1dffaf49.png)
+![截图 - 命令行与 gtk](https://cloud.githubusercontent.com/assets/1709072/5482948/f14bf390-86a4-11e4-8cd9-59bf1dffaf49.png)
 
 不管在哪一端进行控制，所有的客户端都会得到反馈
 
-![screenshot from 2014-12-18 10 10 45](https://cloud.githubusercontent.com/assets/1709072/5482952/f87c8760-86a4-11e4-9057-6db35576bec0.png)
+![截图 - 命令行控制](https://cloud.githubusercontent.com/assets/1709072/5482952/f87c8760-86a4-11e4-9057-6db35576bec0.png)
 
 下载的歌曲会写入完整的 mp3 标签
 
-![screenshot from 2014-12-18 10 51 01](https://cloud.githubusercontent.com/assets/1709072/5482898/d8f610d8-86a3-11e4-82de-faf4cd68fdbb.png)
+![截图 - mp3 标签](https://cloud.githubusercontent.com/assets/1709072/5482898/d8f610d8-86a3-11e4-82de-faf4cd68fdbb.png)
 
 ## 已知的问题
-有一定几率出现启动后闪退，重新再启动即可，该 bug 无法稳定重现，调试起来比较麻烦。
+有较小的几率出现启动后闪退，重新再启动即可，该 bug 无法重现，暂时不好解决。

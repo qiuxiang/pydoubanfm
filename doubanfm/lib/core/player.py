@@ -26,8 +26,8 @@ class Player:
 
         try:
             self.proxy.session.cookies.load()
-            self.user_info = json.load(open(path.user))
-            self.proxy.set_auth(self.user_info)
+            self.user = json.load(open(path.user))
+            self.proxy.set_auth(self.user)
         except IOError:
             pass
 
@@ -54,20 +54,20 @@ class Player:
     def login(self, email, password):
         """:return: 登录成功返回用户信息，失败则返回异常"""
         try:
-            self.user_info = self.proxy.login(email, password)
+            self.user = self.proxy.login(email, password)
             self.proxy.session.cookies.save()
             self.hooks.dispatch('login_success')
-            json_dump(self.user_info, path.user)
+            json_dump(self.user, path.user)
             notify('登录成功',
-                   self.user_info['user_name'] + ' <' +
-                   self.user_info['email'] + '>')
-            return self.user_info
+                   self.user['user_name'] + ' <' +
+                   self.user['email'] + '>')
+            return self.user
         except LoginError as e:
             return e
 
     def logout(self):
         self.proxy.logout()
-        self.user_info = None
+        self.user = None
         self.hooks.dispatch('logout')
         os.remove(path.user)
         if setting.get('channel') == -3:
@@ -78,13 +78,16 @@ class Player:
         self.save_album_cover()
         self.player.set_uri(self.song['url'])
         self.player.play()
+        self.song_notify()
+        self.hooks.dispatch('play')
+
+    def song_notify(self):
         notify('%s %s' % (self.song['title'], ['♡', '♥'][self.song['like']]),
                '%s <%s>\n%s' % (
                    self.song['artist'],
                    self.song['albumtitle'],
                    stars(self.song['rating_avg'])),
                self.song['picture_file'])
-        self.hooks.dispatch('play')
 
     def next(self, operation_type='n'):
         """播放下一曲"""
@@ -111,14 +114,14 @@ class Player:
         self.song['like'] = True
         self.playlist_count = 0
         self.hooks.dispatch('like')
-        notify('喜欢', '%s - %s' % (self.song['artist'], self.song['title']))
+        self.song_notify()
 
     def unlike(self):
         self.update_playlist('u')
         self.song['like'] = False
         self.playlist_count = 0
         self.hooks.dispatch('unlike')
-        notify('不再喜欢', '%s - %s' % (self.song['artist'], self.song['title']))
+        self.song_notify()
 
     def on_player_eos(self):
         """当前歌曲播放完毕后的处理"""

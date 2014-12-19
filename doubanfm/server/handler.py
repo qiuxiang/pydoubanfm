@@ -21,11 +21,11 @@ class Handler:
             self.protocol.send('error', e.message)
             print('error: %s' % e.message)
 
-    def action_user_info(self):
-        if hasattr(self.doubanfm, 'user_info'):
-            self.protocol.send('user_info', self.doubanfm.user_info)
+    def action_user(self):
+        if hasattr(self.doubanfm, 'user'):
+            self.protocol.send('user', self.doubanfm.user)
         else:
-            self.protocol.send('user_info', None)
+            self.protocol.send('user', None)
 
     def action_channels(self):
         self.protocol.send('channels', self.doubanfm.channels)
@@ -51,17 +51,17 @@ class Handler:
     def action_resume(self):
         self.doubanfm.resume()
 
-    def action_set_kbps(self, kbps):
-        self.doubanfm.set_kbps(int(kbps))
+    def action_kbps(self, kbps=None):
+        if kbps:
+            self.doubanfm.set_kbps(int(kbps))
+        else:
+            self.protocol.send('kbps', setting.get('kbps'))
 
-    def action_get_kbps(self):
-        self.protocol.send('kbps', setting.get('kbps'))
-
-    def action_set_channel(self, channel_id):
-        self.doubanfm.select_channel(int(channel_id))
-
-    def action_get_channel(self):
-        self.protocol.send('channel', setting.get('channel'))
+    def action_channel(self, channel_id=None):
+        if channel_id:
+            self.doubanfm.select_channel(int(channel_id))
+        else:
+            self.protocol.send('channel', setting.get('channel'))
 
     def action_state(self):
         self.protocol.send('state', self.doubanfm.player.get_state())
@@ -82,3 +82,24 @@ class Handler:
 
     def action_exit(self):
         reactor.stop()
+
+    def action_song_notify(self):
+        self.doubanfm.song_notify()
+
+    def action_play(self):
+        if self.doubanfm.player.get_state() == 'paused':
+            self.doubanfm.resume()
+        else:
+            self.doubanfm.pause()
+
+    def action_rate(self):
+        if self.doubanfm.song['like']:
+            self.doubanfm.unlike()
+        else:
+            self.doubanfm.like()
+
+    def action_volume(self, volume=None):
+        if volume:
+            self.doubanfm.set_volume(float(volume))
+        else:
+            self.protocol.send('volume', self.doubanfm.player.get_volume())

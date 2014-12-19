@@ -14,6 +14,7 @@ class Factory(protocol.Factory):
             'resume':         self.on_resume,
             'kbps_change':    self.on_kbps_change,
             'channel_change': self.on_channel_change,
+            'volume_change':  self.on_volume_change,
             'skip':           self.on_skip,
             'remove':         self.on_remove,
             'like':           self.on_like,
@@ -36,8 +37,8 @@ class Factory(protocol.Factory):
         print('resume')
 
     def on_login_success(self):
-        self.broadcast('login_success', self.doubanfm.user_info)
-        print('login success: ' + json_dumps(self.doubanfm.user_info))
+        self.broadcast('login_success', self.doubanfm.user)
+        print('login success: ' + json_dumps(self.doubanfm.user))
 
     def on_kbps_change(self):
         self.broadcast('kbps', setting.get('kbps'))
@@ -46,6 +47,10 @@ class Factory(protocol.Factory):
     def on_channel_change(self):
         self.broadcast('channel', setting.get('channel'))
         print('channel: %s' % setting.get('channel'))
+
+    def on_volume_change(self):
+        self.broadcast('volume', self.doubanfm.player.get_volume())
+        print('volume: %s' % self.doubanfm.player.get_volume())
 
     def on_skip(self):
         self.broadcast('skip')

@@ -20,16 +20,16 @@ class Protocol(BaseProtocol):
     def connectionMade(self):
         BaseProtocol.connectionMade(self)
         self.transport.write(
-            'state\nget_kbps\nchannels\nget_channel\nuser_info\nsong')
+            'state\nvolume\nkbps\nchannels\nchannel\nuser\nsong')
 
     def on_channel(self, channel_id):
         BaseProtocol.on_channel(self, channel_id)
         self.channel_id = int(channel_id)
         self.widget_channels[self.channel_id].set_active(True)
 
-    def on_user_info(self, user_info):
-        BaseProtocol.on_user_info(self, user_info)
-        self.user = user_info
+    def on_user(self, user):
+        BaseProtocol.on_user(self, user)
+        self.user = user
         self.set_login_state()
 
     def on_login_failed(self, message):
@@ -147,8 +147,14 @@ class Protocol(BaseProtocol):
         self.get_widget('button-playback').set_tooltip_text('播放')
         self.get_widget('menu-item-playback').set_label('播放')
 
+    def on_volume(self, volume):
+        BaseProtocol.on_volume(self, volume)
+        self.volume = float(volume)
+        self.get_widget('volume-button').set_value(self.volume)
+
     def set_volume(self, widget, value):
-        pass
+        if self.volume != value:
+            self.transport.write('volume %s' % value)
 
     def on_resume(self):
         BaseProtocol.on_resume(self)
@@ -159,11 +165,11 @@ class Protocol(BaseProtocol):
 
     def select_channel(self, widget, channel_id):
         if widget.get_active() and not self.channel_id == channel_id:
-            self.transport.write('set_channel ' + str(channel_id))
+            self.transport.write('channel %s' % channel_id)
 
     def set_kbps(self, widget, kbps):
         if widget.get_active() and not self.kbps == kbps:
-            self.transport.write('set_kbps ' + str(kbps))
+            self.transport.write('kbps %s' % kbps)
 
     def open_album(self, widget):
         webbrowser.open('http://music.douban.com' + self.song['album'])
@@ -209,9 +215,9 @@ class Protocol(BaseProtocol):
     def remove(self, widget):
         self.transport.write('remove')
 
-    def on_login_success(self, user_info):
-        BaseProtocol.on_login_success(self, user_info)
-        self.user = user_info
+    def on_login_success(self, user):
+        BaseProtocol.on_login_success(self, user)
+        self.user = user
         self.set_login_state()
         self.get_widget('window-login').hide()
 

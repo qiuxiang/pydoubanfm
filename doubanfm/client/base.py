@@ -2,7 +2,7 @@
 import json
 import threading
 from twisted.internet.protocol import Protocol as TwistedProtocol
-from ..utils import stars, second2time
+from ..utils import stars, second2time, music_symbol
 
 
 class Protocol(TwistedProtocol):
@@ -11,7 +11,7 @@ class Protocol(TwistedProtocol):
         self.input_thread.setDaemon(True)
 
     def connectionMade(self):
-        print('连接成功')
+        print('connected')
         if not self.input_thread.isAlive():
             self.input_thread.start()
 
@@ -29,19 +29,20 @@ class Protocol(TwistedProtocol):
                     else:
                         getattr(self, 'on_' + data[0])(data[1])
                 except Exception as e:
-                    print('消息处理出错：%s' % e.message)
+                    print('message error: %s' % e.message)
 
     def on_error(self, message):
-        print('服务端错误: %s' % message)
+        print('server error: %s' % message)
 
-    def on_user_info(self, user_info):
-        if user_info:
-            print('用户：%s <%s>' % (user_info['user_name'], user_info['email']))
+    def on_user(self, user):
+        if user:
+            print('%s <%s>' % (user['user_name'], user['email']))
         else:
-            print('用户：None')
+            print('☺')
 
     def on_song(self, song):
-        print('当前播放：\n  %s - %s（%s）%s\n  %s（%s）\n  %s发布于 %s\n  评分：%s' % (
+        print('%s\n  %s - %s（%s）%s\n  %s（%s）\n  %s, %s\n  %s' % (
+            music_symbol(),
             song['artist'],
             song['title'],
             second2time(song['length']),
@@ -57,43 +58,51 @@ class Protocol(TwistedProtocol):
         self.on_song(song)
 
     def on_skip(self):
-        print('跳过')
+        print('skip')
 
     def on_like(self):
-        print('喜欢')
+        print('♥')
 
     def on_unlike(self):
-        print('不再喜欢')
+        print('♡')
 
     def on_remove(self):
-        print('不再播放')
+        print('remove')
 
     def on_pause(self):
-        print('暂停播放')
+        print('pause')
 
     def on_resume(self):
-        print('恢复播放')
+        print('resume')
 
-    def on_login_success(self, user_info):
-        print('登录成功')
-        self.on_user_info(user_info)
+    def on_login_success(self, user):
+        print('login success')
+        self.on_user(user)
 
     def on_login_failed(self, message):
-        print('登录失败：%s' % message)
+        print('login failed: %s' % message)
 
     def on_kbps(self, kbps):
-        print('当前码率：%skbps' % kbps)
+        print('%sKBps' % kbps)
 
     def on_channel(self, channel_id):
-        print('当前频道：%s' % channel_id)
+        done = False
+        if hasattr(self, 'channels'):
+            for channel in self.channels:
+                if channel_id == channel['channel_id']:
+                    print(channel['name'])
+                    done = True
+        if not done:
+            print('%sHz' % channel_id)
 
     def on_channels(self, channels):
-        print('频道列表：')
+        self.channels = channels
+        print('channels: ')
         for channel in channels:
             print('  %s（%s）' % (channel['name'], channel['channel_id']))
 
     def on_playlist(self, playlist):
-        print('播放列表：')
+        print('playlist: ')
         for song in playlist:
             print('  %s - %s <%s>' % (song['artist'], song['title'], song['albumtitle']))
 
@@ -102,3 +111,6 @@ class Protocol(TwistedProtocol):
 
     def on_logout(self):
         print('logout')
+
+    def on_volume(self, volume):
+        print('volume %s%%' % (float(volume) * 100))
