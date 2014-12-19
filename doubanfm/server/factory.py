@@ -37,8 +37,8 @@ class Factory(protocol.Factory):
         print('resume')
 
     def on_login_success(self):
-        self.broadcast('login_success', self.doubanfm.user_info)
-        print('login success: ' + json_dumps(self.doubanfm.user_info))
+        self.broadcast('login_success', self.doubanfm.user)
+        print('login success: ' + json_dumps(self.doubanfm.user))
 
     def on_kbps_change(self):
         self.broadcast('kbps', setting.get('kbps'))

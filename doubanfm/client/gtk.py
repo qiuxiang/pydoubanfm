@@ -20,16 +20,16 @@ class Protocol(BaseProtocol):
     def connectionMade(self):
         BaseProtocol.connectionMade(self)
         self.transport.write(
-            'state\nvolume\nkbps\nchannels\nchannel\nuser_info\nsong')
+            'state\nvolume\nkbps\nchannels\nchannel\nuser\nsong')
 
     def on_channel(self, channel_id):
         BaseProtocol.on_channel(self, channel_id)
         self.channel_id = int(channel_id)
         self.widget_channels[self.channel_id].set_active(True)
 
-    def on_user_info(self, user_info):
-        BaseProtocol.on_user_info(self, user_info)
-        self.user = user_info
+    def on_user(self, user):
+        BaseProtocol.on_user(self, user)
+        self.user = user
         self.set_login_state()
 
     def on_login_failed(self, message):
@@ -213,9 +213,9 @@ class Protocol(BaseProtocol):
     def remove(self, widget):
         self.transport.write('remove')
 
-    def on_login_success(self, user_info):
-        BaseProtocol.on_login_success(self, user_info)
-        self.user = user_info
+    def on_login_success(self, user):
+        BaseProtocol.on_login_success(self, user)
+        self.user = user
         self.set_login_state()
         self.get_widget('window-login').hide()
 

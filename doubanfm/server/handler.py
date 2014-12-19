@@ -21,11 +21,11 @@ class Handler:
             self.protocol.send('error', e.message)
             print('error: %s' % e.message)
 
-    def action_user_info(self):
-        if hasattr(self.doubanfm, 'user_info'):
-            self.protocol.send('user_info', self.doubanfm.user_info)
+    def action_user(self):
+        if hasattr(self.doubanfm, 'user'):
+            self.protocol.send('user', self.doubanfm.user)
         else:
-            self.protocol.send('user_info', None)
+            self.protocol.send('user', None)
 
     def action_channels(self):
         self.protocol.send('channels', self.doubanfm.channels)

@@ -34,9 +34,9 @@ class Protocol(TwistedProtocol):
     def on_error(self, message):
         print('server error: %s' % message)
 
-    def on_user_info(self, user_info):
-        if user_info:
-            print('%s <%s>' % (user_info['user_name'], user_info['email']))
+    def on_user(self, user):
+        if user:
+            print('%s <%s>' % (user['user_name'], user['email']))
         else:
             print('☺')
 
@@ -75,9 +75,9 @@ class Protocol(TwistedProtocol):
     def on_resume(self):
         print('resume')
 
-    def on_login_success(self, user_info):
+    def on_login_success(self, user):
         print('login success')
-        self.on_user_info(user_info)
+        self.on_user(user)
 
     def on_login_failed(self, message):
         print('login failed: %s' % message)

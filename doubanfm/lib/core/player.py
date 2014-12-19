@@ -26,8 +26,8 @@ class Player:
 
         try:
             self.proxy.session.cookies.load()
-            self.user_info = json.load(open(path.user))
-            self.proxy.set_auth(self.user_info)
+            self.user = json.load(open(path.user))
+            self.proxy.set_auth(self.user)
         except IOError:
             pass
 
@@ -54,20 +54,20 @@ class Player:
     def login(self, email, password):
         """:return: 登录成功返回用户信息，失败则返回异常"""
         try:
-            self.user_info = self.proxy.login(email, password)
+            self.user = self.proxy.login(email, password)
             self.proxy.session.cookies.save()
             self.hooks.dispatch('login_success')
-            json_dump(self.user_info, path.user)
+            json_dump(self.user, path.user)
             notify('登录成功',
-                   self.user_info['user_name'] + ' <' +
-                   self.user_info['email'] + '>')
-            return self.user_info
+                   self.user['user_name'] + ' <' +
+                   self.user['email'] + '>')
+            return self.user
         except LoginError as e:
             return e
 
     def logout(self):
         self.proxy.logout()
-        self.user_info = None
+        self.user = None
         self.hooks.dispatch('logout')
         os.remove(path.user)
         if setting.get('channel') == -3:
