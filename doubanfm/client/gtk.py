@@ -99,7 +99,6 @@ class Protocol(BaseProtocol):
 
     def on_song(self, song):
         BaseProtocol.on_song(self, song)
-        self.song = song
         self.get_widget('image-album-cover').set_from_pixbuf(
             GdkPixbuf.Pixbuf.new_from_file_at_scale(
                 song['picture_file'], 240, -1, True))

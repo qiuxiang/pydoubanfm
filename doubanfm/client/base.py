@@ -41,6 +41,7 @@ class Protocol(TwistedProtocol):
             print('☺')
 
     def on_song(self, song):
+        self.song = song
         print('%s%s - %s（%s）%s\n  %s（%s）\n  %s, %s\n  %s' % (
             music_symbol() + ' ',
             color.yellow(song['artist']),
@@ -90,7 +91,7 @@ class Protocol(TwistedProtocol):
         if hasattr(self, 'channels'):
             for channel in self.channels:
                 if channel_id == channel['channel_id']:
-                    print(channel['name'])
+                    print(color.magenta(channel['name']))
                     done = True
         if not done:
             print('%sHz' % color.magenta(channel_id))
@@ -104,7 +105,11 @@ class Protocol(TwistedProtocol):
     def on_playlist(self, playlist):
         print(color.cyan('Playlist:'))
         for song in playlist:
-            print('  %s - %s <%s>' % (
+            current = ' '
+            if hasattr(self, 'song') and self.song == song:
+                current = '>'
+            print('%s %s - %s <%s>' % (
+                current,
                 color.yellow(song['artist']),
                 color.green(song['title']),
                 song['albumtitle']))
