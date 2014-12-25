@@ -19,7 +19,10 @@ from colorama import init, Fore
 init()
 
 
-class path:
+class Path:
+    def __init__(self):
+        pass
+
     root = os.path.abspath(os.path.dirname(__file__)) + '/'
     local = os.path.expanduser('~/.pydoubanfm/')
     album_cover = local + 'album_cover/'
@@ -30,12 +33,15 @@ class path:
     pid = '/var/tmp/doubanfm.pid'
 
 
-class res:
-    icon = path.root + 'res/icon.png'
-    glade = path.root + 'res/doubanfm.glade'
+class Resource:
+    def __init__(self):
+        pass
+
+    icon = Path.root + 'res/icon.png'
+    glade = Path.root + 'res/doubanfm.glade'
 
 
-def notify(title, content, picture=res.icon):
+def notify(title, content, picture=Resource.icon):
     notifier.update(title, content, picture)
     notifier.show()
 
@@ -98,7 +104,7 @@ def music_symbol():
 class setting:
     @staticmethod
     def update_file():
-        json_dump(setting.data, path.setting)
+        json_dump(setting.data, Path.setting)
 
     @staticmethod
     def get(name):
@@ -109,14 +115,14 @@ class setting:
         setting.data[name] = value
         setting.update_file()
 
-    if not os.path.isdir(path.local):
-        os.mkdir(path.local)
+    if not os.path.isdir(Path.local):
+        os.mkdir(Path.local)
 
-    if not os.path.isdir(path.album_cover):
-        os.mkdir(path.album_cover)
+    if not os.path.isdir(Path.album_cover):
+        os.mkdir(Path.album_cover)
 
-    if os.path.isfile(path.setting):
-        data = json.load(open(path.setting))
+    if os.path.isfile(Path.setting):
+        data = json.load(open(Path.setting))
     else:
         data = {'channel': 0, 'kbps': 192, 'port': 1234}
         update_file()
@@ -144,15 +150,15 @@ class Factory(ReconnectingClientFactory):
 
 class ServerDaemon(Daemon):
     def run(self):
-        subprocess.Popen(['python', path.root + 'srv.py'])
+        subprocess.Popen(['python', Path.root + 'srv.py'])
 
 
 def run_client(protocol):
     port = setting.get('port')
-    server = ServerDaemon(path.pid)
+    server = ServerDaemon(Path.pid)
     if not port_is_open(port):
-        if os.path.isfile(path.pid):
-            os.remove(path.pid)
+        if os.path.isfile(Path.pid):
+            os.remove(Path.pid)
         threading.Thread(target=server.start).start()
     reload_sys()
     reactor.connectTCP('127.0.0.1', port, Factory(protocol))

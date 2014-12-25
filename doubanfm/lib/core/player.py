@@ -8,7 +8,7 @@ Notify.init(__name__)
 
 from .proxy import Proxy, LoginError
 from .. import Hooks, GstPlayer
-from ...utils import setting, download, json_dump, notify, path, stars
+from ...utils import setting, download, json_dump, notify, Path as path, stars
 
 
 class Player:

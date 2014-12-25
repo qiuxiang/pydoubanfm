@@ -3,7 +3,7 @@ import threading
 import webbrowser
 from gi.repository import GLib, Gtk, GdkPixbuf
 from .base import Protocol as BaseProtocol
-from ..utils import res, download, notify, add_tag
+from ..utils import Resource as res, download, notify, add_tag
 
 
 class Protocol(BaseProtocol):
