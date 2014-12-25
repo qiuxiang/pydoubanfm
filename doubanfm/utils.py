@@ -9,8 +9,14 @@ import requests
 import eyeD3
 from twisted.internet import reactor
 from twisted.internet.protocol import ReconnectingClientFactory
-from gi.repository import Notify
 from .lib import Daemon
+
+from gi.repository import Notify
+Notify.init('pydoubanfm')
+notifier = Notify.Notification.new('', '', '')
+
+from colorama import init, Fore
+init()
 
 
 class path:
@@ -29,11 +35,9 @@ class res:
     glade = path.root + 'res/doubanfm.glade'
 
 
-Notify.init('pydoubanfm')
-_notify = Notify.Notification.new('', '', '')
 def notify(title, content, picture=res.icon):
-    _notify.update(title, content, picture)
-    _notify.show()
+    notifier.update(title, content, picture)
+    notifier.show()
 
 
 def json_dump(data, filename):
@@ -153,3 +157,44 @@ def run_client(protocol):
     reload_sys()
     reactor.connectTCP('127.0.0.1', port, Factory(protocol))
     reactor.run()
+
+
+class Color:
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def wrap(text, color):
+        return color + str(text) + Fore.RESET
+
+    @staticmethod
+    def red(text):
+        return Color.wrap(text, Fore.RED)
+
+    @staticmethod
+    def green(text):
+        return Color.wrap(text, Fore.GREEN)
+
+    @staticmethod
+    def black(text):
+        return Color.wrap(text, Fore.BLACK)
+
+    @staticmethod
+    def yellow(text):
+        return Color.wrap(text, Fore.YELLOW)
+
+    @staticmethod
+    def blue(text):
+        return Color.wrap(text, Fore.BLUE)
+
+    @staticmethod
+    def magenta(text):
+        return Color.wrap(text, Fore.MAGENTA)
+
+    @staticmethod
+    def cyan(text):
+        return Color.wrap(text, Fore.CYAN)
+
+    @staticmethod
+    def white(text):
+        return Color.wrap(text, Fore.WHITE)

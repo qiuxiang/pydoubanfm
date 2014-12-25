@@ -2,7 +2,7 @@
 import json
 import threading
 from twisted.internet.protocol import Protocol as TwistedProtocol
-from ..utils import stars, second2time, music_symbol
+from ..utils import stars, second2time, music_symbol, Color as color
 
 
 class Protocol(TwistedProtocol):
@@ -11,7 +11,7 @@ class Protocol(TwistedProtocol):
         self.input_thread.setDaemon(True)
 
     def connectionMade(self):
-        print('connected')
+        print(color.green('Connected'))
         if not self.input_thread.isAlive():
             self.input_thread.start()
 
@@ -29,61 +29,61 @@ class Protocol(TwistedProtocol):
                     else:
                         getattr(self, 'on_' + data[0])(data[1])
                 except Exception as e:
-                    print('message error: %s' % e.message)
+                    print(color.red('%sMessage processing failed: %s' % e.message))
 
     def on_error(self, message):
-        print('server error: %s' % message)
+        print(color.red('Server error: %s' % message))
 
     def on_user(self, user):
         if user:
-            print('%s <%s>' % (user['user_name'], user['email']))
+            print('%s <%s>' % (color.cyan(user['user_name']), user['email']))
         else:
             print('☺')
 
     def on_song(self, song):
-        print('%s\n  %s - %s（%s）%s\n  %s（%s）\n  %s, %s\n  %s' % (
+        print('%s%s - %s（%s）%s\n  %s（%s）\n  %s, %s\n  %s' % (
             music_symbol() + ' ',
-            song['artist'],
-            song['title'],
+            color.yellow(song['artist']),
+            color.green(song['title']),
             second2time(song['length']),
-            ['♡', '♥'][song['like']],
-            song['albumtitle'],
+            color.red(['♡', '♥'][song['like']]),
+            color.cyan(song['albumtitle']),
             'http://music.douban.com' + song['album'],
             song['company'],
             song['public_time'],
-            stars(song['rating_avg']),
+            color.magenta(stars(song['rating_avg'])),
         ))
 
     def on_play(self, song):
         self.on_song(song)
 
     def on_skip(self):
-        print('skip')
+        print(color.yellow('Skip'))
 
     def on_like(self):
-        print('♥')
+        print(color.red('♥'))
 
     def on_unlike(self):
-        print('♡')
+        print(color.white('♡'))
 
     def on_remove(self):
-        print('remove')
+        print(color.red('Remove'))
 
     def on_pause(self):
-        print('pause')
+        print(color.blue('Pause'))
 
     def on_resume(self):
-        print('resume')
+        print(color.green('Resume'))
 
     def on_login_success(self, user):
-        print('login success')
+        print(color.green('Login success'))
         self.on_user(user)
 
     def on_login_failed(self, message):
-        print('login failed: %s' % message)
+        print(color.red('Login failed: %s' % message))
 
     def on_kbps(self, kbps):
-        print('%sKBps' % kbps)
+        print('%sKBps' % color.magenta(kbps))
 
     def on_channel(self, channel_id):
         done = False
@@ -93,24 +93,34 @@ class Protocol(TwistedProtocol):
                     print(channel['name'])
                     done = True
         if not done:
-            print('%sHz' % channel_id)
+            print('%sHz' % color.magenta(channel_id))
 
     def on_channels(self, channels):
         self.channels = channels
-        print('channels: ')
+        print(color.yellow('Channels:'))
         for channel in channels:
-            print('  %s（%s）' % (channel['name'], channel['channel_id']))
+            print('  %s（%s）' % (color.cyan(channel['name']), channel['channel_id']))
 
     def on_playlist(self, playlist):
-        print('playlist: ')
+        print(color.cyan('Playlist:'))
         for song in playlist:
-            print('  %s - %s <%s>' % (song['artist'], song['title'], song['albumtitle']))
+            print('  %s - %s <%s>' % (
+                color.yellow(song['artist']),
+                color.green(song['title']),
+                song['albumtitle']))
 
     def on_state(self, state):
-        print(state)
+        if state == 'playing':
+            print(color.green('Playing'))
+
+        if state == 'paused':
+            print(color.yellow('Paused'))
+
+        if state == 'stoped':
+            print(color.red('Stoped'))
 
     def on_logout(self):
-        print('logout')
+        print(color.yellow('Logout'))
 
     def on_volume(self, volume):
-        print('volume %s%%' % (float(volume) * 100))
+        print('Volume %s' % color.magenta(str(float(volume) * 100) + '%'))
