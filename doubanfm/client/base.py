@@ -84,23 +84,24 @@ class Protocol(TwistedProtocol):
         print(color.red('Login failed: %s' % message))
 
     def on_kbps(self, kbps):
-        print('%sKBps' % color.magenta(kbps))
+        print(color.magenta('%sKBps' % kbps))
 
     def on_channel(self, channel_id):
-        done = False
+        self.channel_id = int(channel_id)
         if hasattr(self, 'channels'):
             for channel in self.channels:
                 if channel_id == channel['channel_id']:
                     print(color.magenta(channel['name']))
-                    done = True
-        if not done:
-            print('%sHz' % color.magenta(channel_id))
+                    return
 
     def on_channels(self, channels):
         self.channels = channels
         print(color.yellow('Channels:'))
         for channel in channels:
-            print('  %s（%s）' % (color.cyan(channel['name']), channel['channel_id']))
+            active = color.cyan
+            if hasattr(self, 'channel_id') and channel['channel_id'] == self.channel_id:
+                active = color.magenta
+            print('  %s（%s）' % (active(channel['name']), channel['channel_id']))
 
     def on_playlist(self, playlist):
         print(color.cyan('Playlist:'))

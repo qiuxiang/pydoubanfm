@@ -20,11 +20,10 @@ class Protocol(BaseProtocol):
     def connectionMade(self):
         BaseProtocol.connectionMade(self)
         self.transport.write(
-            'state\nvolume\nkbps\nchannels\nchannel\nuser\nsong')
+            'user\nstate\nvolume\nkbps\nchannels\nchannel\nsong')
 
     def on_channel(self, channel_id):
         BaseProtocol.on_channel(self, channel_id)
-        self.channel_id = int(channel_id)
         self.widget_channels[self.channel_id].set_active(True)
 
     def on_user(self, user):
