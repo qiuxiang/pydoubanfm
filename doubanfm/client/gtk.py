@@ -104,9 +104,9 @@ class Protocol(BaseProtocol):
             GdkPixbuf.Pixbuf.new_from_file_at_scale(
                 song['picture_file'], 240, -1, True))
         self.get_widget('image-album-cover').set_tooltip_text(
-            '标题：%s\n艺术家：%s\n专辑：%s' % (
-                song['title'],
+            '艺术家：%s\n标题：%s\n专辑：%s' % (
                 song['artist'],
+                song['title'],
                 song['albumtitle']))
         self.get_widget('menu-item-title').set_label(
             self.song['artist'] + ' - ' + self.song['title'])

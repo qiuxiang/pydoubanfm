@@ -23,6 +23,7 @@ python 实现的豆瓣电台播放器
 - python-eyed3
 - python-twisted
 - python-gst-1.0
+- convert
 
 作者常用的操作系统是 Ubuntu 最新版，当然，其他 Linux 发行版也基本可以保证支持（主要是解决依赖）。
 至于 OS X，原则上是可以支持的，关键是 pygtk3 和 gst1.0 的安装。Windows 同理，但依赖的解决更为困难。
@@ -33,11 +34,11 @@ $ sudo apt-get install python-requests python-eyed3 python-twisted python-gst-1.
 ```
 
 ## 运行
-在项目目录下运行 `create_desktop_entry.sh` 会创建启动项，这样，你就可以在所有程序里启动豆瓣FM。
+在项目目录下运行 `install.sh` 会创建启动项，这样，你就可以在所有程序里启动豆瓣FM。
 你也可以直接从命令行启动，运行 `./doubanfm/gtk.py` 或 `python -m doubanfm.gtk`
 
 ## 截图
-运行 `create_desktop_entry.py` 可以生成启动菜单项，对于 unity 桌面可以直接通过右键菜单进行控制
+`install.sh` 会生成启动菜单项，Ubuntu Unity 桌面下可以直接通过右键菜单进行控制
 
 ![截图 - Desktop Action](https://cloud.githubusercontent.com/assets/1709072/5485876/4fdef1b0-86db-11e4-970b-62318f12f442.png)
 
@@ -64,6 +65,3 @@ $ sudo apt-get install python-requests python-eyed3 python-twisted python-gst-1.
 下载的歌曲会写入完整的 mp3 标签
 
 ![截图 - mp3 标签](https://cloud.githubusercontent.com/assets/1709072/5482898/d8f610d8-86a3-11e4-82de-faf4cd68fdbb.png)
-
-## 已知的问题
-有较小的几率出现启动后闪退，重新再启动即可，该 bug 无法重现，暂时不好解决。
