@@ -23,6 +23,7 @@ python 实现的豆瓣电台播放器
 - python-eyed3
 - python-twisted
 - python-gst-1.0
+- python-colorama
 - convert
 
 作者常用的操作系统是 Ubuntu 最新版，当然，其他 Linux 发行版也基本可以保证支持（主要是解决依赖）。
