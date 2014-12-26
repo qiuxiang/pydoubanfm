@@ -3,13 +3,10 @@ import os
 import json
 import random
 import socket
-import threading
-import subprocess
 import requests
 import eyeD3
 from twisted.internet import reactor
 from twisted.internet.protocol import ReconnectingClientFactory
-from .lib import Daemon
 
 from gi.repository import Notify
 Notify.init('pydoubanfm')
@@ -148,20 +145,10 @@ class Factory(ReconnectingClientFactory):
         self.retry(connector)
 
 
-class ServerDaemon(Daemon):
-    def run(self):
-        subprocess.Popen(['python', Path.root + 'srv.py'])
-
-
 def run_client(protocol):
-    port = setting.get('port')
-    server = ServerDaemon(Path.pid)
-    if not port_is_open(port):
-        if os.path.isfile(Path.pid):
-            os.remove(Path.pid)
-        threading.Thread(target=server.start).start()
     reload_sys()
-    reactor.connectTCP('127.0.0.1', port, Factory(protocol))
+    os.system('nohup ' + Path.root + 'srv.py' + ' > /dev/null &')
+    reactor.connectTCP('127.0.0.1', setting.get('port'), Factory(protocol))
     reactor.run()
 
 
