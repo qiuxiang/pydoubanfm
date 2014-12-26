@@ -5,15 +5,13 @@ import random
 import socket
 import requests
 import eyeD3
+import colorama
 from twisted.internet import reactor
 from twisted.internet.protocol import ReconnectingClientFactory
 
 from gi.repository import Notify
 Notify.init('pydoubanfm')
 notifier = Notify.Notification.new('', '', '')
-
-from colorama import init, Fore
-init()
 
 
 class Path:
@@ -98,19 +96,19 @@ def music_symbol():
     return random.choice(['♫', '♬', '♪', '♩'])
 
 
-class setting:
+class Setting:
     @staticmethod
     def update_file():
-        json_dump(setting.data, Path.setting)
+        json_dump(Setting.data, Path.setting)
 
     @staticmethod
     def get(name):
-        return setting.data[name]
+        return Setting.data[name]
 
     @staticmethod
     def set(name, value):
-        setting.data[name] = value
-        setting.update_file()
+        Setting.data[name] = value
+        Setting.update_file()
 
     if not os.path.isdir(Path.local):
         os.mkdir(Path.local)
@@ -148,7 +146,7 @@ class Factory(ReconnectingClientFactory):
 def run_client(protocol):
     reload_sys()
     os.system('nohup ' + Path.root + 'srv.py' + ' > /dev/null &')
-    reactor.connectTCP('127.0.0.1', setting.get('port'), Factory(protocol))
+    reactor.connectTCP('127.0.0.1', Setting.get('port'), Factory(protocol))
     reactor.run()
 
 
@@ -158,36 +156,36 @@ class Color:
 
     @staticmethod
     def wrap(text, color):
-        return color + str(text) + Fore.RESET
+        return color + str(text) + colorama.Fore.RESET
 
     @staticmethod
     def red(text):
-        return Color.wrap(text, Fore.RED)
+        return Color.wrap(text, colorama.Fore.RED)
 
     @staticmethod
     def green(text):
-        return Color.wrap(text, Fore.GREEN)
+        return Color.wrap(text, colorama.Fore.GREEN)
 
     @staticmethod
     def black(text):
-        return Color.wrap(text, Fore.BLACK)
+        return Color.wrap(text, colorama.Fore.BLACK)
 
     @staticmethod
     def yellow(text):
-        return Color.wrap(text, Fore.YELLOW)
+        return Color.wrap(text, colorama.Fore.YELLOW)
 
     @staticmethod
     def blue(text):
-        return Color.wrap(text, Fore.BLUE)
+        return Color.wrap(text, colorama.Fore.BLUE)
 
     @staticmethod
     def magenta(text):
-        return Color.wrap(text, Fore.MAGENTA)
+        return Color.wrap(text, colorama.Fore.MAGENTA)
 
     @staticmethod
     def cyan(text):
-        return Color.wrap(text, Fore.CYAN)
+        return Color.wrap(text, colorama.Fore.CYAN)
 
     @staticmethod
     def white(text):
-        return Color.wrap(text, Fore.WHITE)
+        return Color.wrap(text, colorama.Fore.WHITE)

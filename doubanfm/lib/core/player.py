@@ -8,7 +8,7 @@ Notify.init(__name__)
 
 from .proxy import Proxy, LoginError
 from .. import Hooks, GstPlayer
-from ...utils import setting, download, json_dump, notify, Path as path, stars
+from ...utils import Setting, download, json_dump, notify, Path, stars
 
 
 class Player:
@@ -20,35 +20,35 @@ class Player:
         self.player.hooks.register('eos', self.on_player_eos)
 
         self.proxy = Proxy()
-        self.proxy.set_kbps(setting.get('kbps'))
+        self.proxy.set_kbps(Setting.get('kbps'))
         self.proxy.session.cookies = \
-            cookielib.LWPCookieJar(path.cookies)
+            cookielib.LWPCookieJar(Path.cookies)
 
         try:
             self.proxy.session.cookies.load()
-            self.user = json.load(open(path.user))
+            self.user = json.load(open(Path.user))
             self.proxy.set_auth(self.user)
         except IOError:
             pass
 
-        if os.path.isfile(path.channels):
-            self.channels = json.load(open(path.channels))
+        if os.path.isfile(Path.channels):
+            self.channels = json.load(open(Path.channels))
         else:
             self.update_channels()
 
     def update_channels(self):
         self.channels = self.proxy.get_channels()
         self.channels.insert(0, {'name': '红心兆赫', 'channel_id': -3})
-        json_dump(self.channels, path.channels)
+        json_dump(self.channels, Path.channels)
 
     def update_playlist(self, operation_type):
         self.playlist = self.proxy.get_playlist(
-            setting.get('channel'), operation_type, self.song['sid'])['song']
+            Setting.get('channel'), operation_type, self.song['sid'])['song']
         self.proxy.session.cookies.save()
 
     def set_kbps(self, kbps):
         self.proxy.set_kbps(kbps)
-        setting.set('kbps', kbps)
+        Setting.set('kbps', kbps)
         self.hooks.dispatch('kbps_change')
 
     def login(self, email, password):
@@ -57,7 +57,7 @@ class Player:
             self.user = self.proxy.login(email, password)
             self.proxy.session.cookies.save()
             self.hooks.dispatch('login_success')
-            json_dump(self.user, path.user)
+            json_dump(self.user, Path.user)
             notify('登录成功',
                    self.user['user_name'] + ' <' +
                    self.user['email'] + '>')
@@ -69,8 +69,8 @@ class Player:
         self.proxy.logout()
         self.user = None
         self.hooks.dispatch('logout')
-        os.remove(path.user)
-        if setting.get('channel') == -3:
+        os.remove(Path.user)
+        if Setting.get('channel') == -3:
             self.select_channel(0)
 
     def play(self):
@@ -97,7 +97,7 @@ class Player:
         self.play()
 
     def select_channel(self, channel_id):
-        setting.set('channel', channel_id)
+        Setting.set('channel', channel_id)
         self.hooks.dispatch('channel_change')
         self.next('n')
 
@@ -132,7 +132,7 @@ class Player:
             self.playlist_count += 1
 
         self.proxy.get_playlist(
-            setting.get('channel'), 'e', self.song['sid'])
+            Setting.get('channel'), 'e', self.song['sid'])
         self.play()
 
     def run(self):
@@ -155,6 +155,6 @@ class Player:
 
     def save_album_cover(self):
         self.song['picture_file'] = \
-            path.album_cover + self.song['picture'].split('/')[-1]
+            Path.album_cover + self.song['picture'].split('/')[-1]
         if not os.path.isfile(self.song['picture_file']):
             download(self.song['picture'], self.song['picture_file'])
