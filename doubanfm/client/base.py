@@ -7,6 +7,7 @@ from ..utils import stars, second2time, music_symbol, Color as color
 
 class Protocol(TwistedProtocol):
     def __init__(self):
+        print('Starting...')
         self.input_thread = threading.Thread(target=self.input)
         self.input_thread.setDaemon(True)
 
@@ -122,8 +123,11 @@ class Protocol(TwistedProtocol):
         if state == 'paused':
             print(color.yellow('Paused'))
 
-        if state == 'stoped':
+        if state == 'null':
             print(color.red('Stoped'))
+
+        if state == 'ready':
+            print(color.cyan('Ready'))
 
     def on_logout(self):
         print(color.yellow('Logout'))
