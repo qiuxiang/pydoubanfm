@@ -17,7 +17,7 @@ class Player:
         self.song = {'sid': -1}
         self.playlist_count = 0
         self.player = GstPlayer()
-        self.player.hooks.register('eos', self.on_player_eos)
+        self.player.hooks.register('eos', self.next)
 
         self.proxy = Proxy()
         self.proxy.set_kbps(Setting.get('kbps'))
@@ -73,13 +73,18 @@ class Player:
         if Setting.get('channel') == -3:
             self.select_channel(0)
 
-    def play(self):
-        self.song = self.playlist[self.playlist_count]
-        self.save_album_cover()
-        self.player.set_uri(self.song['url'])
-        self.player.play()
-        self.song_notify()
-        self.hooks.dispatch('play')
+    def play(self, index=None):
+        if not index:
+            index = self.playlist_count
+
+        if 0 <= index < len(self.playlist):
+            self.song = self.playlist[index]
+            self.save_album_cover()
+            self.player.stop()
+            self.player.set_uri(self.song['url'])
+            self.player.play()
+            self.song_notify()
+            self.hooks.dispatch('play')
 
     def song_notify(self):
         notify('%s %s' % (self.song['title'], ['♡', '♥'][self.song['like']]),
@@ -89,8 +94,8 @@ class Player:
                    stars(self.song['rating_avg'])),
                self.song['picture_file'])
 
-    def next(self, operation_type='n'):
-        """播放下一曲"""
+    def update(self, operation_type='n'):
+        """播放下一曲，同时进行反馈"""
         self.update_playlist(operation_type)
         self.playlist_count = 0
         self.player.stop()
@@ -99,7 +104,7 @@ class Player:
     def select_channel(self, channel_id):
         Setting.set('channel', channel_id)
         self.hooks.dispatch('channel_change')
-        self.next('n')
+        self.update('n')
 
     def pause(self):
         self.player.pause()
@@ -123,7 +128,7 @@ class Player:
         self.hooks.dispatch('unlike')
         self.song_notify()
 
-    def on_player_eos(self):
+    def next(self, report=True):
         """当前歌曲播放完毕后的处理"""
         if len(self.playlist) == self.playlist_count + 1:
             self.update_playlist('p')
@@ -131,8 +136,10 @@ class Player:
         else:
             self.playlist_count += 1
 
-        self.proxy.get_playlist(
-            Setting.get('channel'), 'e', self.song['sid'])
+        if report:
+            self.proxy.get_playlist(
+                Setting.get('channel'), 'e', self.song['sid'])
+
         self.play()
 
     def run(self):
@@ -142,12 +149,12 @@ class Player:
     def remove(self):
         """不再播放当前的歌曲"""
         self.hooks.dispatch('remove')
-        self.next('b')
+        self.update('b')
 
     def skip(self):
         """跳过当前的歌曲"""
         self.hooks.dispatch('skip')
-        self.next('s')
+        self.update('s')
 
     def set_volume(self, value):
         self.player.set_volume(value)

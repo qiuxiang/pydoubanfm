@@ -45,6 +45,12 @@ class Handler:
     def action_skip(self):
         self.doubanfm.skip()
 
+    def action_next(self):
+        self.doubanfm.next(report=False)
+
+    def action_goto(self, index):
+        self.doubanfm.play(int(index))
+
     def action_pause(self):
         self.doubanfm.pause()
 
