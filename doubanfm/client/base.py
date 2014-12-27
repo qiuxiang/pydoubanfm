@@ -91,7 +91,7 @@ class Protocol(TwistedProtocol):
         self.channel_id = int(channel_id)
         if hasattr(self, 'channels'):
             for channel in self.channels:
-                if channel_id == channel['channel_id']:
+                if channel_id == int(channel['channel_id']):
                     print(Color.magenta(channel['name']))
                     return
 
@@ -100,7 +100,7 @@ class Protocol(TwistedProtocol):
         print(Color.yellow('Channels:'))
         for channel in channels:
             active = Color.cyan
-            if hasattr(self, 'channel_id') and channel['channel_id'] == self.channel_id:
+            if hasattr(self, 'channel_id') and int(channel['channel_id']) == self.channel_id:
                 active = Color.magenta
             print('  %s（%s）' % (active(channel['name']), channel['channel_id']))
 
