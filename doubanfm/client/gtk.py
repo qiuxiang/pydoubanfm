@@ -70,11 +70,18 @@ class Protocol(BaseProtocol):
     def on_playlist(self, playlist):
         BaseProtocol.on_playlist(self, playlist)
         group = Gtk.RadioMenuItem()
-        self.widget_playlist = {}
+        menu_playlist = self.get_widget('menu-playlist')
+
+        if hasattr(self, 'widget_playlist') and self.widget_playlist:
+            for item in self.widget_playlist.values():
+                menu_playlist.remove(item)
+        else:
+            self.widget_playlist = {}
+
         for index, song in enumerate(playlist):
             item = Gtk.RadioMenuItem('%s - %s' % (song['artist'], song['title']), visible=True, group=group)
             item.connect('activate', self.goto, index + 1)
-            self.get_widget('menu-playlist').append(item)
+            menu_playlist.append(item)
             self.widget_playlist[index + 1] = item
 
     def goto(self, widget, index):
