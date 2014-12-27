@@ -30,7 +30,7 @@ class Protocol(TwistedProtocol):
                     else:
                         getattr(self, 'on_' + data[0])(data[1])
                 except Exception as e:
-                    print(Color.red('%sMessage processing failed: %s' % e.message))
+                    print(Color.red('Message processing failed: %s' % e.message))
 
     def on_error(self, message):
         print(Color.red('Server error: %s' % message))
@@ -106,18 +106,16 @@ class Protocol(TwistedProtocol):
 
     def on_playlist(self, playlist):
         print(Color.cyan('Playlist:'))
-        count = 1
-        for song in playlist:
+        for index, song in enumerate(playlist):
             current = ' '
             if hasattr(self, 'song') and self.song == song:
                 current = '>'
             print('%s %s. %s - %s <%s>' % (
                 Color.red(current),
-                count,
+                index + 1,
                 Color.yellow(song['artist']),
                 Color.green(song['title']),
                 song['albumtitle']))
-            count += 1
 
     def on_state(self, state):
         if state == 'playing':

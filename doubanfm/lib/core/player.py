@@ -44,6 +44,7 @@ class Player:
     def update_playlist(self, operation_type):
         self.playlist = self.proxy.get_playlist(
             Setting.get('channel'), operation_type, self.song['sid'])['song']
+        self.hooks.dispatch('playlist_change')
         self.proxy.session.cookies.save()
 
     def set_kbps(self, kbps):
@@ -73,12 +74,15 @@ class Player:
         if Setting.get('channel') == -3:
             self.select_channel(0)
 
-    def play(self, index=None):
-        if not index:
+    def play(self, index=-1):
+        if index == -1:
             index = self.playlist_count
+        else:
+            self.playlist_count = index
 
         if 0 <= index < len(self.playlist):
             self.song = self.playlist[index]
+            self.song['index'] = index + 1
             self.save_album_cover()
             self.player.stop()
             self.player.set_uri(self.song['url'])
