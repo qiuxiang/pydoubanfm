@@ -49,7 +49,8 @@ class Handler:
         self.doubanfm.next(report=False)
 
     def action_goto(self, index):
-        self.doubanfm.play(int(index))
+        """start from 1"""
+        self.doubanfm.play(int(index) - 1)
 
     def action_pause(self):
         self.doubanfm.pause()
