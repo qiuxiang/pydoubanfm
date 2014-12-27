@@ -106,15 +106,18 @@ class Protocol(TwistedProtocol):
 
     def on_playlist(self, playlist):
         print(Color.cyan('Playlist:'))
+        count = 1
         for song in playlist:
             current = ' '
             if hasattr(self, 'song') and self.song == song:
                 current = '>'
-            print('%s %s - %s <%s>' % (
-                current,
+            print('%s %s. %s - %s <%s>' % (
+                Color.red(current),
+                count,
                 Color.yellow(song['artist']),
                 Color.green(song['title']),
                 song['albumtitle']))
+            count += 1
 
     def on_state(self, state):
         if state == 'playing':
