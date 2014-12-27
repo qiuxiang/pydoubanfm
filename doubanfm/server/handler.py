@@ -76,8 +76,8 @@ class Handler:
     def action_playlist(self):
         self.protocol.send('playlist', self.doubanfm.playlist)
 
-    def action_count(self):
-        self.protocol.send('count', self.doubanfm.playlist_count)
+    def action_index(self):
+        self.protocol.send('index', self.doubanfm.playlist_count)
 
     def action_login(self, data):
         result = self.doubanfm.login(data[0], data[1])
