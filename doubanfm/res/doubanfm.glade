@@ -151,6 +151,15 @@
       </object>
     </child>
     <child>
+      <object class="GtkMenuItem" id="menu-item-playlist">
+        <property name="visible">True</property>
+        <property name="label">播放列表</property>
+        <child type="submenu">
+          <object class="GtkMenu" id="menu-playlist"/>
+        </child>
+      </object>
+    </child>
+    <child>
       <object class="GtkMenuItem" id="menu-item-kbps">
         <property name="visible">True</property>
         <property name="label">码率（KBps）</property>

@@ -1,7 +1,7 @@
 from twisted.internet import protocol
 from .protocol import Protocol
 from ..lib.core import Player
-from ..utils import json_dumps, setting
+from ..utils import json_dumps, Setting
 
 
 class Factory(protocol.Factory):
@@ -9,18 +9,19 @@ class Factory(protocol.Factory):
         self.clients = []
         self.doubanfm = Player()
         self.doubanfm.hooks.register({
-            'play':           self.on_play,
-            'pause':          self.on_pause,
-            'resume':         self.on_resume,
-            'kbps_change':    self.on_kbps_change,
-            'channel_change': self.on_channel_change,
-            'volume_change':  self.on_volume_change,
-            'skip':           self.on_skip,
-            'remove':         self.on_remove,
-            'like':           self.on_like,
-            'unlike':         self.on_unlike,
-            'login_success':  self.on_login_success,
-            'logout':         self.on_logout,
+            'play':            self.on_play,
+            'pause':           self.on_pause,
+            'resume':          self.on_resume,
+            'kbps_change':     self.on_kbps_change,
+            'channel_change':  self.on_channel_change,
+            'volume_change':   self.on_volume_change,
+            'playlist_change': self.on_playlist_change,
+            'skip':            self.on_skip,
+            'remove':          self.on_remove,
+            'like':            self.on_like,
+            'unlike':          self.on_unlike,
+            'login_success':   self.on_login_success,
+            'logout':          self.on_logout,
         })
         self.doubanfm.run()
 
@@ -41,16 +42,20 @@ class Factory(protocol.Factory):
         print('login success: ' + json_dumps(self.doubanfm.user))
 
     def on_kbps_change(self):
-        self.broadcast('kbps', setting.get('kbps'))
-        print('kbps: %skbps' % setting.get('kbps'))
+        self.broadcast('kbps', Setting.get('kbps'))
+        print('kbps: %skbps' % Setting.get('kbps'))
 
     def on_channel_change(self):
-        self.broadcast('channel', setting.get('channel'))
-        print('channel: %s' % setting.get('channel'))
+        self.broadcast('channel', Setting.get('channel'))
+        print('channel: %s' % Setting.get('channel'))
 
     def on_volume_change(self):
         self.broadcast('volume', self.doubanfm.player.get_volume())
         print('volume: %s' % self.doubanfm.player.get_volume())
+
+    def on_playlist_change(self):
+        self.broadcast('playlist', self.doubanfm.playlist)
+        print('playlist: %s' % json_dumps(self.doubanfm.playlist))
 
     def on_skip(self):
         self.broadcast('skip')

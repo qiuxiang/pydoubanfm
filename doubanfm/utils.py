@@ -3,17 +3,21 @@ import os
 import json
 import random
 import socket
-import threading
-import subprocess
 import requests
 import eyeD3
+import colorama
 from twisted.internet import reactor
 from twisted.internet.protocol import ReconnectingClientFactory
+
 from gi.repository import Notify
-from .lib import Daemon
+Notify.init('pydoubanfm')
+notifier = Notify.Notification.new('', '', '')
 
 
-class path:
+class Path:
+    def __init__(self):
+        pass
+
     root = os.path.abspath(os.path.dirname(__file__)) + '/'
     local = os.path.expanduser('~/.pydoubanfm/')
     album_cover = local + 'album_cover/'
@@ -24,16 +28,17 @@ class path:
     pid = '/var/tmp/doubanfm.pid'
 
 
-class res:
-    icon = path.root + 'res/icon.png'
-    glade = path.root + 'res/doubanfm.glade'
+class Resource:
+    def __init__(self):
+        pass
+
+    icon = Path.root + 'res/icon.png'
+    glade = Path.root + 'res/doubanfm.glade'
 
 
-Notify.init('pydoubanfm')
-_notify = Notify.Notification.new('', '', '')
-def notify(title, content, picture=res.icon):
-    _notify.update(title, content, picture)
-    _notify.show()
+def notify(title, content, picture=Resource.icon):
+    notifier.update(title, content, picture)
+    notifier.show()
 
 
 def json_dump(data, filename):
@@ -91,28 +96,28 @@ def music_symbol():
     return random.choice(['♫', '♬', '♪', '♩'])
 
 
-class setting:
+class Setting:
     @staticmethod
     def update_file():
-        json_dump(setting.data, path.setting)
+        json_dump(Setting.data, Path.setting)
 
     @staticmethod
     def get(name):
-        return setting.data[name]
+        return Setting.data[name]
 
     @staticmethod
     def set(name, value):
-        setting.data[name] = value
-        setting.update_file()
+        Setting.data[name] = value
+        Setting.update_file()
 
-    if not os.path.isdir(path.local):
-        os.mkdir(path.local)
+    if not os.path.isdir(Path.local):
+        os.mkdir(Path.local)
 
-    if not os.path.isdir(path.album_cover):
-        os.mkdir(path.album_cover)
+    if not os.path.isdir(Path.album_cover):
+        os.mkdir(Path.album_cover)
 
-    if os.path.isfile(path.setting):
-        data = json.load(open(path.setting))
+    if os.path.isfile(Path.setting):
+        data = json.load(open(Path.setting))
     else:
         data = {'channel': 0, 'kbps': 192, 'port': 1234}
         update_file()
@@ -138,18 +143,49 @@ class Factory(ReconnectingClientFactory):
         self.retry(connector)
 
 
-class ServerDaemon(Daemon):
-    def run(self):
-        subprocess.Popen(['python', path.root + 'srv.py'])
-
-
 def run_client(protocol):
-    port = setting.get('port')
-    server = ServerDaemon(path.pid)
-    if not port_is_open(port):
-        if os.path.isfile(path.pid):
-            os.remove(path.pid)
-        threading.Thread(target=server.start).start()
     reload_sys()
-    reactor.connectTCP('127.0.0.1', port, Factory(protocol))
+    os.system('nohup ' + Path.root + 'srv.py' + ' > /dev/null &')
+    reactor.connectTCP('127.0.0.1', Setting.get('port'), Factory(protocol))
     reactor.run()
+
+
+class Color:
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def wrap(text, color):
+        return color + str(text) + colorama.Fore.RESET
+
+    @staticmethod
+    def red(text):
+        return Color.wrap(text, colorama.Fore.RED)
+
+    @staticmethod
+    def green(text):
+        return Color.wrap(text, colorama.Fore.GREEN)
+
+    @staticmethod
+    def black(text):
+        return Color.wrap(text, colorama.Fore.BLACK)
+
+    @staticmethod
+    def yellow(text):
+        return Color.wrap(text, colorama.Fore.YELLOW)
+
+    @staticmethod
+    def blue(text):
+        return Color.wrap(text, colorama.Fore.BLUE)
+
+    @staticmethod
+    def magenta(text):
+        return Color.wrap(text, colorama.Fore.MAGENTA)
+
+    @staticmethod
+    def cyan(text):
+        return Color.wrap(text, colorama.Fore.CYAN)
+
+    @staticmethod
+    def white(text):
+        return Color.wrap(text, colorama.Fore.WHITE)

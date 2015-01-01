@@ -8,7 +8,7 @@ Notify.init(__name__)
 
 from .proxy import Proxy, LoginError
 from .. import Hooks, GstPlayer
-from ...utils import setting, download, json_dump, notify, path, stars
+from ...utils import Setting, download, json_dump, notify, Path, stars
 
 
 class Player:
@@ -17,38 +17,39 @@ class Player:
         self.song = {'sid': -1}
         self.playlist_count = 0
         self.player = GstPlayer()
-        self.player.hooks.register('eos', self.on_player_eos)
+        self.player.hooks.register('eos', self.next)
 
         self.proxy = Proxy()
-        self.proxy.set_kbps(setting.get('kbps'))
+        self.proxy.set_kbps(Setting.get('kbps'))
         self.proxy.session.cookies = \
-            cookielib.LWPCookieJar(path.cookies)
+            cookielib.LWPCookieJar(Path.cookies)
 
         try:
             self.proxy.session.cookies.load()
-            self.user = json.load(open(path.user))
+            self.user = json.load(open(Path.user))
             self.proxy.set_auth(self.user)
         except IOError:
             pass
 
-        if os.path.isfile(path.channels):
-            self.channels = json.load(open(path.channels))
+        if os.path.isfile(Path.channels):
+            self.channels = json.load(open(Path.channels))
         else:
             self.update_channels()
 
     def update_channels(self):
         self.channels = self.proxy.get_channels()
         self.channels.insert(0, {'name': '红心兆赫', 'channel_id': -3})
-        json_dump(self.channels, path.channels)
+        json_dump(self.channels, Path.channels)
 
     def update_playlist(self, operation_type):
         self.playlist = self.proxy.get_playlist(
-            setting.get('channel'), operation_type, self.song['sid'])['song']
+            Setting.get('channel'), operation_type, self.song['sid'])['song']
+        self.hooks.dispatch('playlist_change')
         self.proxy.session.cookies.save()
 
     def set_kbps(self, kbps):
         self.proxy.set_kbps(kbps)
-        setting.set('kbps', kbps)
+        Setting.set('kbps', kbps)
         self.hooks.dispatch('kbps_change')
 
     def login(self, email, password):
@@ -57,7 +58,7 @@ class Player:
             self.user = self.proxy.login(email, password)
             self.proxy.session.cookies.save()
             self.hooks.dispatch('login_success')
-            json_dump(self.user, path.user)
+            json_dump(self.user, Path.user)
             notify('登录成功',
                    self.user['user_name'] + ' <' +
                    self.user['email'] + '>')
@@ -69,17 +70,25 @@ class Player:
         self.proxy.logout()
         self.user = None
         self.hooks.dispatch('logout')
-        os.remove(path.user)
-        if setting.get('channel') == -3:
+        os.remove(Path.user)
+        if Setting.get('channel') == -3:
             self.select_channel(0)
 
-    def play(self):
-        self.song = self.playlist[self.playlist_count]
-        self.save_album_cover()
-        self.player.set_uri(self.song['url'])
-        self.player.play()
-        self.song_notify()
-        self.hooks.dispatch('play')
+    def play(self, index=-1):
+        if index == -1:
+            index = self.playlist_count
+        else:
+            self.playlist_count = index
+
+        if 0 <= index < len(self.playlist):
+            self.song = self.playlist[index]
+            self.song['index'] = index + 1
+            self.save_album_cover()
+            self.player.stop()
+            self.player.set_uri(self.song['url'])
+            self.player.play()
+            self.song_notify()
+            self.hooks.dispatch('play')
 
     def song_notify(self):
         notify('%s %s' % (self.song['title'], ['♡', '♥'][self.song['like']]),
@@ -89,17 +98,17 @@ class Player:
                    stars(self.song['rating_avg'])),
                self.song['picture_file'])
 
-    def next(self, operation_type='n'):
-        """播放下一曲"""
+    def update(self, operation_type='n'):
+        """播放下一曲，同时进行反馈"""
         self.update_playlist(operation_type)
         self.playlist_count = 0
         self.player.stop()
         self.play()
 
     def select_channel(self, channel_id):
-        setting.set('channel', channel_id)
+        Setting.set('channel', channel_id)
         self.hooks.dispatch('channel_change')
-        self.next('n')
+        self.update('n')
 
     def pause(self):
         self.player.pause()
@@ -123,7 +132,7 @@ class Player:
         self.hooks.dispatch('unlike')
         self.song_notify()
 
-    def on_player_eos(self):
+    def next(self, report=True):
         """当前歌曲播放完毕后的处理"""
         if len(self.playlist) == self.playlist_count + 1:
             self.update_playlist('p')
@@ -131,8 +140,10 @@ class Player:
         else:
             self.playlist_count += 1
 
-        self.proxy.get_playlist(
-            setting.get('channel'), 'e', self.song['sid'])
+        if report:
+            self.proxy.get_playlist(
+                Setting.get('channel'), 'e', self.song['sid'])
+
         self.play()
 
     def run(self):
@@ -142,12 +153,12 @@ class Player:
     def remove(self):
         """不再播放当前的歌曲"""
         self.hooks.dispatch('remove')
-        self.next('b')
+        self.update('b')
 
     def skip(self):
         """跳过当前的歌曲"""
         self.hooks.dispatch('skip')
-        self.next('s')
+        self.update('s')
 
     def set_volume(self, value):
         self.player.set_volume(value)
@@ -155,6 +166,6 @@ class Player:
 
     def save_album_cover(self):
         self.song['picture_file'] = \
-            path.album_cover + self.song['picture'].split('/')[-1]
+            Path.album_cover + self.song['picture'].split('/')[-1]
         if not os.path.isfile(self.song['picture_file']):
             download(self.song['picture'], self.song['picture_file'])

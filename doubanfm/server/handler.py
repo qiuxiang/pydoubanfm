@@ -1,6 +1,6 @@
 from twisted.internet import reactor
 from ..lib.core import LoginError
-from ..utils import setting
+from ..utils import Setting
 
 
 class Handler:
@@ -45,6 +45,13 @@ class Handler:
     def action_skip(self):
         self.doubanfm.skip()
 
+    def action_next(self):
+        self.doubanfm.next(report=False)
+
+    def action_goto(self, index):
+        """start from 1"""
+        self.doubanfm.play(int(index) - 1)
+
     def action_pause(self):
         self.doubanfm.pause()
 
@@ -55,13 +62,13 @@ class Handler:
         if kbps:
             self.doubanfm.set_kbps(int(kbps))
         else:
-            self.protocol.send('kbps', setting.get('kbps'))
+            self.protocol.send('kbps', Setting.get('kbps'))
 
     def action_channel(self, channel_id=None):
         if channel_id:
             self.doubanfm.select_channel(int(channel_id))
         else:
-            self.protocol.send('channel', setting.get('channel'))
+            self.protocol.send('channel', Setting.get('channel'))
 
     def action_state(self):
         self.protocol.send('state', self.doubanfm.player.get_state())
@@ -69,8 +76,8 @@ class Handler:
     def action_playlist(self):
         self.protocol.send('playlist', self.doubanfm.playlist)
 
-    def action_count(self):
-        self.protocol.send('count', self.doubanfm.playlist_count)
+    def action_index(self):
+        self.protocol.send('index', self.doubanfm.playlist_count)
 
     def action_login(self, data):
         result = self.doubanfm.login(data[0], data[1])

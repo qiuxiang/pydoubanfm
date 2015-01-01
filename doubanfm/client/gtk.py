@@ -3,7 +3,7 @@ import threading
 import webbrowser
 from gi.repository import GLib, Gtk, GdkPixbuf
 from .base import Protocol as BaseProtocol
-from ..utils import res, download, notify, add_tag
+from ..utils import Resource as res, download, notify, add_tag, stars
 
 
 class Protocol(BaseProtocol):
@@ -20,11 +20,10 @@ class Protocol(BaseProtocol):
     def connectionMade(self):
         BaseProtocol.connectionMade(self)
         self.transport.write(
-            'state\nvolume\nkbps\nchannels\nchannel\nuser\nsong')
+            'user\nstate\nvolume\nkbps\nchannels\nchannel\nplaylist\nsong')
 
     def on_channel(self, channel_id):
         BaseProtocol.on_channel(self, channel_id)
-        self.channel_id = int(channel_id)
         self.widget_channels[self.channel_id].set_active(True)
 
     def on_user(self, user):
@@ -68,6 +67,27 @@ class Protocol(BaseProtocol):
             self.get_widget('menu-channels').append(item)
             self.widget_channels[int(channel['channel_id'])] = item
 
+    def on_playlist(self, playlist):
+        BaseProtocol.on_playlist(self, playlist)
+        group = Gtk.RadioMenuItem()
+        menu_playlist = self.get_widget('menu-playlist')
+
+        if hasattr(self, 'widget_playlist') and self.widget_playlist:
+            for item in self.widget_playlist.values():
+                menu_playlist.remove(item)
+        else:
+            self.widget_playlist = {}
+
+        for index, song in enumerate(playlist):
+            item = Gtk.RadioMenuItem('%s - %s' % (song['artist'], song['title']), visible=True, group=group)
+            item.connect('activate', self.goto, index + 1)
+            menu_playlist.append(item)
+            self.widget_playlist[index + 1] = item
+
+    def goto(self, widget, index):
+        if widget.get_active() and self.song['index'] != index:
+            self.transport.write('goto %s' % index)
+
     def playback(self, widget):
         if self.get_widget('button-playback').get_tooltip_text() == '播放':
             self.transport.write('resume')
@@ -99,12 +119,12 @@ class Protocol(BaseProtocol):
 
     def on_song(self, song):
         BaseProtocol.on_song(self, song)
-        self.song = song
+        self.widget_playlist[song['index']].set_active(True)
         self.get_widget('image-album-cover').set_from_pixbuf(
             GdkPixbuf.Pixbuf.new_from_file_at_scale(
                 song['picture_file'], 240, -1, True))
         self.get_widget('image-album-cover').set_tooltip_text(
-            '艺术家：%s\n标题：%s\n专辑：%s' % (
+            '艺术家：%s\n标　题：%s\n专　辑：%s' % (
                 song['artist'],
                 song['title'],
                 song['albumtitle']))
@@ -164,11 +184,11 @@ class Protocol(BaseProtocol):
         self.get_widget('menu-item-playback').set_label('暂停')
 
     def select_channel(self, widget, channel_id):
-        if widget.get_active() and not self.channel_id == channel_id:
+        if widget.get_active() and self.channel_id != channel_id:
             self.transport.write('channel %s' % channel_id)
 
     def set_kbps(self, widget, kbps):
-        if widget.get_active() and not self.kbps == kbps:
+        if widget.get_active() and self.kbps != kbps:
             self.transport.write('kbps %s' % kbps)
 
     def open_album(self, widget):
