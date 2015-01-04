@@ -97,7 +97,7 @@ class Protocol(TwistedProtocol):
 
     def on_channels(self, channels):
         self.channels = channels
-        print(Color.yellow('Channels:'))
+        print('Channels:')
         for channel in channels:
             active = Color.cyan
             if hasattr(self, 'channel_id') and int(channel['channel_id']) == self.channel_id:
@@ -105,7 +105,7 @@ class Protocol(TwistedProtocol):
             print('  %s（%s）' % (active(channel['name']), channel['channel_id']))
 
     def on_playlist(self, playlist):
-        print(Color.cyan('Playlist:'))
+        print('Playlist:')
         for index, song in enumerate(playlist):
             current = ' '
             if hasattr(self, 'song') and self.song == song:
