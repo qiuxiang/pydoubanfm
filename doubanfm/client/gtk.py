@@ -119,6 +119,7 @@ class Protocol(BaseProtocol):
 
     def on_song(self, song):
         BaseProtocol.on_song(self, song)
+        self.on_resume()
         self.widget_playlist[song['index']].set_active(True)
         self.get_widget('image-album-cover').set_from_pixbuf(
             GdkPixbuf.Pixbuf.new_from_file_at_scale(
