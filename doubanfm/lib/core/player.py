@@ -83,7 +83,7 @@ class Player:
         if 0 <= index < len(self.playlist):
             self.song = self.playlist[index]
             self.song['index'] = index + 1
-            self.save_album_cover()
+            self.save_album_cover(self.song)
             self.player.stop()
             self.player.set_uri(self.song['url'])
             self.player.play()
@@ -164,8 +164,9 @@ class Player:
         self.player.set_volume(value)
         self.hooks.dispatch('volume_change')
 
-    def save_album_cover(self):
-        self.song['picture_file'] = \
-            Path.album_cover + self.song['picture'].split('/')[-1]
-        if not os.path.isfile(self.song['picture_file']):
-            download(self.song['picture'], self.song['picture_file'])
+    @staticmethod
+    def save_album_cover(song):
+        song['picture_file'] = \
+            Path.album_cover + song['picture'].split('/')[-1]
+        if not os.path.isfile(song['picture_file']):
+            download(song['picture'], song['picture_file'])

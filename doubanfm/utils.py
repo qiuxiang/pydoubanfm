@@ -53,6 +53,10 @@ def download(url, filename):
     open(filename, 'wb').write(requests.get(url).content)
 
 
+def safe_filename(filename):
+    return filename.replace('/', '-')
+
+
 def port_is_open(port):
     return socket.socket(
         socket.AF_INET, socket.SOCK_STREAM).connect_ex(('127.0.0.1', port)) == 0
