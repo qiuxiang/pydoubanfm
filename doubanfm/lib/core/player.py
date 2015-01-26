@@ -92,7 +92,7 @@ class Player:
 
     def song_notify(self):
         notify('%s %s' % (self.song['title'], ['♡', '♥'][self.song['like']]),
-               '%s <%s>\n%s' % (
+               '%s《%s》\n%s' % (
                    self.song['artist'],
                    self.song['albumtitle'],
                    stars(self.song['rating_avg'])),
