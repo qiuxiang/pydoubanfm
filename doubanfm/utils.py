@@ -53,6 +53,10 @@ def download(url, filename):
     open(filename, 'wb').write(requests.get(url).content)
 
 
+def safe_filename(filename):
+    return filename.replace('/', '-')
+
+
 def port_is_open(port):
     return socket.socket(
         socket.AF_INET, socket.SOCK_STREAM).connect_ex(('127.0.0.1', port)) == 0
@@ -98,8 +102,8 @@ def music_symbol():
 
 class Setting:
     @staticmethod
-    def update_file():
-        json_dump(Setting.data, Path.setting)
+    def update_file(data):
+        json_dump(data, Path.setting)
 
     @staticmethod
     def get(name):
@@ -108,7 +112,7 @@ class Setting:
     @staticmethod
     def set(name, value):
         Setting.data[name] = value
-        Setting.update_file()
+        Setting.update_file(Setting.data)
 
     if not os.path.isdir(Path.local):
         os.mkdir(Path.local)
@@ -120,7 +124,7 @@ class Setting:
         data = json.load(open(Path.setting))
     else:
         data = {'channel': 0, 'kbps': 192, 'port': 1234}
-        update_file()
+        update_file.__func__(data)
 
 
 class Factory(ReconnectingClientFactory):
