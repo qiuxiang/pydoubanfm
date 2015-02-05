@@ -51,7 +51,7 @@ $ sudo apt-get install python-requests python-eyed3 python-twisted python-gst-1.
 
 ![截图 - 桌面通知](https://cloud.githubusercontent.com/assets/1709072/5482937/ab01bda2-86a4-11e4-9a5d-f34f8e4fdf25.png)
 
-如果你是一个 geek，或许会喜欢命令行的纯粹
+如果你是一个 geek，或许会喜欢命令行
 
 ![截图 - 命令行](https://cloud.githubusercontent.com/assets/1709072/5482950/f36ee114-86a4-11e4-875c-392c88e9a59b.png)
 
