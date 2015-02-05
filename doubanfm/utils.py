@@ -102,8 +102,8 @@ def music_symbol():
 
 class Setting:
     @staticmethod
-    def update_file():
-        json_dump(Setting.data, Path.setting)
+    def update_file(data):
+        json_dump(data, Path.setting)
 
     @staticmethod
     def get(name):
@@ -124,7 +124,7 @@ class Setting:
         data = json.load(open(Path.setting))
     else:
         data = {'channel': 0, 'kbps': 192, 'port': 1234}
-        update_file()
+        update_file.__func__(data)
 
 
 class Factory(ReconnectingClientFactory):
