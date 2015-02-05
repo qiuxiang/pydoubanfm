@@ -112,7 +112,7 @@ class Setting:
     @staticmethod
     def set(name, value):
         Setting.data[name] = value
-        Setting.update_file()
+        Setting.update_file(Setting.data)
 
     if not os.path.isdir(Path.local):
         os.mkdir(Path.local)
