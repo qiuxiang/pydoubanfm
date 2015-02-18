@@ -24,14 +24,14 @@ python 实现的豆瓣电台播放器
 - python-twisted   # tcp server
 - python-gst-1.0   # 播放模块
 - python-colorama  # 终端彩色 print
-- convert          # 图片转换
+- imagemagick      # 图片转换 convert
 
 作者常用的操作系统是 Ubuntu 最新版，当然，其他 Linux 发行版也基本可以保证支持（主要是解决依赖）。
 至于 OS X，原则上是可以支持的，关键是 pygtk3 和 gst1.0 的安装。Windows 同理，但依赖的解决更为困难。
 以 Ubuntu 为例，运行以下命令：
 
 ```sh
-$ sudo apt-get install python-requests python-eyed3 python-twisted python-gst-1.0 python-colorama convert
+$ sudo apt-get install python-requests python-eyed3 python-twisted python-gst-1.0 python-colorama imagemagick
 ```
 
 ## 运行
