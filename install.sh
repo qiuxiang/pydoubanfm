@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-pwd=`pwd`
+pwd=$(pwd)
 
 source_icon=$pwd/doubanfm/res/icon.png
 for size in 256 128 48 32 24 22 16; do
